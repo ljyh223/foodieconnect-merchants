@@ -1,0 +1,22 @@
+{
+  "save": "保存",
+  "cancel": "取消",
+  "confirm": "确认",
+  "delete": "删除",
+  "edit": "编辑",
+  "add": "添加",
+  "search": "搜索",
+  "filter": "筛选",
+  "refresh": "刷新",
+  "loading": "加载中...",
+  "noData": "暂无数据",
+  "error": "错误",
+  "success": "成功",
+  "warning": "警告",
+  "info": "提示",
+  "retry": "重试",
+  "close": "关闭",
+  "ok": "确定",
+  "yes": "是",
+  "no": "否"
+}

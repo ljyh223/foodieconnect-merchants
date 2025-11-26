@@ -1,0 +1,23 @@
+{
+  "title": "菜单管理",
+  "items": "菜品列表",
+  "categories": "分类管理",
+  "addItem": "添加菜品",
+  "editItem": "编辑菜品",
+  "deleteItem": "删除菜品",
+  "itemName": "菜品名称",
+  "description": "菜品描述",
+  "price": "价格",
+  "originalPrice": "原价",
+  "category": "分类",
+  "image": "菜品图片",
+  "available": "可售",
+  "unavailable": "售罄",
+  "recommended": "推荐",
+  "spiceLevel": "辣度",
+  "preparationTime": "制作时间",
+  "calories": "卡路里",
+  "addSuccess": "添加成功",
+  "updateSuccess": "更新成功",
+  "deleteSuccess": "删除成功"
+}

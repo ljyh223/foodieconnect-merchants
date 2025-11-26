@@ -1,0 +1,16 @@
+{
+  "title": "Restaurant Management",
+  "name": "Restaurant Name",
+  "type": "Restaurant Type",
+  "description": "Description",
+  "address": "Address",
+  "phone": "Phone",
+  "hours": "Business Hours",
+  "status": "Status",
+  "open": "Open",
+  "closed": "Closed",
+  "image": "Restaurant Image",
+  "updateInfo": "Update Info",
+  "updateSuccess": "Update Successful",
+  "updateFailed": "Update Failed"
+}

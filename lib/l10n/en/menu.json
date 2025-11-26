@@ -1,0 +1,23 @@
+{
+  "title": "Menu Management",
+  "items": "Menu Items",
+  "categories": "Categories",
+  "addItem": "Add Item",
+  "editItem": "Edit Item",
+  "deleteItem": "Delete Item",
+  "itemName": "Item Name",
+  "description": "Description",
+  "price": "Price",
+  "originalPrice": "Original Price",
+  "category": "Category",
+  "image": "Item Image",
+  "available": "Available",
+  "unavailable": "Unavailable",
+  "recommended": "Recommended",
+  "spiceLevel": "Spice Level",
+  "preparationTime": "Preparation Time",
+  "calories": "Calories",
+  "addSuccess": "Add Successful",
+  "updateSuccess": "Update Successful",
+  "deleteSuccess": "Delete Successful"
+}

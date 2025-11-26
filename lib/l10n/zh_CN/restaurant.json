@@ -1,0 +1,16 @@
+{
+  "title": "餐厅管理",
+  "name": "餐厅名称",
+  "type": "餐厅类型",
+  "description": "餐厅描述",
+  "address": "地址",
+  "phone": "联系电话",
+  "hours": "营业时间",
+  "status": "营业状态",
+  "open": "营业中",
+  "closed": "已打烊",
+  "image": "餐厅图片",
+  "updateInfo": "更新信息",
+  "updateSuccess": "更新成功",
+  "updateFailed": "更新失败"
+}

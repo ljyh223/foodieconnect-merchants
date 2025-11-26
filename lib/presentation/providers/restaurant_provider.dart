@@ -1,0 +1,302 @@
+import 'package:flutter/foundation.dart';
+
+import 'package:foodieconnect/core/utils/logger.dart';
+import 'package:foodieconnect/data/models/restaurant/restaurant_model.dart';
+import 'package:foodieconnect/data/models/restaurant/restaurant_update_request.dart';
+import 'package:foodieconnect/data/services/restaurant_service.dart';
+
+/// 餐厅状态管理Provider
+class RestaurantProvider extends ChangeNotifier {
+  final RestaurantService _restaurantService = RestaurantService();
+
+  // 状态变量
+  bool _isLoading = false;
+  bool _isUpdating = false;
+  String? _errorMessage;
+  RestaurantModel? _restaurant;
+
+  // Getters
+  bool get isLoading => _isLoading;
+  bool get isUpdating => _isUpdating;
+  String? get errorMessage => _errorMessage;
+  RestaurantModel? get restaurant => _restaurant;
+
+  /// 获取餐厅信息
+  Future<void> loadRestaurant() async {
+    try {
+      _setLoading(true);
+      _clearError();
+
+      AppLogger.info('RestaurantProvider: 开始加载餐厅信息');
+
+      final response = await _restaurantService.getRestaurant();
+
+      if (response.isSuccess && response.data != null) {
+        _restaurant = response.data;
+        AppLogger.info('RestaurantProvider: 餐厅信息加载成功');
+      } else {
+        _setError(response.errorMessage);
+        AppLogger.warning('RestaurantProvider: 餐厅信息加载失败 - ${response.errorMessage}');
+      }
+
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('RestaurantProvider: 加载餐厅信息异常', error: e);
+      _setError('加载餐厅信息失败，请稍后重试');
+      notifyListeners();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// 更新餐厅信息
+  Future<bool> updateRestaurant(RestaurantUpdateRequest request) async {
+    try {
+      _setUpdating(true);
+      _clearError();
+
+      AppLogger.info('RestaurantProvider: 开始更新餐厅信息');
+
+      final response = await _restaurantService.updateRestaurant(request);
+
+      if (response.isSuccess && response.data != null) {
+        _restaurant = response.data;
+        AppLogger.info('RestaurantProvider: 餐厅信息更新成功');
+        notifyListeners();
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        AppLogger.warning('RestaurantProvider: 餐厅信息更新失败 - ${response.errorMessage}');
+        return false;
+      }
+    } catch (e) {
+      AppLogger.error('RestaurantProvider: 更新餐厅信息异常', error: e);
+      _setError('更新餐厅信息失败，请稍后重试');
+      return false;
+    } finally {
+      _setUpdating(false);
+    }
+  }
+
+  /// 更新餐厅营业状态
+  Future<bool> updateRestaurantStatus(bool isOpen) async {
+    try {
+      _setUpdating(true);
+      _clearError();
+
+      AppLogger.info('RestaurantProvider: 开始更新餐厅营业状态');
+
+      final response = await _restaurantService.updateRestaurantStatus(isOpen);
+
+      if (response.isSuccess) {
+        // 更新本地状态
+        if (_restaurant != null) {
+          _restaurant = _restaurant!.copyWith(isOpen: isOpen);
+          AppLogger.info('RestaurantProvider: 餐厅营业状态更新成功');
+          notifyListeners();
+        }
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        AppLogger.warning('RestaurantProvider: 餐厅营业状态更新失败 - ${response.errorMessage}');
+        return false;
+      }
+    } catch (e) {
+      AppLogger.error('RestaurantProvider: 更新餐厅营业状态异常', error: e);
+      _setError('更新营业状态失败，请稍后重试');
+      return false;
+    } finally {
+      _setUpdating(false);
+    }
+  }
+
+  /// 切换餐厅营业状态
+  Future<bool> toggleRestaurantStatus() async {
+    if (_restaurant == null) {
+      _setError('餐厅信息未加载');
+      return false;
+    }
+
+    final newStatus = !_restaurant!.isCurrentlyOpen;
+    return await updateRestaurantStatus(newStatus);
+  }
+
+  /// 更新餐厅图片
+  Future<bool> updateRestaurantImage(dynamic imageFile) async {
+    try {
+      _setUpdating(true);
+      _clearError();
+
+      AppLogger.info('RestaurantProvider: 开始更新餐厅图片');
+
+      final response = await _restaurantService.updateRestaurantImage(imageFile);
+
+      if (response.isSuccess) {
+        // 更新本地状态
+        if (_restaurant != null) {
+          _restaurant = _restaurant!.copyWith(imageUrl: response.data);
+          AppLogger.info('RestaurantProvider: 餐厅图片更新成功');
+          notifyListeners();
+        }
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        AppLogger.warning('RestaurantProvider: 餐厅图片更新失败 - ${response.errorMessage}');
+        return false;
+      }
+    } catch (e) {
+      AppLogger.error('RestaurantProvider: 更新餐厅图片异常', error: e);
+      _setError('更新餐厅图片失败，请稍后重试');
+      return false;
+    } finally {
+      _setUpdating(false);
+    }
+  }
+
+  /// 刷新餐厅信息
+  Future<void> refreshRestaurant() async {
+    await loadRestaurant();
+  }
+
+  /// 获取餐厅显示名称
+  String get restaurantDisplayName {
+    if (_restaurant == null) return '未知餐厅';
+    return _restaurant!.name.isNotEmpty 
+        ? _restaurant!.name 
+        : '未命名餐厅';
+  }
+
+  /// 获取餐厅类型显示
+  String get restaurantTypeDisplay {
+    if (_restaurant == null) return '';
+    return _restaurant!.type.isNotEmpty 
+        ? _restaurant!.type 
+        : '未分类';
+  }
+
+  /// 获取餐厅地址显示
+  String get restaurantAddressDisplay {
+    if (_restaurant == null) return '';
+    return _restaurant!.address.isNotEmpty 
+        ? _restaurant!.address 
+        : '地址未设置';
+  }
+
+  /// 获取餐厅电话显示
+  String get restaurantPhoneDisplay {
+    if (_restaurant == null) return '';
+    return _restaurant!.phone.isNotEmpty 
+        ? _restaurant!.phone 
+        : '电话未设置';
+  }
+
+  /// 获取餐厅营业时间显示
+  String get restaurantHoursDisplay {
+    if (_restaurant == null) return '';
+    return _restaurant!.hours?.isNotEmpty == true 
+        ? _restaurant!.hours! 
+        : '营业时间未设置';
+  }
+
+  /// 获取餐厅描述显示
+  String get restaurantDescriptionDisplay {
+    if (_restaurant == null) return '';
+    return _restaurant!.description?.isNotEmpty == true 
+        ? _restaurant!.description! 
+        : '暂无描述';
+  }
+
+  /// 获取餐厅状态显示
+  String get restaurantStatusDisplay {
+    if (_restaurant == null) return '';
+    return _restaurant!.isCurrentlyOpen ? '营业中' : '已打烊';
+  }
+
+  /// 获取餐厅评分显示
+  String get restaurantRatingDisplay {
+    if (_restaurant == null) return '';
+    return _restaurant!.ratingDisplay;
+  }
+
+  /// 获取餐厅评价数量显示
+  String get restaurantReviewCountDisplay {
+    if (_restaurant == null) return '';
+    return _restaurant!.reviewCountDisplay;
+  }
+
+  /// 检查餐厅是否营业
+  bool get isRestaurantOpen {
+    return _restaurant?.isCurrentlyOpen ?? false;
+  }
+
+  /// 检查是否有餐厅信息
+  bool get hasRestaurantInfo {
+    return _restaurant != null;
+  }
+
+  /// 检查是否有餐厅图片
+  bool get hasRestaurantImage {
+    return _restaurant?.displayImage?.isNotEmpty == true;
+  }
+
+  /// 获取餐厅图片URL
+  String? get restaurantImageUrl {
+    return _restaurant?.displayImage;
+  }
+
+  /// 设置加载状态
+  void _setLoading(bool loading) {
+    if (_isLoading != loading) {
+      _isLoading = loading;
+      _scheduleNotifyListeners();
+    }
+  }
+
+  /// 设置更新状态
+  void _setUpdating(bool updating) {
+    if (_isUpdating != updating) {
+      _isUpdating = updating;
+      _scheduleNotifyListeners();
+    }
+  }
+
+  /// 设置错误信息
+  void _setError(String error) {
+    if (_errorMessage != error) {
+      _errorMessage = error;
+      _scheduleNotifyListeners();
+    }
+  }
+
+  /// 清除错误信息
+  void _clearError() {
+    if (_errorMessage != null) {
+      _errorMessage = null;
+      _scheduleNotifyListeners();
+    }
+  }
+
+  /// 延迟通知监听器，避免在build阶段调用
+  void _scheduleNotifyListeners() {
+    Future.microtask(() {
+      if (hasListeners) {
+        notifyListeners();
+      }
+    });
+  }
+
+  /// 清除错误信息（公共方法）
+  void clearError() {
+    _clearError();
+  }
+
+  /// 重置状态
+  void reset() {
+    _isLoading = false;
+    _isUpdating = false;
+    _errorMessage = null;
+    _restaurant = null;
+    notifyListeners();
+    AppLogger.info('RestaurantProvider: 状态已重置');
+  }
+}

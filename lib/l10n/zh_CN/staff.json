@@ -1,0 +1,19 @@
+{
+  "title": "员工管理",
+  "list": "员工列表",
+  "addStaff": "添加员工",
+  "editStaff": "编辑员工",
+  "deleteStaff": "删除员工",
+  "name": "姓名",
+  "position": "职位",
+  "status": "状态",
+  "online": "在线",
+  "offline": "离线",
+  "busy": "忙碌",
+  "experience": "经验",
+  "rating": "评分",
+  "schedule": "排班",
+  "addSchedule": "添加排班",
+  "editSchedule": "编辑排班",
+  "deleteSchedule": "删除排班"
+}

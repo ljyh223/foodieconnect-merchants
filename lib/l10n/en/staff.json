@@ -1,0 +1,19 @@
+{
+  "title": "Staff Management",
+  "list": "Staff List",
+  "addStaff": "Add Staff",
+  "editStaff": "Edit Staff",
+  "deleteStaff": "Delete Staff",
+  "name": "Name",
+  "position": "Position",
+  "status": "Status",
+  "online": "Online",
+  "offline": "Offline",
+  "busy": "Busy",
+  "experience": "Experience",
+  "rating": "Rating",
+  "schedule": "Schedule",
+  "addSchedule": "Add Schedule",
+  "editSchedule": "Edit Schedule",
+  "deleteSchedule": "Delete Schedule"
+}
