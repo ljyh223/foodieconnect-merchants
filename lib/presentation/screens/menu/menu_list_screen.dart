@@ -5,6 +5,9 @@ import 'package:foodieconnect/core/theme/app_theme.dart';
 import 'package:foodieconnect/core/utils/image_utils.dart';
 import 'package:foodieconnect/presentation/providers/menu_provider.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
+import 'package:foodieconnect/data/models/menu/menu_item_request.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 /// 菜单列表页面
 class MenuListScreen extends StatefulWidget {
@@ -23,8 +26,7 @@ class _MenuListScreenState extends State<MenuListScreen> {
     if (!_isInitialized) {
       // 延迟初始化，避免在build阶段触发状态更新
       Future.microtask(() {
-        if (mounted && !_isInitialized) {
-          _loadMenuData();
+        if (mounted && !_isInitialized) {          _loadMenuData();
         }
       });
     }
@@ -511,11 +513,400 @@ class _MenuListScreenState extends State<MenuListScreen> {
   }
 
   void _showAddItemDialog(BuildContext context) {
-    // TODO: 实现添加菜品对话框
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('添加菜品功能开发中...'),
-      ),
+    final provider = Provider.of<MenuProvider>(context, listen: false);
+    if (provider.categories.isEmpty) {
+      provider.loadCategories();
+    }
+
+    final nameController = TextEditingController();
+    final descController = TextEditingController();
+    final priceController = TextEditingController();
+    final originalPriceController = TextEditingController();
+    final sortController = TextEditingController(text: '0');
+    final prepTimeController = TextEditingController();
+    final caloriesController = TextEditingController();
+    final imageUrlController = TextEditingController();
+    int? selectedCategoryId;
+    String? selectedSpiceLevel;
+    bool isAvailable = true;
+    bool isRecommended = false;
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setState) {
+            final categories = Provider.of<MenuProvider>(ctx).categories;
+            return Dialog(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.85,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 标题栏
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: const BoxDecoration(
+                        color: AppTheme.primaryColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.add, color: Colors.white),
+                          const SizedBox(width: 8),
+                          const Text(
+                            '添加菜品',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            onPressed: () => Navigator.of(ctx).pop(),
+                            icon: const Icon(Icons.close, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // 内容区域
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            // 基本信息
+                            _buildSection(
+                              title: '基本信息',
+                              children: [
+                                TextField(
+                                  controller: nameController,
+                                  decoration: const InputDecoration(
+                                    labelText: '菜品名称 *',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.restaurant_menu),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                TextField(
+                                  controller: descController,
+                                  decoration: const InputDecoration(
+                                    labelText: '描述',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.description),
+                                  ),
+                                  maxLines: 2,
+                                ),
+                                const SizedBox(height: 12),
+                                DropdownButtonFormField<int>(
+                                  initialValue: selectedCategoryId,
+                                  items: categories
+                                      .map((c) => DropdownMenuItem<int>(value: c.id, child: Text(c.name)))
+                                      .toList(),
+                                  onChanged: (v) => setState(() => selectedCategoryId = v),
+                                  decoration: const InputDecoration(
+                                    labelText: '分类 *',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.category),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // 价格信息
+                            _buildSection(
+                              title: '价格信息',
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextField(
+                                        controller: priceController,
+                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                        decoration: const InputDecoration(
+                                          labelText: '价格 *',
+                                          border: OutlineInputBorder(),
+                                          prefixIcon: Icon(Icons.attach_money),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: originalPriceController,
+                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                        decoration: const InputDecoration(
+                                          labelText: '原价(可选)',
+                                          border: OutlineInputBorder(),
+                                          prefixIcon: Icon(Icons.money_off),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                TextField(
+                                  controller: sortController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    labelText: '排序',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.sort),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // 属性信息
+                            _buildSection(
+                              title: '属性信息',
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        initialValue: selectedSpiceLevel,
+                                        items: AppConstants.spiceLevels
+                                            .map((s) => DropdownMenuItem<String>(value: s, child: Text(s)))
+                                            .toList(),
+                                        onChanged: (v) => setState(() => selectedSpiceLevel = v),
+                                        decoration: const InputDecoration(
+                                          labelText: '辣度(可选)',
+                                          border: OutlineInputBorder(),
+                                          prefixIcon: Icon(Icons.whatshot),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: prepTimeController,
+                                        keyboardType: TextInputType.number,
+                                        decoration: const InputDecoration(
+                                          labelText: '制作时间(分钟)',
+                                          border: OutlineInputBorder(),
+                                          prefixIcon: Icon(Icons.timer),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                TextField(
+                                  controller: caloriesController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    labelText: '卡路里(可选)',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.local_fire_department),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // 图片上传
+                            _buildSection(
+                              title: '图片',
+                              children: [
+                                TextField(
+                                  controller: imageUrlController,
+                                  decoration: const InputDecoration(
+                                    labelText: '图片URL(可选)',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.image),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    ElevatedButton.icon(
+                                      onPressed: () async {
+                                        final picker = ImagePicker();
+                                        final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+                                        if (picked == null) return;
+                                        final file = File(picked.path);
+                                        final url = await provider.uploadMenuItemImage(file);
+                                        if (!context.mounted) return;
+                                        if (url != null) {
+                                          imageUrlController.text = url;
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('图片上传成功')));
+                                        }
+                                      },
+                                      icon: const Icon(Icons.file_upload),
+                                      label: const Text('选择图片并上传'),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    if (imageUrlController.text.isNotEmpty)
+                                      Expanded(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: Image.network(
+                                            ImageUtils.getFullImageUrl(imageUrlController.text),
+                                            height: 60,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // 状态设置
+                            _buildSection(
+                              title: '状态设置',
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.check_circle, color: AppTheme.successColor),
+                                          const SizedBox(width: 8),
+                                          const Text('可售'),
+                                          const SizedBox(width: 8),
+                                          Switch(value: isAvailable, onChanged: (v) => setState(() => isAvailable = v)),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.star, color: AppTheme.warningColor),
+                                          const SizedBox(width: 8),
+                                          const Text('推荐'),
+                                          const SizedBox(width: 8),
+                                          Switch(value: isRecommended, onChanged: (v) => setState(() => isRecommended = v)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    // 底部按钮
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.of(ctx).pop(),
+                            child: const Text('取消'),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            onPressed: () async {
+                              final name = nameController.text.trim();
+                              final price = double.tryParse(priceController.text.trim() == '' ? 'nan' : priceController.text.trim());
+                              final originalPrice = originalPriceController.text.trim().isEmpty
+                                  ? null
+                                  : double.tryParse(originalPriceController.text.trim());
+                              final sortOrder = int.tryParse(sortController.text.trim()) ?? 0;
+                              final preparationTime = prepTimeController.text.trim().isEmpty
+                                  ? null
+                                  : int.tryParse(prepTimeController.text.trim());
+                              final calories = caloriesController.text.trim().isEmpty
+                                  ? null
+                                  : int.tryParse(caloriesController.text.trim());
+
+                              if (name.isEmpty || price == null || selectedCategoryId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('请填写名称、价格并选择分类')),
+                                );
+                                return;
+                              }
+
+                              final request = MenuItemRequest(
+                                name: name,
+                                description: descController.text.trim().isEmpty ? null : descController.text.trim(),
+                                price: price,
+                                originalPrice: originalPrice,
+                                categoryId: selectedCategoryId!,
+                                imageUrl: imageUrlController.text.trim().isEmpty ? null : imageUrlController.text.trim(),
+                                isAvailable: isAvailable,
+                                isRecommended: isRecommended,
+                                sortOrder: sortOrder,
+                                nutritionInfo: null,
+                                allergenInfo: null,
+                                spiceLevel: selectedSpiceLevel,
+                                preparationTime: preparationTime,
+                                calories: calories,
+                              );
+
+                              if (!request.isValid) {
+                                final msg = request.validationError ?? '数据校验失败';
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+                                return;
+                              }
+
+                              final ok = await Provider.of<MenuProvider>(context, listen: false).createMenuItem(request);
+                              if (!context.mounted) return;
+                              if (ok) {
+                                Navigator.of(ctx).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('菜品添加成功')));
+                              }
+                            },
+                            child: const Text('保存'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // 构建分组的UI组件
+  Widget _buildSection({required String title, required List<Widget> children}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.primaryColor,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ...children,
+      ],
     );
   }
 
@@ -541,11 +932,382 @@ class _MenuListScreenState extends State<MenuListScreen> {
 
   /// 显示编辑菜品对话框
   void _showEditItemDialog(BuildContext context, MenuItemModel menuItem, MenuProvider provider) {
-    // TODO: 实现编辑菜品对话框
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('编辑菜品: ${menuItem.name}'),
-      ),
+    if (provider.categories.isEmpty) {
+      provider.loadCategories();
+    }
+
+    final nameController = TextEditingController(text: menuItem.name);
+    final descController = TextEditingController(text: menuItem.description ?? '');
+    final priceController = TextEditingController(text: menuItem.price.toString());
+    final originalPriceController = TextEditingController(
+        text: menuItem.originalPrice == null ? '' : menuItem.originalPrice!.toString());
+    final sortController = TextEditingController(text: menuItem.sortOrder.toString());
+    final prepTimeController = TextEditingController(text: menuItem.preparationTime?.toString() ?? '');
+    final caloriesController = TextEditingController(text: menuItem.calories?.toString() ?? '');
+    final imageUrlController = TextEditingController(text: menuItem.imageUrl ?? '');
+    int? selectedCategoryId = menuItem.categoryId;
+    String? selectedSpiceLevel = menuItem.spiceLevel;
+    bool isAvailable = menuItem.isAvailable;
+    bool isRecommended = menuItem.isRecommended;
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (ctx, setState) {
+            final categories = Provider.of<MenuProvider>(ctx).categories;
+            return Dialog(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.85,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // 标题栏
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: const BoxDecoration(
+                        color: AppTheme.primaryColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(12),
+                          topRight: Radius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.edit, color: Colors.white),
+                          const SizedBox(width: 8),
+                          const Text(
+                            '编辑菜品',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const Spacer(),
+                          IconButton(
+                            onPressed: () => Navigator.of(ctx).pop(),
+                            icon: const Icon(Icons.close, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
+                    // 内容区域
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            // 基本信息
+                            _buildSection(
+                              title: '基本信息',
+                              children: [
+                                TextField(
+                                  controller: nameController,
+                                  decoration: const InputDecoration(
+                                    labelText: '菜品名称 *',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.restaurant_menu),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                TextField(
+                                  controller: descController,
+                                  decoration: const InputDecoration(
+                                    labelText: '描述',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.description),
+                                  ),
+                                  maxLines: 2,
+                                ),
+                                const SizedBox(height: 12),
+                                DropdownButtonFormField<int>(
+                                  initialValue: selectedCategoryId,
+                                  items: categories
+                                      .map((c) => DropdownMenuItem<int>(value: c.id, child: Text(c.name)))
+                                      .toList(),
+                                  onChanged: (v) => setState(() => selectedCategoryId = v),
+                                  decoration: const InputDecoration(
+                                    labelText: '分类 *',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.category),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // 价格信息
+                            _buildSection(
+                              title: '价格信息',
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextField(
+                                        controller: priceController,
+                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                        decoration: const InputDecoration(
+                                          labelText: '价格 *',
+                                          border: OutlineInputBorder(),
+                                          prefixIcon: Icon(Icons.attach_money),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: originalPriceController,
+                                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                        decoration: const InputDecoration(
+                                          labelText: '原价(可选)',
+                                          border: OutlineInputBorder(),
+                                          prefixIcon: Icon(Icons.money_off),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                TextField(
+                                  controller: sortController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    labelText: '排序',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.sort),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // 属性信息
+                            _buildSection(
+                              title: '属性信息',
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        initialValue: selectedSpiceLevel,
+                                        items: AppConstants.spiceLevels
+                                            .map((s) => DropdownMenuItem<String>(value: s, child: Text(s)))
+                                            .toList(),
+                                        onChanged: (v) => setState(() => selectedSpiceLevel = v),
+                                        decoration: const InputDecoration(
+                                          labelText: '辣度(可选)',
+                                          border: OutlineInputBorder(),
+                                          prefixIcon: Icon(Icons.whatshot),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: prepTimeController,
+                                        keyboardType: TextInputType.number,
+                                        decoration: const InputDecoration(
+                                          labelText: '制作时间(分钟)',
+                                          border: OutlineInputBorder(),
+                                          prefixIcon: Icon(Icons.timer),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                TextField(
+                                  controller: caloriesController,
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    labelText: '卡路里(可选)',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.local_fire_department),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // 图片上传
+                            _buildSection(
+                              title: '图片',
+                              children: [
+                                TextField(
+                                  controller: imageUrlController,
+                                  decoration: const InputDecoration(
+                                    labelText: '图片URL(可选)',
+                                    border: OutlineInputBorder(),
+                                    prefixIcon: Icon(Icons.image),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    ElevatedButton.icon(
+                                      onPressed: () async {
+                                        final picker = ImagePicker();
+                                        final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 85);
+                                        if (picked == null) return;
+                                        final file = File(picked.path);
+                                        final url = await provider.uploadMenuItemImage(file);
+                                        if (!context.mounted) return;
+                                        if (url != null) {
+                                          imageUrlController.text = url;
+                                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('图片上传成功')));
+                                        }
+                                      },
+                                      icon: const Icon(Icons.file_upload),
+                                      label: const Text('选择图片并上传'),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    if (imageUrlController.text.isNotEmpty)
+                                      Expanded(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(8),
+                                          child: Image.network(
+                                            ImageUtils.getFullImageUrl(imageUrlController.text),
+                                            height: 60,
+                                            fit: BoxFit.cover,
+                                            errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            
+                            const SizedBox(height: 16),
+                            
+                            // 状态设置
+                            _buildSection(
+                              title: '状态设置',
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.check_circle, color: AppTheme.successColor),
+                                          const SizedBox(width: 8),
+                                          const Text('可售'),
+                                          const SizedBox(width: 8),
+                                          Switch(value: isAvailable, onChanged: (v) => setState(() => isAvailable = v)),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          const Icon(Icons.star, color: AppTheme.warningColor),
+                                          const SizedBox(width: 8),
+                                          const Text('推荐'),
+                                          const SizedBox(width: 8),
+                                          Switch(value: isRecommended, onChanged: (v) => setState(() => isRecommended = v)),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    // 底部按钮
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[50],
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.of(ctx).pop(),
+                            child: const Text('取消'),
+                          ),
+                          const SizedBox(width: 12),
+                          ElevatedButton(
+                            onPressed: () async {
+                              final name = nameController.text.trim();
+                              final price = double.tryParse(priceController.text.trim() == '' ? 'nan' : priceController.text.trim());
+                              final originalPrice = originalPriceController.text.trim().isEmpty
+                                  ? null
+                                  : double.tryParse(originalPriceController.text.trim());
+                              final sortOrder = int.tryParse(sortController.text.trim()) ?? 0;
+                              final preparationTime = prepTimeController.text.trim().isEmpty
+                                  ? null
+                                  : int.tryParse(prepTimeController.text.trim());
+                              final calories = caloriesController.text.trim().isEmpty
+                                  ? null
+                                  : int.tryParse(caloriesController.text.trim());
+
+                              if (name.isEmpty || price == null || selectedCategoryId == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('请填写名称、价格并选择分类')),
+                                );
+                                return;
+                              }
+
+                              final request = MenuItemRequest(
+                                name: name,
+                                description: descController.text.trim().isEmpty ? null : descController.text.trim(),
+                                price: price,
+                                originalPrice: originalPrice,
+                                categoryId: selectedCategoryId!,
+                                imageUrl: imageUrlController.text.trim().isEmpty ? null : imageUrlController.text.trim(),
+                                isAvailable: isAvailable,
+                                isRecommended: isRecommended,
+                                sortOrder: sortOrder,
+                                nutritionInfo: null,
+                                allergenInfo: null,
+                                spiceLevel: selectedSpiceLevel,
+                                preparationTime: preparationTime,
+                                calories: calories,
+                              );
+
+                              if (!request.isValid) {
+                                final msg = request.validationError ?? '数据校验失败';
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+                                return;
+                              }
+
+                              final ok = await Provider.of<MenuProvider>(context, listen: false)
+                                  .updateMenuItem(menuItem.id, request);
+                              if (!context.mounted) return;
+                              if (ok) {
+                                Navigator.of(ctx).pop();
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('菜品更新成功')));
+                              }
+                            },
+                            child: const Text('保存'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 

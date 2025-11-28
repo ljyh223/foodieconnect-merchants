@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'dart:io';
 import 'package:foodieconnect/core/utils/logger.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_request.dart';
@@ -42,7 +43,7 @@ class MenuService {
       }
 
       final response = await _apiService.get<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/items',
+        '/merchant/menu/items',
         queryParameters: queryParameters,
       );
 
@@ -96,7 +97,7 @@ class MenuService {
       AppLogger.info('MenuService: 创建菜品 - ${request.name}');
 
       final response = await _apiService.post<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/items',
+        '/merchant/menu/items',
         data: request.toJson(),
       );
 
@@ -139,7 +140,7 @@ class MenuService {
       AppLogger.info('MenuService: 更新菜品 - $itemId');
 
       final response = await _apiService.put<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/items/$itemId',
+        '/merchant/menu/items/$itemId',
         data: request.toJson(),
       );
 
@@ -179,7 +180,7 @@ class MenuService {
       AppLogger.info('MenuService: 删除菜品 - $itemId');
 
       final response = await _apiService.delete<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/items/$itemId',
+        '/merchant/menu/items/$itemId',
       );
 
       final apiResponse = ApiResponse<void>.fromJson(
@@ -218,7 +219,7 @@ class MenuService {
       AppLogger.info('MenuService: 切换菜品状态 - $itemId, $isAvailable');
 
       final response = await _apiService.put<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/items/$itemId/status',
+        '/merchant/menu/items/$itemId/status',
         data: {
           'isAvailable': isAvailable,
         },
@@ -260,7 +261,7 @@ class MenuService {
       AppLogger.info('MenuService: 设置推荐菜品 - $itemId, $isRecommended');
 
       final response = await _apiService.put<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/items/$itemId/recommended',
+        '/merchant/menu/items/$itemId/recommended',
         data: {
           'isRecommended': isRecommended,
         },
@@ -340,7 +341,7 @@ class MenuService {
       AppLogger.info('MenuService: 获取所有菜品');
 
       final response = await _apiService.get<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/items/all',
+        '/merchant/menu/items/all',
       );
 
       final apiResponse = ApiResponse<List<MenuItemModel>>.fromJson(
@@ -404,7 +405,7 @@ class MenuService {
       AppLogger.info('MenuService: 获取分类列表');
 
       final response = await _apiService.get<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/categories',
+        '/merchant/menu/categories',
       );
 
       final apiResponse = ApiResponse<List<MenuCategoryModel>>.fromJson(
@@ -444,13 +445,83 @@ class MenuService {
     }
   }
 
+  // ==================== 图片上传相关方法 ====================
+
+  /// 上传菜品图片并返回图片URL
+  Future<ApiResponse<String>> uploadMenuItemImage(File imageFile) async {
+    try {
+      AppLogger.info('MenuService: 上传菜品图片');
+
+      // 使用通用图片上传接口
+      final response = await _apiService.uploadFile<Map<String, dynamic>>(
+        '/upload/image',
+        imageFile,
+      );
+
+      final apiResponse = ApiResponse<String>.fromJson(
+        response.data!,
+        (json) {
+          // 根据API契约，/upload/image返回MapStringString格式
+          if (json is Map<String, dynamic>) {
+            // 尝试从data字段中获取图片URL
+            if (json.containsKey('data') && json['data'] is Map) {
+              final data = json['data'] as Map<String, dynamic>;
+              // 常见的字段名可能是imageUrl、url、path等
+              if (data.containsKey('imageUrl')) {
+                return data['imageUrl'] as String;
+              } else if (data.containsKey('url')) {
+                return data['url'] as String;
+              } else if (data.containsKey('path')) {
+                return data['path'] as String;
+              }
+              // 如果没有找到明确的字段，取第一个值
+              if (data.isNotEmpty) {
+                return data.values.first as String;
+              }
+            }
+            // 直接在根级别查找
+            if (json.containsKey('imageUrl')) {
+              return json['imageUrl'] as String;
+            } else if (json.containsKey('url')) {
+              return json['url'] as String;
+            } else if (json.containsKey('path')) {
+              return json['path'] as String;
+            }
+          }
+          return json.toString();
+        },
+      );
+
+      if (apiResponse.isSuccess) {
+        AppLogger.info('MenuService: 菜品图片上传成功 - ${apiResponse.data}');
+      } else {
+        AppLogger.warning('MenuService: 菜品图片上传失败 - ${apiResponse.errorMessage}');
+      }
+
+      return apiResponse;
+    } on DioException catch (e) {
+      AppLogger.error('MenuService: 菜品图片上传网络错误', error: e);
+      if (e.response?.data is Map<String, dynamic>) {
+        final errorData = e.response!.data as Map<String, dynamic>;
+        return ApiResponse.error(
+          _extractErrorMessage(errorData),
+          code: e.response?.statusCode,
+        );
+      }
+      return ApiResponse.error('图片上传失败，请检查网络连接');
+    } catch (e) {
+      AppLogger.error('MenuService: 菜品图片上传未知错误', error: e);
+      return ApiResponse.error('图片上传失败，请稍后重试');
+    }
+  }
+
   /// 创建分类
   Future<ApiResponse<MenuCategoryModel>> createCategory(MenuCategoryRequest request) async {
     try {
       AppLogger.info('MenuService: 创建分类 - ${request.name}');
 
       final response = await _apiService.post<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/categories',
+        '/merchant/menu/categories',
         data: request.toJson(),
       );
 
@@ -490,7 +561,7 @@ class MenuService {
       AppLogger.info('MenuService: 更新分类 - $categoryId');
 
       final response = await _apiService.put<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/categories/$categoryId',
+        '/merchant/menu/categories/$categoryId',
         data: request.toJson(),
       );
 
@@ -530,7 +601,7 @@ class MenuService {
       AppLogger.info('MenuService: 删除分类 - $categoryId');
 
       final response = await _apiService.delete<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/categories/$categoryId',
+        '/merchant/menu/categories/$categoryId',
       );
 
       final apiResponse = ApiResponse<void>.fromJson(
@@ -569,7 +640,7 @@ class MenuService {
       AppLogger.info('MenuService: 切换分类状态 - $categoryId, $isActive');
 
       final response = await _apiService.put<Map<String, dynamic>>(
-        '/api/v1/merchant/menu/categories/$categoryId/status',
+        '/merchant/menu/categories/$categoryId/status',
         data: {
           'isActive': isActive,
         },

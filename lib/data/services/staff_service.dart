@@ -27,7 +27,7 @@ class StaffService {
       }
 
       final response = await _apiService.get<Map<String, dynamic>>(
-        '/api/v1/merchant/staff',
+        '/merchant/staff',
         queryParameters: queryParameters,
       );
 
@@ -74,7 +74,7 @@ class StaffService {
       AppLogger.info('StaffService: 获取员工详情 - $staffId');
 
       final response = await _apiService.get<Map<String, dynamic>>(
-        '/api/v1/merchant/staff/$staffId',
+        '/merchant/staff/$staffId',
       );
 
       final apiResponse = ApiResponse<StaffModel>.fromJson(
@@ -113,7 +113,7 @@ class StaffService {
       AppLogger.info('StaffService: 更新员工状态 - $staffId, $status');
 
       final response = await _apiService.put<Map<String, dynamic>>(
-        '/api/v1/merchant/staff/$staffId/status',
+        '/merchant/staff/$staffId/status',
         data: {
           'status': status,
         },
@@ -155,7 +155,7 @@ class StaffService {
       AppLogger.info('StaffService: 更新员工评分 - $staffId, $rating');
 
       final response = await _apiService.put<Map<String, dynamic>>(
-        '/api/v1/merchant/staff/$staffId/rating',
+        '/merchant/staff/$staffId/rating',
         data: {
           'rating': rating,
         },

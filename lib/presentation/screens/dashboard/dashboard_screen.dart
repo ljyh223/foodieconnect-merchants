@@ -13,6 +13,8 @@ import 'package:foodieconnect/presentation/screens/menu/menu_list_screen.dart';
 import 'package:foodieconnect/presentation/screens/staff/staff_list_screen.dart';
 import 'package:foodieconnect/presentation/screens/statistics/statistics_overview_screen.dart';
 
+import '../menu/menu_list_screen_refactored.dart';
+
 /// 仪表盘页面
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -28,7 +30,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // 页面列表
   final List<Widget> _pages = [
     const RestaurantInfoScreen(),
-    const MenuListScreen(),
+    const MenuListScreenRefactored(),
     const StaffListScreen(),
     const StatisticsOverviewScreen(),
   ];

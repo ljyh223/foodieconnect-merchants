@@ -16,7 +16,7 @@ class RestaurantService {
       AppLogger.info('RestaurantService: 获取餐厅信息');
 
       final response = await _apiService.get<Map<String, dynamic>>(
-        '/api/v1/merchant/restaurants',
+        '/merchant/restaurants',
       );
 
       final apiResponse = ApiResponse<RestaurantModel>.fromJson(
@@ -55,7 +55,7 @@ class RestaurantService {
       AppLogger.info('RestaurantService: 更新餐厅信息');
 
       final response = await _apiService.put<Map<String, dynamic>>(
-        '/api/v1/merchant/restaurants',
+        '/merchant/restaurants',
         data: request.toJson(),
       );
 
@@ -95,7 +95,7 @@ class RestaurantService {
       AppLogger.info('RestaurantService: 更新餐厅营业状态 - $isOpen');
 
       final response = await _apiService.put<Map<String, dynamic>>(
-        '/api/v1/merchant/restaurants/status',
+        '/merchant/restaurants/status',
         data: {
           'isOpen': isOpen,
         },
@@ -137,7 +137,7 @@ class RestaurantService {
       AppLogger.info('RestaurantService: 更新餐厅图片');
 
       final response = await _apiService.uploadFile<Map<String, dynamic>>(
-        '/api/v1/merchant/restaurants/image',
+        '/merchant/restaurants/image',
         imageFile,
       );
 
@@ -183,7 +183,7 @@ class RestaurantService {
       AppLogger.info('RestaurantService: 获取餐厅详情（用户视角）');
 
       final response = await _apiService.get<Map<String, dynamic>>(
-        '/api/v1/merchant/restaurants/detail',
+        '/merchant/restaurants/detail',
       );
 
       final apiResponse = ApiResponse<RestaurantModel>.fromJson(

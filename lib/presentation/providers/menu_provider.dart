@@ -1,8 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'dart:io';
 
 import 'package:foodieconnect/core/utils/logger.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_request.dart';
+import 'package:foodieconnect/data/models/menu/menu_category_model.dart';
+import 'package:foodieconnect/data/models/menu/menu_category_request.dart';
 import 'package:foodieconnect/data/services/menu_service.dart';
 
 /// 菜单状态管理Provider
@@ -14,6 +17,11 @@ class MenuProvider extends ChangeNotifier {
   bool _isCreating = false;
   bool _isUpdating = false;
   bool _isDeleting = false;
+  bool _isUploadingImage = false;
+  bool _isCategoryLoading = false;
+  bool _isCategoryCreating = false;
+  bool _isCategoryUpdating = false;
+  bool _isCategoryDeleting = false;
   String? _errorMessage;
   List<MenuItemModel> _menuItems = [];
   List<MenuItemModel> _allMenuItems = [];
@@ -22,6 +30,8 @@ class MenuProvider extends ChangeNotifier {
   String? _selectedCategoryId;
   bool? _filterAvailable;
   bool? _filterRecommended;
+  List<MenuCategoryModel> _categories = [];
+  MenuCategoryModel? _selectedCategory;
 
   // 分页相关
   int _currentPage = 0;
@@ -34,6 +44,11 @@ class MenuProvider extends ChangeNotifier {
   bool get isCreating => _isCreating;
   bool get isUpdating => _isUpdating;
   bool get isDeleting => _isDeleting;
+  bool get isUploadingImage => _isUploadingImage;
+  bool get isCategoryLoading => _isCategoryLoading;
+  bool get isCategoryCreating => _isCategoryCreating;
+  bool get isCategoryUpdating => _isCategoryUpdating;
+  bool get isCategoryDeleting => _isCategoryDeleting;
   String? get errorMessage => _errorMessage;
   List<MenuItemModel> get menuItems => _menuItems;
   List<MenuItemModel> get allMenuItems => _allMenuItems;
@@ -46,6 +61,8 @@ class MenuProvider extends ChangeNotifier {
   int get pageSize => _pageSize;
   bool get hasMore => _hasMore;
   int get totalCount => _totalCount;
+  List<MenuCategoryModel> get categories => _categories;
+  MenuCategoryModel? get selectedCategory => _selectedCategory;
 
   /// 获取菜品列表
   Future<void> loadMenuItems({
@@ -132,6 +149,34 @@ class MenuProvider extends ChangeNotifier {
       notifyListeners();
     } finally {
       _setLoading(false);
+    }
+  }
+
+  /// 上传菜品图片，返回图片URL
+  Future<String?> uploadMenuItemImage(dynamic imageFile) async {
+    try {
+      _isUploadingImage = true;
+      _clearError();
+      notifyListeners();
+
+      final file = imageFile is String
+          ? File(imageFile)
+          : (imageFile as File);
+
+      final response = await _menuService.uploadMenuItemImage(file);
+
+      if (response.isSuccess && response.data != null) {
+        return response.data!;
+      } else {
+        _setError(response.errorMessage);
+        return null;
+      }
+    } catch (e) {
+      _setError('图片上传失败，请稍后重试');
+      return null;
+    } finally {
+      _isUploadingImage = false;
+      notifyListeners();
     }
   }
 
@@ -361,6 +406,141 @@ class MenuProvider extends ChangeNotifier {
     await loadMenuItems(refresh: true);
   }
 
+  /// 加载分类列表
+  Future<void> loadCategories() async {
+    try {
+      _setCategoryLoading(true);
+      _clearError();
+
+      final response = await _menuService.getCategories();
+
+      if (response.isSuccess && response.data != null) {
+        _categories = response.data!;
+        notifyListeners();
+      } else {
+        _setError(response.errorMessage);
+      }
+    } catch (e) {
+      _setError('加载分类列表失败，请稍后重试');
+    } finally {
+      _setCategoryLoading(false);
+    }
+  }
+
+  /// 创建分类
+  Future<bool> createCategory(MenuCategoryRequest request) async {
+    try {
+      _setCategoryCreating(true);
+      _clearError();
+
+      final response = await _menuService.createCategory(request);
+
+      if (response.isSuccess && response.data != null) {
+        _categories.insert(0, response.data!);
+        notifyListeners();
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        return false;
+      }
+    } catch (e) {
+      _setError('创建分类失败，请稍后重试');
+      return false;
+    } finally {
+      _setCategoryCreating(false);
+    }
+  }
+
+  /// 更新分类
+  Future<bool> updateCategory(int categoryId, MenuCategoryRequest request) async {
+    try {
+      _setCategoryUpdating(true);
+      _clearError();
+
+      final response = await _menuService.updateCategory(categoryId, request);
+
+      if (response.isSuccess && response.data != null) {
+        final index = _categories.indexWhere((c) => c.id == categoryId);
+        if (index != -1) {
+          _categories[index] = response.data!;
+        }
+        if (_selectedCategory?.id == categoryId) {
+          _selectedCategory = response.data!;
+        }
+        notifyListeners();
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        return false;
+      }
+    } catch (e) {
+      _setError('更新分类失败，请稍后重试');
+      return false;
+    } finally {
+      _setCategoryUpdating(false);
+    }
+  }
+
+  /// 删除分类
+  Future<bool> deleteCategory(int categoryId) async {
+    try {
+      _setCategoryDeleting(true);
+      _clearError();
+
+      final response = await _menuService.deleteCategory(categoryId);
+
+      if (response.isSuccess) {
+        _categories.removeWhere((c) => c.id == categoryId);
+        if (_selectedCategory?.id == categoryId) {
+          _selectedCategory = null;
+        }
+        notifyListeners();
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        return false;
+      }
+    } catch (e) {
+      _setError('删除分类失败，请稍后重试');
+      return false;
+    } finally {
+      _setCategoryDeleting(false);
+    }
+  }
+
+  /// 切换分类状态
+  Future<bool> toggleCategoryStatus(int categoryId, bool isActive) async {
+    try {
+      _clearError();
+
+      final response = await _menuService.toggleCategoryStatus(categoryId, isActive);
+
+      if (response.isSuccess) {
+        final index = _categories.indexWhere((c) => c.id == categoryId);
+        if (index != -1) {
+          _categories[index] = _categories[index].copyWith(isActive: isActive);
+        }
+        if (_selectedCategory?.id == categoryId) {
+          _selectedCategory = _selectedCategory!.copyWith(isActive: isActive);
+        }
+        notifyListeners();
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        return false;
+      }
+    } catch (e) {
+      _setError('切换分类状态失败，请稍后重试');
+      return false;
+    }
+  }
+
+  /// 选择分类
+  void selectCategory(MenuCategoryModel? category) {
+    _selectedCategory = category;
+    notifyListeners();
+  }
+
   /// 清除所有筛选条件
   Future<void> clearFilters() async {
     _searchKeyword = '';
@@ -428,6 +608,26 @@ class MenuProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void _setCategoryLoading(bool loading) {
+    _isCategoryLoading = loading;
+    notifyListeners();
+  }
+
+  void _setCategoryCreating(bool creating) {
+    _isCategoryCreating = creating;
+    notifyListeners();
+  }
+
+  void _setCategoryUpdating(bool updating) {
+    _isCategoryUpdating = updating;
+    notifyListeners();
+  }
+
+  void _setCategoryDeleting(bool deleting) {
+    _isCategoryDeleting = deleting;
+    notifyListeners();
+  }
+
   /// 设置错误信息
   void _setError(String error) {
     _errorMessage = error;
@@ -451,6 +651,10 @@ class MenuProvider extends ChangeNotifier {
     _isCreating = false;
     _isUpdating = false;
     _isDeleting = false;
+    _isCategoryLoading = false;
+    _isCategoryCreating = false;
+    _isCategoryUpdating = false;
+    _isCategoryDeleting = false;
     _errorMessage = null;
     _menuItems.clear();
     _allMenuItems.clear();
@@ -462,6 +666,8 @@ class MenuProvider extends ChangeNotifier {
     _currentPage = 0;
     _hasMore = true;
     _totalCount = 0;
+    _categories.clear();
+    _selectedCategory = null;
     
     notifyListeners();
     AppLogger.info('MenuProvider: 状态已重置');

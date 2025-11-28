@@ -6,6 +6,7 @@ import 'core/theme/app_theme.dart';
 import 'core/constants/app_constants.dart';
 import 'data/storage/shared_preferences.dart';
 import 'data/services/api_service.dart';
+import 'l10n/generated/translations.g.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/restaurant_provider.dart';
 import 'presentation/providers/menu_provider.dart';
@@ -26,6 +27,7 @@ Future<void> main() async {
   // 创建并初始化AuthProvider
   final authProvider = AuthProvider();
   await authProvider.init();
+  LocaleSettings.useDeviceLocale();
   
   runApp(FoodieConnectApp(authProvider: authProvider));
 }

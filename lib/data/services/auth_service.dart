@@ -20,7 +20,7 @@ class AuthService {
       AppLogger.info('AuthService: 开始商家登录 - ${request.username}');
 
       final response = await _apiService.post<Map<String, dynamic>>(
-        '/api/v1/merchant/auth/login',
+        '/merchant/auth/login',
         data: request.toJson(),
       );
 
@@ -63,7 +63,7 @@ class AuthService {
       AppLogger.info('AuthService: 开始商家注册');
 
       final response = await _apiService.post<Map<String, dynamic>>(
-        '/api/v1/merchant/auth/register',
+        '/merchant/auth/register',
         data: registerData,
       );
 
@@ -103,7 +103,7 @@ class AuthService {
       AppLogger.info('AuthService: 获取当前商家信息');
 
       final response = await _apiService.get<Map<String, dynamic>>(
-        '/api/v1/merchant/auth/profile',
+        '/merchant/auth/profile',
       );
 
       final apiResponse = ApiResponse<UserDTO>.fromJson(
@@ -145,7 +145,7 @@ class AuthService {
       AppLogger.info('AuthService: 开始修改密码');
 
       final response = await _apiService.put<Map<String, dynamic>>(
-        '/api/v1/merchant/auth/change-password',
+        '/merchant/auth/change-password',
         data: {
           'currentPassword': currentPassword,
           'newPassword': newPassword,
@@ -188,7 +188,7 @@ class AuthService {
       AppLogger.info('AuthService: 开始商家登出');
 
       final response = await _apiService.post<Map<String, dynamic>>(
-        '/api/v1/merchant/auth/logout',
+        '/merchant/auth/logout',
       );
 
       final apiResponse = ApiResponse<void>.fromJson(

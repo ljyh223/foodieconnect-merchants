@@ -6,7 +6,7 @@ class AppConstants {
   
   // API配置
   static const String baseUrl = 'http://192.168.124.200:8080/api/v1';
-  static const String merchantApiPrefix = '/api/v1/merchant';
+  static const String merchantApiPrefix = '/merchant';
   static const Duration apiTimeout = Duration(seconds: 30);
   
   // 存储键名

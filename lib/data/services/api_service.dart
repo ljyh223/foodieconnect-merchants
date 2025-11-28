@@ -60,7 +60,7 @@ class ApiService {
     }
 
     // 添加商家API前缀
-    if (options.path.startsWith('/api/v1/merchant')) {
+    if (options.path.startsWith('/merchant')) {
       // 商家API不需要额外处理，直接使用
     }
 
