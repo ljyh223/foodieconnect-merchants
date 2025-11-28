@@ -3,9 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:foodieconnect/core/theme/app_theme.dart';
 import 'package:foodieconnect/presentation/providers/menu_provider.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
-import 'package:foodieconnect/presentation/widgets/menu/item_form_dialog.dart';
 import 'package:foodieconnect/presentation/widgets/menu/item_card.dart';
 import 'package:foodieconnect/presentation/widgets/menu/search_filter_bar.dart';
+
+import 'menu_item_screen.dart';
 
 /// 重构后的菜单列表页面
 /// 使用提取的组件，代码更简洁、可维护
@@ -177,7 +178,7 @@ class _MenuListScreenRefactoredState extends State<MenuListScreenRefactored> {
   }
 
 void _showAddItemDialog(BuildContext context) {
-  ItemFormDialog.show(
+  MenuItemFormScreen.show(
     context,
     item: null, // null表示添加模式
     onSave: (request) async {
@@ -213,7 +214,7 @@ void _showAddItemDialog(BuildContext context) {
   }
 
 void _showEditItemDialog(BuildContext context, MenuItemModel menuItem, MenuProvider provider) {
-  ItemFormDialog.show(
+  MenuItemFormScreen.show(
     context,
     item: menuItem,
     onSave: (request) async {

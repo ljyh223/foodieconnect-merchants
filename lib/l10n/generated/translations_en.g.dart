@@ -315,6 +315,75 @@ class TranslationsRestaurantEn {
 
 	/// en: 'Update Failed'
 	String get updateFailed => 'Update Failed';
+
+	/// en: 'Edit Restaurant Information'
+	String get editTitle => 'Edit Restaurant Information';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Cancel'
+	String get cancel => 'Cancel';
+
+	/// en: 'Reset'
+	String get reset => 'Reset';
+
+	/// en: 'Edit'
+	String get edit => 'Edit';
+
+	/// en: 'Select Image'
+	String get selectImage => 'Select Image';
+
+	/// en: 'Take Photo'
+	String get takePhoto => 'Take Photo';
+
+	/// en: 'Choose from Gallery'
+	String get chooseFromGallery => 'Choose from Gallery';
+
+	/// en: 'Remove Image'
+	String get removeImage => 'Remove Image';
+
+	/// en: 'Open Time'
+	String get openTime => 'Open Time';
+
+	/// en: 'Close Time'
+	String get closeTime => 'Close Time';
+
+	/// en: 'Custom Type'
+	String get customType => 'Custom Type';
+
+	/// en: 'Please Select'
+	String get pleaseSelect => 'Please Select';
+
+	/// en: 'Please Enter'
+	String get pleaseEnter => 'Please Enter';
+
+	/// en: 'Required'
+	String get required => 'Required';
+
+	/// en: 'Saving...'
+	String get saving => 'Saving...';
+
+	/// en: 'Restaurant information updated successfully'
+	String get editSuccess => 'Restaurant information updated successfully';
+
+	/// en: 'Failed to update restaurant information'
+	String get editFailed => 'Failed to update restaurant information';
+
+	/// en: 'Image uploaded successfully'
+	String get imageUploadSuccess => 'Image uploaded successfully';
+
+	/// en: 'Failed to upload image'
+	String get imageUploadFailed => 'Failed to upload image';
+
+	/// en: 'Are you sure you want to discard changes?'
+	String get confirmDiscard => 'Are you sure you want to discard changes?';
+
+	/// en: 'Discard'
+	String get discard => 'Discard';
+
+	/// en: 'Keep Editing'
+	String get keepEditing => 'Keep Editing';
 }
 
 // Path: staff
@@ -531,6 +600,29 @@ extension on Translations {
 			'restaurant.updateInfo' => 'Update Info',
 			'restaurant.updateSuccess' => 'Update Successful',
 			'restaurant.updateFailed' => 'Update Failed',
+			'restaurant.editTitle' => 'Edit Restaurant Information',
+			'restaurant.save' => 'Save',
+			'restaurant.cancel' => 'Cancel',
+			'restaurant.reset' => 'Reset',
+			'restaurant.edit' => 'Edit',
+			'restaurant.selectImage' => 'Select Image',
+			'restaurant.takePhoto' => 'Take Photo',
+			'restaurant.chooseFromGallery' => 'Choose from Gallery',
+			'restaurant.removeImage' => 'Remove Image',
+			'restaurant.openTime' => 'Open Time',
+			'restaurant.closeTime' => 'Close Time',
+			'restaurant.customType' => 'Custom Type',
+			'restaurant.pleaseSelect' => 'Please Select',
+			'restaurant.pleaseEnter' => 'Please Enter',
+			'restaurant.required' => 'Required',
+			'restaurant.saving' => 'Saving...',
+			'restaurant.editSuccess' => 'Restaurant information updated successfully',
+			'restaurant.editFailed' => 'Failed to update restaurant information',
+			'restaurant.imageUploadSuccess' => 'Image uploaded successfully',
+			'restaurant.imageUploadFailed' => 'Failed to upload image',
+			'restaurant.confirmDiscard' => 'Are you sure you want to discard changes?',
+			'restaurant.discard' => 'Discard',
+			'restaurant.keepEditing' => 'Keep Editing',
 			'staff.title' => 'Staff Management',
 			'staff.list' => 'Staff List',
 			'staff.addStaff' => 'Add Staff',

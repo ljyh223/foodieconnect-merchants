@@ -131,36 +131,97 @@ class RestaurantService {
     }
   }
 
-  /// 更新餐厅图片
-  Future<ApiResponse<String>> updateRestaurantImage(File imageFile) async {
+  /// 上传图片文件
+  Future<ApiResponse<String>> uploadImage(File imageFile) async {
     try {
-      AppLogger.info('RestaurantService: 更新餐厅图片');
-
+      AppLogger.info('RestaurantService: 上传图片文件');
+      
       final response = await _apiService.uploadFile<Map<String, dynamic>>(
-        '/merchant/restaurants/image',
+        '/upload/image',
         imageFile,
       );
-
+      
       final apiResponse = ApiResponse<String>.fromJson(
         response.data!,
         (json) {
-          // 假设返回的数据中包含图片URL
-          if (json is Map<String, dynamic> && json.containsKey('imageUrl')) {
-            return json['imageUrl'] as String;
+          // 根据API契约，上传图片返回 ApiResponseMapStringString
+          // data 字段是 Map<String, String>，需要从中提取URL
+          if (json is Map<String, dynamic>) {
+            // 如果直接包含URL字段
+            if (json.containsKey('url')) {
+              return json['url'] as String;
+            }
+            // 如果包含data字段且data是Map
+            if (json.containsKey('data') && json['data'] is Map<String, dynamic>) {
+              final data = json['data'] as Map<String, dynamic>;
+              // 从data中提取URL
+              if (data.containsKey('url')) {
+                return data['url'] as String;
+              }
+              if (data.containsKey('imageUrl')) {
+                return data['imageUrl'] as String;
+              }
+              // 如果data是Map<String, String>，尝试获取第一个值
+              if (data.isNotEmpty) {
+                return data.values.first as String;
+              }
+            }
           }
-          return json.toString();
+          return '';
         },
       );
-
+      
       if (apiResponse.isSuccess) {
-        AppLogger.info('RestaurantService: 更新餐厅图片成功');
+        AppLogger.info('RestaurantService: 图片上传成功 - URL: ${apiResponse.data}');
       } else {
-        AppLogger.warning('RestaurantService: 更新餐厅图片失败 - ${apiResponse.errorMessage}');
+        AppLogger.warning('RestaurantService: 图片上传失败 - ${apiResponse.errorMessage}');
       }
-
+      
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('RestaurantService: 更新餐厅图片网络错误', error: e);
+      AppLogger.error('RestaurantService: 上传图片网络错误', error: e);
+      
+      if (e.response?.data is Map<String, dynamic>) {
+        final errorData = e.response!.data as Map<String, dynamic>;
+        return ApiResponse.error(
+          _extractErrorMessage(errorData),
+          code: e.response?.statusCode,
+        );
+      }
+      
+      return ApiResponse.error('上传图片失败，请检查网络连接');
+    } catch (e) {
+      AppLogger.error('RestaurantService: 上传图片未知错误', error: e);
+      return ApiResponse.error('上传图片失败，请稍后重试');
+    }
+  }
+
+  /// 更新餐厅图片URL
+  Future<ApiResponse<String>> updateRestaurantImageUrl(String imageUrl) async {
+    try {
+      AppLogger.info('RestaurantService: 更新餐厅图片URL - $imageUrl');
+      
+      final response = await _apiService.put<Map<String, dynamic>>(
+        '/merchant/restaurants/image',
+        data: {
+          'imageUrl': imageUrl,
+        },
+      );
+      
+      final apiResponse = ApiResponse<String>.fromJson(
+        response.data!,
+        (json) => imageUrl,
+      );
+      
+      if (apiResponse.isSuccess) {
+        AppLogger.info('RestaurantService: 餐厅图片URL更新成功');
+      } else {
+        AppLogger.warning('RestaurantService: 餐厅图片URL更新失败 - ${apiResponse.errorMessage}');
+      }
+      
+      return apiResponse;
+    } on DioException catch (e) {
+      AppLogger.error('RestaurantService: 更新餐厅图片URL网络错误', error: e);
       
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -172,7 +233,7 @@ class RestaurantService {
       
       return ApiResponse.error('更新餐厅图片失败，请检查网络连接');
     } catch (e) {
-      AppLogger.error('RestaurantService: 更新餐厅图片未知错误', error: e);
+      AppLogger.error('RestaurantService: 更新餐厅图片URL未知错误', error: e);
       return ApiResponse.error('更新餐厅图片失败，请稍后重试');
     }
   }

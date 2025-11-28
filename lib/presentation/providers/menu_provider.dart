@@ -187,6 +187,7 @@ class MenuProvider extends ChangeNotifier {
       _clearError();
 
       AppLogger.info('MenuProvider: 开始创建菜品 - ${request.name}');
+      AppLogger.info('MenuProvider: 请求数据 - ${request.toJson()}');
 
       final response = await _menuService.createMenuItem(request);
 
@@ -196,12 +197,13 @@ class MenuProvider extends ChangeNotifier {
         _allMenuItems.add(newItem);
         _totalCount++;
         
-        AppLogger.info('MenuProvider: 菜品创建成功');
+        AppLogger.info('MenuProvider: 菜品创建成功 - ${newItem.toJson()}');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
         AppLogger.warning('MenuProvider: 菜品创建失败 - ${response.errorMessage}');
+        AppLogger.warning('MenuProvider: 响应数据 - ${response.toJson((data) => data)}');
         return false;
       }
     } catch (e) {

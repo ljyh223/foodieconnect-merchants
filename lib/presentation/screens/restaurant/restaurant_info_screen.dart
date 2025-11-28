@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:foodieconnect/core/constants/app_constants.dart';
 import 'package:foodieconnect/core/theme/app_theme.dart';
 import 'package:foodieconnect/presentation/providers/restaurant_provider.dart';
+import 'package:foodieconnect/presentation/screens/restaurant/restaurant_edit_screen.dart';
 
 /// 餐厅信息页面
 class RestaurantInfoScreen extends StatelessWidget {
@@ -83,46 +84,59 @@ class RestaurantInfoScreen extends StatelessWidget {
           const SizedBox(height: AppConstants.defaultPadding),
           
           // 餐厅图片卡片
-          if (restaurant.displayImage?.isNotEmpty == true)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '餐厅图片',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(AppConstants.defaultPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    '餐厅图片',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                     ),
-                    const SizedBox(height: AppConstants.defaultPadding / 2),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                      child: Image.network(
-                        restaurant.displayImage!,
-                        height: 200,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            height: 200,
-                            width: double.infinity,
-                            color: AppTheme.surfaceColor,
-                            child: const Icon(
-                              Icons.broken_image,
-                              color: AppTheme.textSecondary,
-                              size: 50,
-                            ),
-                          );
-                        },
+                  ),
+                  const SizedBox(height: AppConstants.defaultPadding / 2),
+                  if (restaurant.displayImage?.isNotEmpty == true)
+                    GestureDetector(
+                      onTap: () {
+                        _showImagePreview(context, restaurant.displayImage!);
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
+                        child: Image.network(
+                          restaurant.displayImage!,
+                          height: 200,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildImagePlaceholder();
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              height: 200,
+                              width: double.infinity,
+                              color: AppTheme.surfaceColor,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    )
+                  else
+                    _buildImagePlaceholder(),
+                ],
               ),
             ),
+          ),
           
           const SizedBox(height: AppConstants.defaultPadding),
           
@@ -316,12 +330,18 @@ class RestaurantInfoScreen extends StatelessWidget {
   }
 
   void _showEditRestaurantDialog(BuildContext context, dynamic restaurant) {
-    // 这里可以实现编辑餐厅信息的对话框
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('编辑功能开发中...'),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => RestaurantEditScreen(restaurant: restaurant),
       ),
-    );
+    ).then((result) {
+      if (result == true) {
+        // 编辑成功，刷新数据
+        if (context.mounted) {
+          Provider.of<RestaurantProvider>(context, listen: false).loadRestaurant();
+        }
+      }
+    });
   }
 
   void _toggleRestaurantStatus(BuildContext context, RestaurantProvider provider) {
@@ -344,5 +364,84 @@ class RestaurantInfoScreen extends StatelessWidget {
         );
       }
     });
+  }
+
+  /// 构建图片占位符
+  Widget _buildImagePlaceholder() {
+    return Container(
+      height: 200,
+      width: double.infinity,
+      color: AppTheme.surfaceColor,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.photo_camera,
+            color: AppTheme.textSecondary,
+            size: 50,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            '暂无餐厅图片',
+            style: TextStyle(
+              color: AppTheme.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 显示图片预览对话框
+  void _showImagePreview(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(20),
+        child: Stack(
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: Hero(
+                    tag: 'restaurant_image_$imageUrl',
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 300,
+                            height: 300,
+                            color: Colors.grey[300],
+                            child: const Icon(
+                              Icons.broken_image,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              top: 40,
+              right: 20,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 30),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

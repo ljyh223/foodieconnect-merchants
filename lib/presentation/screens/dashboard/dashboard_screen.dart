@@ -9,7 +9,6 @@ import 'package:foodieconnect/presentation/providers/restaurant_provider.dart';
 import 'package:foodieconnect/presentation/providers/menu_provider.dart';
 import 'package:foodieconnect/presentation/providers/staff_provider.dart';
 import 'package:foodieconnect/presentation/screens/restaurant/restaurant_info_screen.dart';
-import 'package:foodieconnect/presentation/screens/menu/menu_list_screen.dart';
 import 'package:foodieconnect/presentation/screens/staff/staff_list_screen.dart';
 import 'package:foodieconnect/presentation/screens/statistics/statistics_overview_screen.dart';
 

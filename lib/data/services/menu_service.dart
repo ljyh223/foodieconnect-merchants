@@ -450,44 +450,67 @@ class MenuService {
   /// 上传菜品图片并返回图片URL
   Future<ApiResponse<String>> uploadMenuItemImage(File imageFile) async {
     try {
-      AppLogger.info('MenuService: 上传菜品图片');
+      AppLogger.info('MenuService: 上传菜品图片 - 文件大小: ${imageFile.lengthSync()} bytes');
 
-      // 使用通用图片上传接口
+      // 使用ApiService中已有的uploadFile方法，它会自动处理认证和Content-Type
       final response = await _apiService.uploadFile<Map<String, dynamic>>(
-        '/upload/image',
+        '/merchant/upload/image',
         imageFile,
       );
+
+      AppLogger.debug('MenuService: 图片上传响应 - ${response.data}');
 
       final apiResponse = ApiResponse<String>.fromJson(
         response.data!,
         (json) {
-          // 根据API契约，/upload/image返回MapStringString格式
+          AppLogger.debug('MenuService: 解析图片上传响应 - $json');
+          
+          // 根据API契约，/upload/image返回ApiResponseMapStringString格式
           if (json is Map<String, dynamic>) {
             // 尝试从data字段中获取图片URL
             if (json.containsKey('data') && json['data'] is Map) {
               final data = json['data'] as Map<String, dynamic>;
+              AppLogger.debug('MenuService: 解析data字段 - $data');
+              
               // 常见的字段名可能是imageUrl、url、path等
               if (data.containsKey('imageUrl')) {
-                return data['imageUrl'] as String;
+                final url = data['imageUrl'] as String;
+                AppLogger.info('MenuService: 从imageUrl字段获取URL - $url');
+                return url;
               } else if (data.containsKey('url')) {
-                return data['url'] as String;
+                final url = data['url'] as String;
+                AppLogger.info('MenuService: 从url字段获取URL - $url');
+                return url;
               } else if (data.containsKey('path')) {
-                return data['path'] as String;
+                final url = data['path'] as String;
+                AppLogger.info('MenuService: 从path字段获取URL - $url');
+                return url;
               }
               // 如果没有找到明确的字段，取第一个值
               if (data.isNotEmpty) {
-                return data.values.first as String;
+                final url = data.values.first as String;
+                AppLogger.info('MenuService: 从第一个值获取URL - $url');
+                return url;
               }
             }
+            
             // 直接在根级别查找
             if (json.containsKey('imageUrl')) {
-              return json['imageUrl'] as String;
+              final url = json['imageUrl'] as String;
+              AppLogger.info('MenuService: 从根级别imageUrl字段获取URL - $url');
+              return url;
             } else if (json.containsKey('url')) {
-              return json['url'] as String;
+              final url = json['url'] as String;
+              AppLogger.info('MenuService: 从根级别url字段获取URL - $url');
+              return url;
             } else if (json.containsKey('path')) {
-              return json['path'] as String;
+              final url = json['path'] as String;
+              AppLogger.info('MenuService: 从根级别path字段获取URL - $url');
+              return url;
             }
           }
+          
+          AppLogger.warning('MenuService: 无法解析图片URL，返回原始响应');
           return json.toString();
         },
       );
@@ -501,6 +524,9 @@ class MenuService {
       return apiResponse;
     } on DioException catch (e) {
       AppLogger.error('MenuService: 菜品图片上传网络错误', error: e);
+      AppLogger.error('MenuService: HTTP状态码 - ${e.response?.statusCode}');
+      AppLogger.error('MenuService: 错误响应 - ${e.response?.data}');
+      
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
         return ApiResponse.error(
@@ -508,7 +534,7 @@ class MenuService {
           code: e.response?.statusCode,
         );
       }
-      return ApiResponse.error('图片上传失败，请检查网络连接');
+      return ApiResponse.error('图片上传失败，请检查网络连接和权限');
     } catch (e) {
       AppLogger.error('MenuService: 菜品图片上传未知错误', error: e);
       return ApiResponse.error('图片上传失败，请稍后重试');

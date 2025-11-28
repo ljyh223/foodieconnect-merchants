@@ -127,21 +127,37 @@ class RestaurantProvider extends ChangeNotifier {
       _setUpdating(true);
       _clearError();
 
-      AppLogger.info('RestaurantProvider: 开始更新餐厅图片');
+      AppLogger.info('RestaurantProvider: 开始上传餐厅图片');
 
-      final response = await _restaurantService.updateRestaurantImage(imageFile);
+      // 第一步：上传图片文件
+      final uploadResponse = await _restaurantService.uploadImage(imageFile);
+      
+      if (!uploadResponse.isSuccess || uploadResponse.data?.isEmpty != false) {
+        final errorMessage = uploadResponse.errorMessage.isNotEmpty == true
+            ? uploadResponse.errorMessage
+            : '图片上传失败';
+        _setError(errorMessage);
+        AppLogger.warning('RestaurantProvider: 图片上传失败 - $errorMessage');
+        return false;
+      }
 
-      if (response.isSuccess) {
+      final imageUrl = uploadResponse.data!;
+      AppLogger.info('RestaurantProvider: 图片上传成功，URL: $imageUrl');
+
+      // 第二步：更新餐厅图片URL
+      final updateResponse = await _restaurantService.updateRestaurantImageUrl(imageUrl);
+
+      if (updateResponse.isSuccess) {
         // 更新本地状态
         if (_restaurant != null) {
-          _restaurant = _restaurant!.copyWith(imageUrl: response.data);
+          _restaurant = _restaurant!.copyWith(imageUrl: imageUrl);
           AppLogger.info('RestaurantProvider: 餐厅图片更新成功');
           notifyListeners();
         }
         return true;
       } else {
-        _setError(response.errorMessage);
-        AppLogger.warning('RestaurantProvider: 餐厅图片更新失败 - ${response.errorMessage}');
+        _setError(updateResponse.errorMessage);
+        AppLogger.warning('RestaurantProvider: 餐厅图片URL更新失败 - ${updateResponse.errorMessage}');
         return false;
       }
     } catch (e) {

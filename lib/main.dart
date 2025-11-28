@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-
 import 'core/theme/app_theme.dart';
 import 'core/constants/app_constants.dart';
 import 'data/storage/shared_preferences.dart';
@@ -13,6 +12,7 @@ import 'presentation/providers/menu_provider.dart';
 import 'presentation/providers/staff_provider.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/dashboard/dashboard_screen.dart';
+import 'presentation/screens/restaurant/restaurant_edit_screen.dart';
 
 /// 应用入口点
 Future<void> main() async {
@@ -51,52 +51,56 @@ class FoodieConnectApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MenuProvider()),
         ChangeNotifierProvider(create: (_) => StaffProvider()),
       ],
-      child: MaterialApp(
-        title: AppConstants.appName,
-        debugShowCheckedModeBanner: false,
-        
-        // 主题配置
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-        
-        // 国际化配置
-        localizationsDelegates: const [
-          // AppLocalizations.delegate, // 待生成后启用
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('zh', 'CN'), // 中文简体
-          Locale('en', 'US'), // 英文
-        ],
-        
-        // 路由配置
-        home: Consumer<AuthProvider>(
-          builder: (context, authProvider, child) {
-            // 根据登录状态显示不同页面
-            return authProvider.isLoggedIn
-                ? const DashboardScreen()
-                : const LoginScreen();
+      child: TranslationProvider(
+        child: MaterialApp(
+          title: AppConstants.appName,
+          debugShowCheckedModeBanner: false,
+          
+          // 主题配置
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
+          
+          // 国际化配置
+          localizationsDelegates: const [
+            // AppLocalizations.delegate, // 待生成后启用
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const [
+            Locale('zh', 'CN'), // 中文简体
+            Locale('en', 'US'), // 英文
+          ],
+          
+          // 路由配置
+          home: Consumer<AuthProvider>(
+            builder: (context, authProvider, child) {
+              // 根据登录状态显示不同页面
+              return authProvider.isLoggedIn
+                  ? const DashboardScreen()
+                  : const LoginScreen();
+            },
+          ),
+          
+          // 页面过渡动画
+          onGenerateRoute: (settings) {
+            return MaterialPageRoute(
+              builder: (context) {
+                switch (settings.name) {
+                  case '/login':
+                    return const LoginScreen();
+                  case '/dashboard':
+                    return const DashboardScreen();
+                  case '/restaurant/edit':
+                    return const RestaurantEditScreen();
+                  default:
+                    return const LoginScreen();
+                }
+              },
+            );
           },
         ),
-        
-        // 页面过渡动画
-        onGenerateRoute: (settings) {
-          return MaterialPageRoute(
-            builder: (context) {
-              switch (settings.name) {
-                case '/login':
-                  return const LoginScreen();
-                case '/dashboard':
-                  return const DashboardScreen();
-                default:
-                  return const LoginScreen();
-              }
-            },
-          );
-        },
       ),
     );
   }

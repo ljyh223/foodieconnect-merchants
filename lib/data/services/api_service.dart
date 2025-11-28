@@ -258,6 +258,19 @@ class ApiService {
   }) async {
     try {
       final fileName = file.path.split('/').last;
+      
+      // 为图片上传创建特殊的请求选项
+      final uploadOptions = Options(
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          // 如果有访问令牌，添加认证头
+          if (_accessToken != null) 'Authorization': 'Bearer $_accessToken',
+        },
+        // 增加超时时间，上传可能需要更长时间
+        sendTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+      );
+      
       final formData = FormData.fromMap({
         ...?data,
         'file': await MultipartFile.fromFile(
@@ -270,7 +283,7 @@ class ApiService {
         path,
         data: formData,
         onSendProgress: onSendProgress,
-        options: options,
+        options: uploadOptions,
       );
     } catch (e) {
       rethrow;
