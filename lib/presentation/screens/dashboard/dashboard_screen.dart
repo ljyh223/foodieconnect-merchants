@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:foodieconnect/core/constants/app_constants.dart';
 import 'package:foodieconnect/core/theme/app_theme.dart';
 import 'package:foodieconnect/core/utils/logger.dart';
+import 'package:foodieconnect/l10n/generated/translations.g.dart';
 import 'package:foodieconnect/presentation/providers/auth_provider.dart';
 import 'package:foodieconnect/presentation/providers/restaurant_provider.dart';
 import 'package:foodieconnect/presentation/providers/menu_provider.dart';
@@ -34,25 +35,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     const StatisticsOverviewScreen(),
   ];
 
-  // 底部导航项
-  final List<BottomNavigationBarItem> _bottomNavItems = [
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.restaurant),
-      label: '餐厅',
-    ),
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.restaurant_menu),
-      label: '菜单',
-    ),
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.people),
-      label: '员工',
-    ),
-    const BottomNavigationBarItem(
-      icon: Icon(Icons.analytics),
-      label: '统计',
-    ),
-  ];
+  // 底部导航项 - 动态创建，使用多语言资源
 
   @override
   void initState() {
@@ -199,11 +182,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   /// 构建底部导航栏
   Widget _buildBottomNavigationBar() {
+    final t = Translations.of(context);
+    
+    final List<BottomNavigationBarItem> items = [
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.restaurant),
+        label: t.navigation.restaurant,
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.restaurant_menu),
+        label: t.navigation.menu,
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.people),
+        label: t.navigation.staff,
+      ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.analytics),
+        label: t.navigation.statistics,
+      ),
+    ];
+    
     return BottomNavigationBar(
       currentIndex: _currentIndex,
       onTap: _onBottomNavTap,
       type: BottomNavigationBarType.fixed,
-      items: _bottomNavItems,
+      items: items,
       selectedItemColor: AppTheme.primaryColor,
       unselectedItemColor: AppTheme.textSecondary,
       backgroundColor: Colors.white,

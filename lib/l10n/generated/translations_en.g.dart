@@ -96,6 +96,39 @@ class TranslationsAuthEn {
 
 	/// en: 'Password changed successfully'
 	String get passwordChanged => 'Password changed successfully';
+
+	/// en: 'Settings'
+	String get settings => 'Settings';
+
+	/// en: 'Language'
+	String get language => 'Language';
+
+	/// en: 'Merchant Management Platform'
+	String get merchantPlatform => 'Merchant Management Platform';
+
+	/// en: 'Remember Me'
+	String get rememberMe => 'Remember Me';
+
+	/// en: 'Forgot Password?'
+	String get forgotPasswordQuestion => 'Forgot Password?';
+
+	/// en: 'Enter Username'
+	String get enterUsername => 'Enter Username';
+
+	/// en: 'Enter Password'
+	String get enterPassword => 'Enter Password';
+
+	/// en: 'Username must be at least {min} characters'
+	String get usernameMinLength => 'Username must be at least {min} characters';
+
+	/// en: 'Password must be at least {min} characters'
+	String get passwordMinLength => 'Password must be at least {min} characters';
+
+	/// en: 'Please enter username and password'
+	String get enterUsernameAndPassword => 'Please enter username and password';
+
+	/// en: 'Please contact admin to reset password'
+	String get resetPasswordContactAdmin => 'Please contact admin to reset password';
 }
 
 // Path: common
@@ -237,6 +270,210 @@ class TranslationsMenuEn {
 
 	/// en: 'Delete Successful'
 	String get deleteSuccess => 'Delete Successful';
+
+	/// en: 'Loading menu...'
+	String get loadingMenu => 'Loading menu...';
+
+	/// en: 'No items available'
+	String get noItems => 'No items available';
+
+	/// en: 'Retry'
+	String get retry => 'Retry';
+
+	/// en: 'Item added successfully'
+	String get itemAdded => 'Item added successfully';
+
+	/// en: 'Failed to add item'
+	String get itemAddFailed => 'Failed to add item';
+
+	/// en: 'Item updated successfully'
+	String get itemUpdated => 'Item updated successfully';
+
+	/// en: 'Failed to update item'
+	String get itemUpdateFailed => 'Failed to update item';
+
+	/// en: 'Item enabled'
+	String get itemEnabled => 'Item enabled';
+
+	/// en: 'Item disabled'
+	String get itemDisabled => 'Item disabled';
+
+	/// en: 'Item set as recommended'
+	String get itemSetAsRecommended => 'Item set as recommended';
+
+	/// en: 'Item removed from recommended'
+	String get itemUnsetAsRecommended => 'Item removed from recommended';
+
+	/// en: 'Operation failed, please retry'
+	String get operationFailed => 'Operation failed, please retry';
+
+	/// en: 'Confirm Delete'
+	String get confirmDelete => 'Confirm Delete';
+
+	/// en: 'Are you sure you want to delete item "{name}"? This operation cannot be undone.'
+	String get deleteConfirmMessage => 'Are you sure you want to delete item "{name}"? This operation cannot be undone.';
+
+	/// en: 'Cancel'
+	String get cancel => 'Cancel';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
+
+	/// en: 'Item "{name}" deleted'
+	String get itemDeleted => 'Item "{name}" deleted';
+
+	/// en: 'Failed to delete item, please retry'
+	String get deleteFailed => 'Failed to delete item, please retry';
+
+	/// en: 'Search items'
+	String get searchItems => 'Search items';
+
+	/// en: 'Available items'
+	String get availableItems => 'Available items';
+
+	/// en: 'Unavailable items'
+	String get unavailableItems => 'Unavailable items';
+
+	/// en: 'Recommended items'
+	String get recommendedItems => 'Recommended items';
+
+	/// en: 'All items'
+	String get allItems => 'All items';
+
+	/// en: 'Today'
+	String get today => 'Today';
+
+	/// en: 'Yesterday'
+	String get yesterday => 'Yesterday';
+
+	/// en: 'days ago'
+	String get daysAgo => 'days ago';
+
+	/// en: 'Edit'
+	String get edit => 'Edit';
+
+	/// en: 'Disable'
+	String get disable => 'Disable';
+
+	/// en: 'Enable'
+	String get enable => 'Enable';
+
+	/// en: 'Set as recommended'
+	String get setAsRecommended => 'Set as recommended';
+
+	/// en: 'Remove from recommended'
+	String get unsetAsRecommended => 'Remove from recommended';
+
+	/// en: 'Created: '
+	String get created => 'Created: ';
+
+	/// en: 'Edit Menu Item'
+	String get editMenuItem => 'Edit Menu Item';
+
+	/// en: 'Add New Menu Item'
+	String get addNewMenuItem => 'Add New Menu Item';
+
+	/// en: 'Save'
+	String get save => 'Save';
+
+	/// en: 'Basic Information'
+	String get basicInfo => 'Basic Information';
+
+	/// en: 'e.g., Signature Beef Noodle'
+	String get exampleItemName => 'e.g., Signature Beef Noodle';
+
+	/// en: 'Short and clear name (required)'
+	String get shortClearName => 'Short and clear name (required)';
+
+	/// en: 'Describe ingredients, taste, portion, etc.'
+	String get enterDescription => 'Describe ingredients, taste, portion, etc.';
+
+	/// en: 'Will be displayed in order details page'
+	String get displayInDetails => 'Will be displayed in order details page';
+
+	/// en: 'Price and Specifications'
+	String get priceSpecs => 'Price and Specifications';
+
+	/// en: 'Current Price'
+	String get currentPrice => 'Current Price';
+
+	/// en: 'Actual selling price'
+	String get actualPrice => 'Actual selling price';
+
+	/// en: 'Show original price'
+	String get showOriginalPrice => 'Show original price';
+
+	/// en: 'Preparation Time'
+	String get prepTime => 'Preparation Time';
+
+	/// en: 'minutes'
+	String get minutes => 'minutes';
+
+	/// en: 'Estimated time'
+	String get estimatedTime => 'Estimated time';
+
+	/// en: 'Calories'
+	String get caloriesLabel => 'Calories';
+
+	/// en: 'Kcal'
+	String get kcal => 'Kcal';
+
+	/// en: 'Image and Settings'
+	String get imageSettings => 'Image and Settings';
+
+	/// en: 'Item Image'
+	String get itemImage => 'Item Image';
+
+	/// en: 'Upload clear photos to boost sales'
+	String get uploadClearPhoto => 'Upload clear photos to boost sales';
+
+	/// en: 'Click to change image'
+	String get clickToChangeImage => 'Click to change image';
+
+	/// en: 'Click to upload image'
+	String get clickToUploadImage => 'Click to upload image';
+
+	/// en: 'Supports album selection or camera'
+	String get supportAlbumCamera => 'Supports album selection or camera';
+
+	/// en: 'Image failed to load'
+	String get imageLoadFailed => 'Image failed to load';
+
+	/// en: 'On Sale'
+	String get onSale => 'On Sale';
+
+	/// en: 'Will be hidden from customers when turned off'
+	String get hideFromCustomers => 'Will be hidden from customers when turned off';
+
+	/// en: 'Manager Recommended'
+	String get managerRecommended => 'Manager Recommended';
+
+	/// en: 'Will be prioritized in recommended section'
+	String get displayInRecommendations => 'Will be prioritized in recommended section';
+
+	/// en: 'Sort Order'
+	String get sortOrder => 'Sort Order';
+
+	/// en: 'Larger numbers appear first'
+	String get numberGreaterMoreTop => 'Larger numbers appear first';
+
+	/// en: 'Please fill in name, price and select category'
+	String get fillNamePriceCategory => 'Please fill in name, price and select category';
+
+	/// en: 'Data validation failed'
+	String get validationFailed => 'Data validation failed';
+
+	/// en: 'Select from Album'
+	String get selectFromAlbum => 'Select from Album';
+
+	/// en: 'Take Photo'
+	String get takePhoto => 'Take Photo';
+
+	/// en: 'Select Category'
+	String get selectCategory => 'Select Category';
+
+	/// en: 'Loading categories...'
+	String get loadingCategories => 'Loading categories...';
 }
 
 // Path: navigation
@@ -384,6 +621,105 @@ class TranslationsRestaurantEn {
 
 	/// en: 'Keep Editing'
 	String get keepEditing => 'Keep Editing';
+
+	/// en: 'Restaurant Information'
+	String get infoTitle => 'Restaurant Information';
+
+	/// en: 'Loading restaurant information...'
+	String get loading => 'Loading restaurant information...';
+
+	/// en: 'No restaurant information'
+	String get noData => 'No restaurant information';
+
+	/// en: 'Retry'
+	String get retry => 'Retry';
+
+	/// en: 'Basic Information'
+	String get basicInfo => 'Basic Information';
+
+	/// en: 'Restaurant Type'
+	String get restaurantType => 'Restaurant Type';
+
+	/// en: 'Address'
+	String get restaurantAddress => 'Address';
+
+	/// en: 'Phone'
+	String get restaurantPhone => 'Phone';
+
+	/// en: 'Business Hours'
+	String get businessHours => 'Business Hours';
+
+	/// en: 'Operating Status'
+	String get operatingStatus => 'Operating Status';
+
+	/// en: 'Restaurant Image'
+	String get restaurantImage => 'Restaurant Image';
+
+	/// en: 'Restaurant Description'
+	String get restaurantDescription => 'Restaurant Description';
+
+	/// en: 'Review Information'
+	String get reviewInfo => 'Review Information';
+
+	/// en: 'Rating'
+	String get rating => 'Rating';
+
+	/// en: 'Review Count'
+	String get reviewCount => 'Review Count';
+
+	/// en: 'Chat Room Verification Code'
+	String get chatRoomVerificationCode => 'Chat Room Verification Code';
+
+	/// en: 'Current Code'
+	String get currentCode => 'Current Code';
+
+	/// en: 'Loading...'
+	String get loadingCode => 'Loading...';
+
+	/// en: 'Modify'
+	String get modify => 'Modify';
+
+	/// en: 'Edit Info'
+	String get editInfo => 'Edit Info';
+
+	/// en: 'Set Closed'
+	String get setClosed => 'Set Closed';
+
+	/// en: 'Set Open'
+	String get setOpen => 'Set Open';
+
+	/// en: 'Settings'
+	String get settings => 'Settings';
+
+	/// en: 'Edit Chat Room Verification Code'
+	String get editVerificationCode => 'Edit Chat Room Verification Code';
+
+	/// en: 'New Code'
+	String get newCode => 'New Code';
+
+	/// en: 'Please enter new verification code'
+	String get enterNewCode => 'Please enter new verification code';
+
+	/// en: 'Please enter verification code'
+	String get enterCode => 'Please enter verification code';
+
+	/// en: 'Verification code must be at least {min} characters'
+	String get codeMinLength => 'Verification code must be at least {min} characters';
+
+	/// en: 'Verification code updated successfully'
+	String get codeUpdateSuccess => 'Verification code updated successfully';
+
+	/// en: 'Failed to update verification code'
+	String get codeUpdateFailed => 'Failed to update verification code';
+
+	/// en: 'Set to Open'
+	String get setOpenSuccess => 'Set to Open';
+
+	/// en: 'Set to Closed'
+	String get setClosedSuccess => 'Set to Closed';
+
+	/// en: 'Failed to toggle status'
+	String get statusToggleFailed => 'Failed to toggle status';
 }
 
 // Path: staff
@@ -444,6 +780,66 @@ class TranslationsStaffEn {
 
 	/// en: 'Delete Schedule'
 	String get deleteSchedule => 'Delete Schedule';
+
+	/// en: 'Loading staff list...'
+	String get loadingStaffList => 'Loading staff list...';
+
+	/// en: 'Total Staff'
+	String get totalStaff => 'Total Staff';
+
+	/// en: 'Online'
+	String get onlineStaff => 'Online';
+
+	/// en: 'Offline'
+	String get offlineStaff => 'Offline';
+
+	/// en: 'Busy'
+	String get busyStaff => 'Busy';
+
+	/// en: 'Set as Offline'
+	String get setAsOffline => 'Set as Offline';
+
+	/// en: 'Set as Online'
+	String get setAsOnline => 'Set as Online';
+
+	/// en: 'Update Rating'
+	String get updateRating => 'Update Rating';
+
+	/// en: 'Confirm Operation'
+	String get confirmOperation => 'Confirm Operation';
+
+	/// en: 'Are you sure you want to set ${staffName}'s status to ${newStatus}?'
+	String confirmStatusChange({required Object staffName, required Object newStatus}) => 'Are you sure you want to set ${staffName}\'s status to ${newStatus}?';
+
+	/// en: 'Cancel'
+	String get cancel => 'Cancel';
+
+	/// en: 'Confirm'
+	String get confirm => 'Confirm';
+
+	/// en: 'Update Rating'
+	String get updateRatingTitle => 'Update Rating';
+
+	/// en: 'Set new rating for ${staffName}: '
+	String setNewRating({required Object staffName}) => 'Set new rating for ${staffName}: ';
+
+	/// en: 'Rating (0.0-5.0)'
+	String get ratingInputHint => 'Rating (0.0-5.0)';
+
+	/// en: 'Please enter a valid rating (0.0-5.0)'
+	String get validRatingRequired => 'Please enter a valid rating (0.0-5.0)';
+
+	/// en: 'No staff information available'
+	String get noStaffInfo => 'No staff information available';
+
+	/// en: 'Retry'
+	String get retry => 'Retry';
+
+	/// en: 'Unknown Status'
+	String get unknownStatus => 'Unknown Status';
+
+	/// en: 'Unknown'
+	String get unknown => 'Unknown';
 }
 
 // Path: statistics
@@ -539,6 +935,17 @@ extension on Translations {
 			'auth.invalidCredentials' => 'Invalid username or password',
 			'auth.passwordMismatch' => 'Passwords do not match',
 			'auth.passwordChanged' => 'Password changed successfully',
+			'auth.settings' => 'Settings',
+			'auth.language' => 'Language',
+			'auth.merchantPlatform' => 'Merchant Management Platform',
+			'auth.rememberMe' => 'Remember Me',
+			'auth.forgotPasswordQuestion' => 'Forgot Password?',
+			'auth.enterUsername' => 'Enter Username',
+			'auth.enterPassword' => 'Enter Password',
+			'auth.usernameMinLength' => 'Username must be at least {min} characters',
+			'auth.passwordMinLength' => 'Password must be at least {min} characters',
+			'auth.enterUsernameAndPassword' => 'Please enter username and password',
+			'auth.resetPasswordContactAdmin' => 'Please contact admin to reset password',
 			'common.save' => 'Save',
 			'common.cancel' => 'Cancel',
 			'common.confirm' => 'Confirm',
@@ -580,6 +987,74 @@ extension on Translations {
 			'menu.addSuccess' => 'Add Successful',
 			'menu.updateSuccess' => 'Update Successful',
 			'menu.deleteSuccess' => 'Delete Successful',
+			'menu.loadingMenu' => 'Loading menu...',
+			'menu.noItems' => 'No items available',
+			'menu.retry' => 'Retry',
+			'menu.itemAdded' => 'Item added successfully',
+			'menu.itemAddFailed' => 'Failed to add item',
+			'menu.itemUpdated' => 'Item updated successfully',
+			'menu.itemUpdateFailed' => 'Failed to update item',
+			'menu.itemEnabled' => 'Item enabled',
+			'menu.itemDisabled' => 'Item disabled',
+			'menu.itemSetAsRecommended' => 'Item set as recommended',
+			'menu.itemUnsetAsRecommended' => 'Item removed from recommended',
+			'menu.operationFailed' => 'Operation failed, please retry',
+			'menu.confirmDelete' => 'Confirm Delete',
+			'menu.deleteConfirmMessage' => 'Are you sure you want to delete item "{name}"? This operation cannot be undone.',
+			'menu.cancel' => 'Cancel',
+			'menu.delete' => 'Delete',
+			'menu.itemDeleted' => 'Item "{name}" deleted',
+			'menu.deleteFailed' => 'Failed to delete item, please retry',
+			'menu.searchItems' => 'Search items',
+			'menu.availableItems' => 'Available items',
+			'menu.unavailableItems' => 'Unavailable items',
+			'menu.recommendedItems' => 'Recommended items',
+			'menu.allItems' => 'All items',
+			'menu.today' => 'Today',
+			'menu.yesterday' => 'Yesterday',
+			'menu.daysAgo' => 'days ago',
+			'menu.edit' => 'Edit',
+			'menu.disable' => 'Disable',
+			'menu.enable' => 'Enable',
+			'menu.setAsRecommended' => 'Set as recommended',
+			'menu.unsetAsRecommended' => 'Remove from recommended',
+			'menu.created' => 'Created: ',
+			'menu.editMenuItem' => 'Edit Menu Item',
+			'menu.addNewMenuItem' => 'Add New Menu Item',
+			'menu.save' => 'Save',
+			'menu.basicInfo' => 'Basic Information',
+			'menu.exampleItemName' => 'e.g., Signature Beef Noodle',
+			'menu.shortClearName' => 'Short and clear name (required)',
+			'menu.enterDescription' => 'Describe ingredients, taste, portion, etc.',
+			'menu.displayInDetails' => 'Will be displayed in order details page',
+			'menu.priceSpecs' => 'Price and Specifications',
+			'menu.currentPrice' => 'Current Price',
+			'menu.actualPrice' => 'Actual selling price',
+			'menu.showOriginalPrice' => 'Show original price',
+			'menu.prepTime' => 'Preparation Time',
+			'menu.minutes' => 'minutes',
+			'menu.estimatedTime' => 'Estimated time',
+			'menu.caloriesLabel' => 'Calories',
+			'menu.kcal' => 'Kcal',
+			'menu.imageSettings' => 'Image and Settings',
+			'menu.itemImage' => 'Item Image',
+			'menu.uploadClearPhoto' => 'Upload clear photos to boost sales',
+			'menu.clickToChangeImage' => 'Click to change image',
+			'menu.clickToUploadImage' => 'Click to upload image',
+			'menu.supportAlbumCamera' => 'Supports album selection or camera',
+			'menu.imageLoadFailed' => 'Image failed to load',
+			'menu.onSale' => 'On Sale',
+			'menu.hideFromCustomers' => 'Will be hidden from customers when turned off',
+			'menu.managerRecommended' => 'Manager Recommended',
+			'menu.displayInRecommendations' => 'Will be prioritized in recommended section',
+			'menu.sortOrder' => 'Sort Order',
+			'menu.numberGreaterMoreTop' => 'Larger numbers appear first',
+			'menu.fillNamePriceCategory' => 'Please fill in name, price and select category',
+			'menu.validationFailed' => 'Data validation failed',
+			'menu.selectFromAlbum' => 'Select from Album',
+			'menu.takePhoto' => 'Take Photo',
+			'menu.selectCategory' => 'Select Category',
+			'menu.loadingCategories' => 'Loading categories...',
 			'navigation.dashboard' => 'Dashboard',
 			'navigation.restaurant' => 'Restaurant',
 			'navigation.menu' => 'Menu',
@@ -623,6 +1098,39 @@ extension on Translations {
 			'restaurant.confirmDiscard' => 'Are you sure you want to discard changes?',
 			'restaurant.discard' => 'Discard',
 			'restaurant.keepEditing' => 'Keep Editing',
+			'restaurant.infoTitle' => 'Restaurant Information',
+			'restaurant.loading' => 'Loading restaurant information...',
+			'restaurant.noData' => 'No restaurant information',
+			'restaurant.retry' => 'Retry',
+			'restaurant.basicInfo' => 'Basic Information',
+			'restaurant.restaurantType' => 'Restaurant Type',
+			'restaurant.restaurantAddress' => 'Address',
+			'restaurant.restaurantPhone' => 'Phone',
+			'restaurant.businessHours' => 'Business Hours',
+			'restaurant.operatingStatus' => 'Operating Status',
+			'restaurant.restaurantImage' => 'Restaurant Image',
+			'restaurant.restaurantDescription' => 'Restaurant Description',
+			'restaurant.reviewInfo' => 'Review Information',
+			'restaurant.rating' => 'Rating',
+			'restaurant.reviewCount' => 'Review Count',
+			'restaurant.chatRoomVerificationCode' => 'Chat Room Verification Code',
+			'restaurant.currentCode' => 'Current Code',
+			'restaurant.loadingCode' => 'Loading...',
+			'restaurant.modify' => 'Modify',
+			'restaurant.editInfo' => 'Edit Info',
+			'restaurant.setClosed' => 'Set Closed',
+			'restaurant.setOpen' => 'Set Open',
+			'restaurant.settings' => 'Settings',
+			'restaurant.editVerificationCode' => 'Edit Chat Room Verification Code',
+			'restaurant.newCode' => 'New Code',
+			'restaurant.enterNewCode' => 'Please enter new verification code',
+			'restaurant.enterCode' => 'Please enter verification code',
+			'restaurant.codeMinLength' => 'Verification code must be at least {min} characters',
+			'restaurant.codeUpdateSuccess' => 'Verification code updated successfully',
+			'restaurant.codeUpdateFailed' => 'Failed to update verification code',
+			'restaurant.setOpenSuccess' => 'Set to Open',
+			'restaurant.setClosedSuccess' => 'Set to Closed',
+			'restaurant.statusToggleFailed' => 'Failed to toggle status',
 			'staff.title' => 'Staff Management',
 			'staff.list' => 'Staff List',
 			'staff.addStaff' => 'Add Staff',
@@ -640,6 +1148,26 @@ extension on Translations {
 			'staff.addSchedule' => 'Add Schedule',
 			'staff.editSchedule' => 'Edit Schedule',
 			'staff.deleteSchedule' => 'Delete Schedule',
+			'staff.loadingStaffList' => 'Loading staff list...',
+			'staff.totalStaff' => 'Total Staff',
+			'staff.onlineStaff' => 'Online',
+			'staff.offlineStaff' => 'Offline',
+			'staff.busyStaff' => 'Busy',
+			'staff.setAsOffline' => 'Set as Offline',
+			'staff.setAsOnline' => 'Set as Online',
+			'staff.updateRating' => 'Update Rating',
+			'staff.confirmOperation' => 'Confirm Operation',
+			'staff.confirmStatusChange' => ({required Object staffName, required Object newStatus}) => 'Are you sure you want to set ${staffName}\'s status to ${newStatus}?',
+			'staff.cancel' => 'Cancel',
+			'staff.confirm' => 'Confirm',
+			'staff.updateRatingTitle' => 'Update Rating',
+			'staff.setNewRating' => ({required Object staffName}) => 'Set new rating for ${staffName}: ',
+			'staff.ratingInputHint' => 'Rating (0.0-5.0)',
+			'staff.validRatingRequired' => 'Please enter a valid rating (0.0-5.0)',
+			'staff.noStaffInfo' => 'No staff information available',
+			'staff.retry' => 'Retry',
+			'staff.unknownStatus' => 'Unknown Status',
+			'staff.unknown' => 'Unknown',
 			'statistics.title' => 'Statistics',
 			'statistics.overview' => 'Overview',
 			'statistics.today' => 'Today',

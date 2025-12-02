@@ -8,6 +8,7 @@ import 'package:foodieconnect/presentation/providers/menu_provider.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_request.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:foodieconnect/l10n/generated/translations.g.dart';
 import 'dart:io';
 
 /// 菜品表单页面 (全屏模式)
@@ -104,17 +105,17 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
           children: [
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('从相册选择'),
+              title: Text(Translations.of(context).menu.selectFromAlbum),
               onTap: () => Navigator.pop(context, 0),
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('拍照'),
+              title: Text(Translations.of(context).menu.takePhoto),
               onTap: () => Navigator.pop(context, 1),
             ),
             ListTile(
               leading: const Icon(Icons.cancel),
-              title: const Text('取消'),
+              title: Text(Translations.of(context).menu.cancel),
               onTap: () => Navigator.pop(context, -1),
             ),
           ],
@@ -148,8 +149,8 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
         _priceController.text.isEmpty ||
         _selectedCategoryId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('请填写名称、价格并选择分类'),
+        SnackBar(
+          content: Text(Translations.of(context).menu.fillNamePriceCategory),
           backgroundColor: Colors.red,
         ),
       );
@@ -174,7 +175,10 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
     if (!request.isValid) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(request.validationError ?? '数据验证失败'),
+          content: Text(
+            request.validationError ??
+                Translations.of(context).menu.validationFailed,
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -203,16 +207,20 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50, // 浅灰背景，突显白色输入框
       appBar: AppBar(
-        title: Text(_isEdit ? "编辑菜品" : "添加新菜品"),
+        title: Text(
+          _isEdit
+              ? Translations.of(context).menu.editMenuItem
+              : Translations.of(context).menu.addNewMenuItem,
+        ),
         elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Colors.black, // 黑色标题和按钮
         actions: [
           TextButton(
             onPressed: _handleSubmit,
-            child: const Text(
-              "保存",
-              style: TextStyle(
+            child: Text(
+              Translations.of(context).menu.save,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.primaryColor,
@@ -227,14 +235,14 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            _buildSectionLabel("基本信息"),
+            _buildSectionLabel(Translations.of(context).menu.basicInfo),
             _buildCard(
               children: [
                 _EfficientTextField(
                   controller: _nameController,
-                  label: "菜品名称",
-                  hint: "例如：招牌牛肉面",
-                  helperText: "简短清晰的名称（必填）",
+                  label: Translations.of(context).menu.itemName,
+                  hint: Translations.of(context).menu.exampleItemName,
+                  helperText: Translations.of(context).menu.shortClearName,
                   icon: Icons.restaurant_menu,
                 ),
                 const SizedBox(height: 16),
@@ -246,16 +254,16 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                 const SizedBox(height: 16),
                 _EfficientTextField(
                   controller: _descController,
-                  label: "菜品描述",
-                  hint: "介绍食材、口味、分量等",
-                  helperText: "将在点餐详情页展示",
+                  label: Translations.of(context).menu.description,
+                  hint: Translations.of(context).menu.enterDescription,
+                  helperText: Translations.of(context).menu.displayInDetails,
                   icon: Icons.description_outlined,
                   maxLines: 3,
                 ),
               ],
             ),
 
-            _buildSectionLabel("价格与规格"),
+            _buildSectionLabel(Translations.of(context).menu.priceSpecs),
             _buildCard(
               children: [
                 Row(
@@ -264,9 +272,9 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                     Expanded(
                       child: _EfficientTextField(
                         controller: _priceController,
-                        label: "现价",
+                        label: Translations.of(context).menu.currentPrice,
                         hint: "0.00",
-                        helperText: "实际售价",
+                        helperText: Translations.of(context).menu.actualPrice,
                         icon: Icons.attach_money,
                         isNumber: true,
                       ),
@@ -275,9 +283,11 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                     Expanded(
                       child: _EfficientTextField(
                         controller: _originalPriceController,
-                        label: "原价",
+                        label: Translations.of(context).menu.originalPrice,
                         hint: "0.00",
-                        helperText: "展示划线价",
+                        helperText: Translations.of(
+                          context,
+                        ).menu.showOriginalPrice,
                         isNumber: true,
                       ),
                     ),
@@ -290,9 +300,9 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                     Expanded(
                       child: _EfficientTextField(
                         controller: _prepTimeController,
-                        label: "制作时间",
-                        hint: "分钟",
-                        helperText: "预估耗时",
+                        label: Translations.of(context).menu.prepTime,
+                        hint: Translations.of(context).menu.minutes,
+                        helperText: Translations.of(context).menu.estimatedTime,
                         icon: Icons.timer_outlined,
                         isNumber: true,
                       ),
@@ -301,9 +311,9 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                     Expanded(
                       child: _EfficientTextField(
                         controller: _caloriesController,
-                        label: "热量",
-                        hint: "Kcal",
-                        helperText: "卡路里",
+                        label: Translations.of(context).menu.caloriesLabel,
+                        hint: Translations.of(context).menu.kcal,
+                        helperText: Translations.of(context).menu.calories,
                         icon: Icons.local_fire_department_outlined,
                         isNumber: true,
                       ),
@@ -313,15 +323,15 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
               ],
             ),
 
-            _buildSectionLabel("图片与设置"),
+            _buildSectionLabel(Translations.of(context).menu.imageSettings),
             _buildCard(
               children: [
                 // 图片上传区域
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      "菜品图片",
+                    Text(
+                      Translations.of(context).menu.itemImage,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -329,7 +339,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "上传清晰的菜品照片，有助于提升销量",
+                      Translations.of(context).menu.uploadClearPhoto,
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.grey.shade500,
@@ -361,7 +371,13 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                _imageUrl != null ? "点击更换图片" : "点击上传图片",
+                                _imageUrl != null
+                                    ? Translations.of(
+                                        context,
+                                      ).menu.clickToChangeImage
+                                    : Translations.of(
+                                        context,
+                                      ).menu.clickToUploadImage,
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.grey.shade600,
@@ -369,7 +385,9 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                "支持相册选择或拍照",
+                                Translations.of(
+                                  context,
+                                ).menu.supportAlbumCamera,
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: Colors.grey.shade500,
@@ -395,9 +413,9 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                               height: 100,
                               color: Colors.grey.shade200,
                               alignment: Alignment.center,
-                              child: const Text(
-                                "图片无法加载",
-                                style: TextStyle(color: Colors.grey),
+                              child: Text(
+                                Translations.of(context).menu.imageLoadFailed,
+                                style: const TextStyle(color: Colors.grey),
                               ),
                             ),
                           ),
@@ -410,14 +428,14 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
 
                 // 开关选项
                 _buildSwitchTile(
-                  "上架销售",
-                  "关闭后顾客端将不可见",
+                  Translations.of(context).menu.onSale,
+                  Translations.of(context).menu.hideFromCustomers,
                   _isAvailable,
                   (v) => setState(() => _isAvailable = v),
                 ),
                 _buildSwitchTile(
-                  "店长推荐",
-                  "在推荐栏目优先展示",
+                  Translations.of(context).menu.managerRecommended,
+                  Translations.of(context).menu.displayInRecommendations,
                   _isRecommended,
                   (v) => setState(() => _isRecommended = v),
                 ),
@@ -425,9 +443,11 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                 const SizedBox(height: 8),
                 _EfficientTextField(
                   controller: _sortController,
-                  label: "排序权重",
+                  label: Translations.of(context).menu.sortOrder,
                   hint: "0",
-                  helperText: "数字越大越靠前",
+                  helperText: Translations.of(
+                    context,
+                  ).menu.numberGreaterMoreTop,
                   icon: Icons.sort,
                   isNumber: true,
                 ),
@@ -524,7 +544,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "所属分类",
+                    Translations.of(context).menu.category,
                     style: TextStyle(
                       fontSize: 12,
                       color: AppTheme.primaryColor,
@@ -533,7 +553,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "正在加载分类...",
+                    Translations.of(context).menu.loadingCategories,
                     style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                   ),
                 ],
@@ -587,7 +607,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "所属分类",
+                    Translations.of(context).menu.category,
                     style: TextStyle(
                       fontSize: 12,
                       color: _selectedCategoryId != null
@@ -600,7 +620,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                   Text(
                     _selectedCategoryId != null
                         ? selectedCategory.name
-                        : "请选择分类",
+                        : Translations.of(context).menu.selectCategory,
                     style: TextStyle(
                       fontSize: 16,
                       color: _selectedCategoryId != null
@@ -647,8 +667,8 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              "选择分类",
+            Text(
+              Translations.of(context).menu.selectCategory,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),

@@ -5,6 +5,7 @@ import 'package:foodieconnect/presentation/providers/menu_provider.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
 import 'package:foodieconnect/presentation/widgets/menu/item_card.dart';
 import 'package:foodieconnect/presentation/widgets/menu/search_filter_bar.dart';
+import 'package:foodieconnect/l10n/generated/translations.g.dart';
 
 import 'menu_item_screen.dart';
 
@@ -14,7 +15,8 @@ class MenuListScreenRefactored extends StatefulWidget {
   const MenuListScreenRefactored({super.key});
 
   @override
-  State<MenuListScreenRefactored> createState() => _MenuListScreenRefactoredState();
+  State<MenuListScreenRefactored> createState() =>
+      _MenuListScreenRefactoredState();
 }
 
 class _MenuListScreenRefactoredState extends State<MenuListScreenRefactored> {
@@ -50,7 +52,7 @@ class _MenuListScreenRefactoredState extends State<MenuListScreenRefactored> {
           resizeToAvoidBottomInset: false,
           backgroundColor: AppTheme.surfaceColor,
           appBar: AppBar(
-            title: const Text('菜单管理'),
+            title: Text(Translations.of(context).menu.title),
             backgroundColor: AppTheme.primaryColor,
             foregroundColor: Colors.white,
             elevation: 0,
@@ -72,16 +74,16 @@ class _MenuListScreenRefactoredState extends State<MenuListScreenRefactored> {
 
   Widget _buildBody(MenuProvider provider) {
     if (provider.isLoading && provider.menuItems.isEmpty) {
-      return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('加载菜单中...'),
-                ],
-              ),
-            );
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text(Translations.of(context).menu.loadingMenu),
+          ],
+        ),
+      );
     }
 
     if (provider.errorMessage != null) {
@@ -105,12 +107,15 @@ class _MenuListScreenRefactoredState extends State<MenuListScreenRefactored> {
         children: [
           // 搜索和筛选栏 - 使用提取的组件
           SearchFilterBar(provider: provider),
-          
+
           // 菜品列表 - 使用提取的组件
-          ...provider.menuItems.map((menuItem) => ItemCard(
-            item: menuItem,
-            onAction: (action) => _handleMenuItemAction(context, action, menuItem, provider),
-          )),
+          ...provider.menuItems.map(
+            (menuItem) => ItemCard(
+              item: menuItem,
+              onAction: (action) =>
+                  _handleMenuItemAction(context, action, menuItem, provider),
+            ),
+          ),
         ],
       ),
     );
@@ -142,10 +147,13 @@ class _MenuListScreenRefactoredState extends State<MenuListScreenRefactored> {
                 onPressed: () {
                   // 重新加载
                   if (context.mounted) {
-                    Provider.of<MenuProvider>(context, listen: false).refreshMenuItems();
+                    Provider.of<MenuProvider>(
+                      context,
+                      listen: false,
+                    ).refreshMenuItems();
                   }
                 },
-                child: const Text('重试'),
+                child: Text(Translations.of(context).menu.retry),
               ),
             ],
           ),
@@ -155,46 +163,53 @@ class _MenuListScreenRefactoredState extends State<MenuListScreenRefactored> {
   }
 
   Widget _buildEmptyWidget() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.restaurant_menu,
-            size: 64,
-            color: AppTheme.textSecondary,
-          ),
+          Icon(Icons.restaurant_menu, size: 64, color: AppTheme.textSecondary),
           SizedBox(height: 16),
           Text(
-            '暂无菜品',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppTheme.textSecondary,
-            ),
+            Translations.of(context).menu.noItems,
+            style: TextStyle(fontSize: 16, color: AppTheme.textSecondary),
           ),
         ],
       ),
     );
   }
 
-void _showAddItemDialog(BuildContext context) {
-  MenuItemFormScreen.show(
-    context,
-    item: null, // null表示添加模式
-    onSave: (request) async {
-      final ok = await Provider.of<MenuProvider>(context, listen: false).createMenuItem(request);
-      if (!context.mounted) return;
-      if (ok) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('菜品添加成功')));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('菜品添加失败')));
-      }
-    },
-  );
-}
+  void _showAddItemDialog(BuildContext context) {
+    MenuItemFormScreen.show(
+      context,
+      item: null, // null表示添加模式
+      onSave: (request) async {
+        final ok = await Provider.of<MenuProvider>(
+          context,
+          listen: false,
+        ).createMenuItem(request);
+        if (!context.mounted) return;
+        if (ok) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(Translations.of(context).menu.itemAdded)),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(Translations.of(context).menu.itemAddFailed),
+            ),
+          );
+        }
+      },
+    );
+  }
 
   /// 处理菜品操作
-  void _handleMenuItemAction(BuildContext context, String action, MenuItemModel menuItem, MenuProvider provider) {
+  void _handleMenuItemAction(
+    BuildContext context,
+    String action,
+    MenuItemModel menuItem,
+    MenuProvider provider,
+  ) {
     switch (action) {
       case 'edit':
         _showEditItemDialog(context, menuItem, provider);
@@ -213,42 +228,64 @@ void _showAddItemDialog(BuildContext context) {
     }
   }
 
-void _showEditItemDialog(BuildContext context, MenuItemModel menuItem, MenuProvider provider) {
-  MenuItemFormScreen.show(
-    context,
-    item: menuItem,
-    onSave: (request) async {
-      final ok = await Provider.of<MenuProvider>(context, listen: false)
-          .updateMenuItem(menuItem.id, request);
-      if (!context.mounted) return;
-      if (ok) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('菜品更新成功')));
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('菜品更新失败')));
-      }
-    },
-  );
-}
+  void _showEditItemDialog(
+    BuildContext context,
+    MenuItemModel menuItem,
+    MenuProvider provider,
+  ) {
+    MenuItemFormScreen.show(
+      context,
+      item: menuItem,
+      onSave: (request) async {
+        final ok = await Provider.of<MenuProvider>(
+          context,
+          listen: false,
+        ).updateMenuItem(menuItem.id, request);
+        if (!context.mounted) return;
+        if (ok) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(Translations.of(context).menu.itemUpdated)),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(Translations.of(context).menu.itemUpdateFailed),
+            ),
+          );
+        }
+      },
+    );
+  }
 
   /// 切换菜品状态
-  void _toggleMenuItemStatus(BuildContext context, MenuItemModel menuItem, MenuProvider provider) async {
+  void _toggleMenuItemStatus(
+    BuildContext context,
+    MenuItemModel menuItem,
+    MenuProvider provider,
+  ) async {
     final newStatus = !menuItem.isAvailable;
-    
+
     final result = await provider.toggleMenuItemStatus(menuItem.id, newStatus);
-    
+
     if (!context.mounted) return;
-    
+
     if (result) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('菜品${newStatus ? '已启用' : '已停售'}'),
-          backgroundColor: newStatus ? AppTheme.successColor : AppTheme.warningColor,
+          content: Text(
+            newStatus
+                ? Translations.of(context).menu.itemEnabled
+                : Translations.of(context).menu.itemDisabled,
+          ),
+          backgroundColor: newStatus
+              ? AppTheme.successColor
+              : AppTheme.warningColor,
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('操作失败，请重试'),
+        SnackBar(
+          content: Text(Translations.of(context).menu.operationFailed),
           backgroundColor: AppTheme.errorColor,
         ),
       );
@@ -256,17 +293,28 @@ void _showEditItemDialog(BuildContext context, MenuItemModel menuItem, MenuProvi
   }
 
   /// 切换推荐状态
-  void _toggleRecommendedStatus(BuildContext context, MenuItemModel menuItem, MenuProvider provider) async {
+  void _toggleRecommendedStatus(
+    BuildContext context,
+    MenuItemModel menuItem,
+    MenuProvider provider,
+  ) async {
     final newStatus = !menuItem.isRecommended;
-    
-    final result = await provider.setRecommendedMenuItem(menuItem.id, newStatus);
-    
+
+    final result = await provider.setRecommendedMenuItem(
+      menuItem.id,
+      newStatus,
+    );
+
     if (!context.mounted) return;
-    
+
     if (result) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('菜品${newStatus ? '已设为推荐' : '已取消推荐'}'),
+          content: Text(
+            newStatus
+                ? Translations.of(context).menu.itemSetAsRecommended
+                : Translations.of(context).menu.itemUnsetAsRecommended,
+          ),
           backgroundColor: AppTheme.warningColor,
         ),
       );
@@ -281,27 +329,33 @@ void _showEditItemDialog(BuildContext context, MenuItemModel menuItem, MenuProvi
   }
 
   /// 显示删除确认对话框
-  void _showDeleteConfirmation(BuildContext context, MenuItemModel menuItem, MenuProvider provider) {
+  void _showDeleteConfirmation(
+    BuildContext context,
+    MenuItemModel menuItem,
+    MenuProvider provider,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('确认删除'),
-          content: Text('确定要删除菜品 "${menuItem.name}" 吗？此操作不可恢复。'),
+          title: Text(Translations.of(context).menu.confirmDelete),
+          content: Text(
+            Translations.of(
+              context,
+            ).menu.deleteConfirmMessage.replaceAll('{name}', menuItem.name),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('取消'),
+              child: Text(Translations.of(context).menu.cancel),
             ),
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
                 await _deleteMenuItem(context, menuItem, provider);
               },
-              style: TextButton.styleFrom(
-                foregroundColor: AppTheme.errorColor,
-              ),
-              child: const Text('删除'),
+              style: TextButton.styleFrom(foregroundColor: AppTheme.errorColor),
+              child: Text(Translations.of(context).menu.delete),
             ),
           ],
         );
@@ -310,22 +364,30 @@ void _showEditItemDialog(BuildContext context, MenuItemModel menuItem, MenuProvi
   }
 
   /// 删除菜品
-  Future<void> _deleteMenuItem(BuildContext context, MenuItemModel menuItem, MenuProvider provider) async {
+  Future<void> _deleteMenuItem(
+    BuildContext context,
+    MenuItemModel menuItem,
+    MenuProvider provider,
+  ) async {
     final result = await provider.deleteMenuItem(menuItem.id);
-    
+
     if (!context.mounted) return;
-    
+
     if (result) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('菜品 "${menuItem.name}" 已删除'),
+          content: Text(
+            Translations.of(
+              context,
+            ).menu.itemDeleted.replaceAll('{name}', menuItem.name),
+          ),
           backgroundColor: AppTheme.successColor,
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('删除失败，请重试'),
+        SnackBar(
+          content: Text(Translations.of(context).menu.deleteFailed),
           backgroundColor: AppTheme.errorColor,
         ),
       );

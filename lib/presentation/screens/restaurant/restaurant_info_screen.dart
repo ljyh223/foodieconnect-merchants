@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:foodieconnect/core/constants/app_constants.dart';
 import 'package:foodieconnect/core/theme/app_theme.dart';
+import 'package:foodieconnect/l10n/generated/translations.g.dart';
 import 'package:foodieconnect/presentation/providers/restaurant_provider.dart';
 import 'package:foodieconnect/presentation/screens/restaurant/restaurant_edit_screen.dart';
 
@@ -22,45 +23,46 @@ class RestaurantInfoScreen extends StatelessWidget {
             provider.loadChatRoomVerificationCode();
           });
         }
+        final t = Translations.of(context);
         return Scaffold(
           backgroundColor: AppTheme.surfaceColor,
           appBar: AppBar(
-            title: const Text('餐厅信息'),
+            title: Text(t.restaurant.infoTitle),
             backgroundColor: AppTheme.primaryColor,
             foregroundColor: Colors.white,
             elevation: 0,
           ),
-          body: _buildBody(provider),
+          body: _buildBody(provider, t),
         );
       },
     );
   }
 
-  Widget _buildBody(RestaurantProvider provider) {
+  Widget _buildBody(RestaurantProvider provider, Translations t) {
     if (provider.isLoading) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
+            const CircularProgressIndicator(),
             const SizedBox(height: 16),
-            Text('加载餐厅信息中...'),
+            Text(t.restaurant.loading),
           ],
         ),
       );
     }
 
     if (provider.errorMessage != null) {
-      return _buildErrorWidget(provider.errorMessage!);
+      return _buildErrorWidget(provider.errorMessage!, t);
     }
 
     if (provider.restaurant == null) {
-      return _buildEmptyWidget();
+      return _buildEmptyWidget(t);
     }
 
     return Builder(
       builder: (context) {
-        return _buildRestaurantInfo(context, provider, provider.restaurant!);
+        return _buildRestaurantInfo(context, provider, provider.restaurant!, t);
       },
     );
   }
@@ -69,6 +71,7 @@ class RestaurantInfoScreen extends StatelessWidget {
     BuildContext context,
     RestaurantProvider provider,
     dynamic restaurant,
+    Translations t,
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -88,12 +91,15 @@ class RestaurantInfoScreen extends StatelessWidget {
           const SizedBox(height: AppConstants.defaultPadding),
 
           // 餐厅基本信息 - 扁平化布局
-          _buildSectionTitle('基本信息'),
-          _buildInfoRow('餐厅类型', restaurant.type),
-          _buildInfoRow('地址', restaurant.address),
-          _buildInfoRow('电话', restaurant.phone),
-          _buildInfoRow('营业时间', restaurant.hours ?? '未设置'),
-          _buildInfoRow('营业状态', restaurant.statusDisplay),
+          _buildSectionTitle(t.restaurant.basicInfo),
+          _buildInfoRow(t.restaurant.restaurantType, restaurant.type),
+          _buildInfoRow(t.restaurant.restaurantAddress, restaurant.address),
+          _buildInfoRow(t.restaurant.restaurantPhone, restaurant.phone),
+          _buildInfoRow(
+            t.restaurant.businessHours,
+            restaurant.hours ?? t.restaurant.closed,
+          ),
+          _buildInfoRow(t.restaurant.operatingStatus, restaurant.statusDisplay),
 
           const SizedBox(height: AppConstants.defaultPadding * 2),
 
@@ -102,7 +108,7 @@ class RestaurantInfoScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionTitle('餐厅图片'),
+                _buildSectionTitle(t.restaurant.restaurantImage),
                 const SizedBox(height: AppConstants.defaultPadding / 2),
                 GestureDetector(
                   onTap: () {
@@ -144,7 +150,7 @@ class RestaurantInfoScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: AppConstants.defaultPadding * 2),
-                _buildSectionTitle('餐厅描述'),
+                _buildSectionTitle(t.restaurant.restaurantDescription),
                 const SizedBox(height: AppConstants.defaultPadding / 2),
                 Text(
                   restaurant.description!,
@@ -160,13 +166,21 @@ class RestaurantInfoScreen extends StatelessWidget {
           const SizedBox(height: AppConstants.defaultPadding * 2),
 
           // 评价信息
-          _buildSectionTitle('评价信息'),
+          _buildSectionTitle(t.restaurant.reviewInfo),
           const SizedBox(height: AppConstants.defaultPadding / 2),
           Row(
             children: [
-              Expanded(child: _buildInfoRow('评分', restaurant.ratingDisplay)),
               Expanded(
-                child: _buildInfoRow('评价数', restaurant.reviewCountDisplay),
+                child: _buildInfoRow(
+                  t.restaurant.rating,
+                  restaurant.ratingDisplay,
+                ),
+              ),
+              Expanded(
+                child: _buildInfoRow(
+                  t.restaurant.reviewCount,
+                  restaurant.reviewCountDisplay,
+                ),
               ),
             ],
           ),
@@ -174,21 +188,21 @@ class RestaurantInfoScreen extends StatelessWidget {
           const SizedBox(height: AppConstants.defaultPadding * 2),
 
           // 聊天室验证码
-          _buildSectionTitle('聊天室验证码'),
+          _buildSectionTitle(t.restaurant.chatRoomVerificationCode),
           const SizedBox(height: AppConstants.defaultPadding / 2),
           Row(
             children: [
               Expanded(
                 child: _buildInfoRow(
-                  '当前验证码',
-                  provider.chatRoomVerificationCode ?? '加载中...',
+                  t.restaurant.currentCode,
+                  provider.chatRoomVerificationCode ?? t.restaurant.loadingCode,
                 ),
               ),
               const SizedBox(width: AppConstants.defaultPadding),
               ElevatedButton(
                 onPressed: () {
                   // 修改验证码
-                  _showUpdateVerificationCodeDialog(context, provider);
+                  _showUpdateVerificationCodeDialog(context, provider, t);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
@@ -199,7 +213,7 @@ class RestaurantInfoScreen extends StatelessWidget {
                   ),
                   minimumSize: const Size(80, 40),
                 ),
-                child: const Text('修改'),
+                child: Text(t.restaurant.modify),
               ),
             ],
           ),
@@ -223,7 +237,7 @@ class RestaurantInfoScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: const Text('编辑信息'),
+                  child: Text(t.restaurant.editInfo),
                 ),
               ),
               const SizedBox(width: AppConstants.defaultPadding),
@@ -231,7 +245,7 @@ class RestaurantInfoScreen extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // 切换营业状态
-                    _toggleRestaurantStatus(context, provider);
+                    _toggleRestaurantStatus(context, provider, t);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: restaurant.isCurrentlyOpen
@@ -243,10 +257,33 @@ class RestaurantInfoScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
-                  child: Text(restaurant.isCurrentlyOpen ? '设置打烊' : '设置营业'),
+                  child: Text(
+                    restaurant.isCurrentlyOpen
+                        ? t.restaurant.setClosed
+                        : t.restaurant.setOpen,
+                  ),
                 ),
               ),
             ],
+          ),
+
+          const SizedBox(height: AppConstants.defaultPadding),
+
+          // 设置按钮
+          ElevatedButton(
+            onPressed: () {
+              // 跳转到设置页面
+              Navigator.of(context).pushNamed('/settings');
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.grey[800],
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+            child: Text(t.auth.settings),
           ),
         ],
       ),
@@ -293,7 +330,7 @@ class RestaurantInfoScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorWidget(String error) {
+  Widget _buildErrorWidget(String error, Translations t) {
     return Builder(
       builder: (context) {
         return Center(
@@ -325,7 +362,7 @@ class RestaurantInfoScreen extends StatelessWidget {
                     ).loadRestaurant();
                   }
                 },
-                child: const Text('重试'),
+                child: Text(t.restaurant.retry),
               ),
             ],
           ),
@@ -334,15 +371,15 @@ class RestaurantInfoScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyWidget() {
-    return const Center(
+  Widget _buildEmptyWidget(Translations t) {
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.restaurant, size: 64, color: AppTheme.textSecondary),
           SizedBox(height: AppConstants.defaultPadding),
           Text(
-            '暂无餐厅信息',
+            t.restaurant.noData,
             style: TextStyle(fontSize: 16, color: AppTheme.textSecondary),
           ),
         ],
@@ -373,21 +410,24 @@ class RestaurantInfoScreen extends StatelessWidget {
   void _toggleRestaurantStatus(
     BuildContext context,
     RestaurantProvider provider,
+    Translations t,
   ) {
     provider.toggleRestaurantStatus().then((success) {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              provider.restaurant?.isCurrentlyOpen == true ? '已设置营业' : '已设置打烊',
+              provider.restaurant?.isCurrentlyOpen == true
+                  ? t.restaurant.setOpenSuccess
+                  : t.restaurant.setClosedSuccess,
             ),
             backgroundColor: AppTheme.successColor,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('状态切换失败'),
+          SnackBar(
+            content: Text(t.restaurant.statusToggleFailed),
             backgroundColor: AppTheme.errorColor,
           ),
         );
@@ -452,6 +492,7 @@ class RestaurantInfoScreen extends StatelessWidget {
   void _showUpdateVerificationCodeDialog(
     BuildContext context,
     RestaurantProvider provider,
+    Translations t,
   ) {
     final TextEditingController _controller = TextEditingController(
       text: provider.chatRoomVerificationCode,
@@ -462,7 +503,7 @@ class RestaurantInfoScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: Colors.white,
-        title: const Text('修改聊天室验证码'),
+        title: Text(t.restaurant.editVerificationCode),
         content: Form(
           key: _formKey,
           child: Column(
@@ -470,17 +511,17 @@ class RestaurantInfoScreen extends StatelessWidget {
             children: [
               TextFormField(
                 controller: _controller,
-                decoration: const InputDecoration(
-                  labelText: '新验证码',
-                  hintText: '请输入新的聊天室验证码',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: t.restaurant.newCode,
+                  hintText: t.restaurant.enterNewCode,
+                  border: const OutlineInputBorder(),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return '请输入验证码';
+                    return t.restaurant.enterCode;
                   }
                   if (value.length < 4) {
-                    return '验证码长度不能少于4位';
+                    return t.restaurant.codeMinLength.replaceAll('{min}', '4');
                   }
                   return null;
                 },
@@ -492,7 +533,7 @@ class RestaurantInfoScreen extends StatelessWidget {
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
             style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
-            child: const Text('取消'),
+            child: Text(t.restaurant.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -504,15 +545,18 @@ class RestaurantInfoScreen extends StatelessWidget {
                   if (success) {
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('验证码更新成功'),
+                      SnackBar(
+                        content: Text(t.restaurant.codeUpdateSuccess),
                         backgroundColor: AppTheme.successColor,
                       ),
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(provider.errorMessage ?? '验证码更新失败'),
+                        content: Text(
+                          provider.errorMessage ??
+                              t.restaurant.codeUpdateFailed,
+                        ),
                         backgroundColor: AppTheme.errorColor,
                       ),
                     );
@@ -524,7 +568,7 @@ class RestaurantInfoScreen extends StatelessWidget {
               backgroundColor: Colors.black,
               foregroundColor: Colors.white,
             ),
-            child: const Text('保存'),
+            child: Text(t.restaurant.save),
           ),
         ],
       ),

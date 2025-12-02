@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:foodieconnect/core/constants/app_constants.dart';
 import 'package:foodieconnect/core/theme/app_theme.dart';
+import 'package:foodieconnect/l10n/generated/translations.g.dart';
 
 /// 统计概览页面
 class StatisticsOverviewScreen extends StatelessWidget {
@@ -11,91 +12,156 @@ class StatisticsOverviewScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppTheme.surfaceColor,
       appBar: AppBar(
-        title: const Text('数据统计'),
+        title: Text(Translations.of(context).statistics.title),
         backgroundColor: AppTheme.primaryColor,
         foregroundColor: Colors.white,
         elevation: 0,
       ),
-      body: _buildBody(),
+      body: _buildBody(context),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(BuildContext context) {
+    final t = Translations.of(context);
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // 今日统计
-          _buildTodayStats(),
-          
+          _buildTodayStats(t),
+
           const SizedBox(height: AppConstants.defaultPadding),
-          
+
           // 本周统计
-          _buildWeeklyStats(),
-          
+          _buildWeeklyStats(t),
+
           const SizedBox(height: AppConstants.defaultPadding),
-          
+
           // 本月统计
-          _buildMonthlyStats(),
-          
+          _buildMonthlyStats(t),
+
           const SizedBox(height: AppConstants.defaultPadding),
-          
+
           // 本年统计
-          _buildYearlyStats(),
+          _buildYearlyStats(t),
         ],
       ),
     );
   }
 
-  Widget _buildTodayStats() {
+  Widget _buildTodayStats(Translations t) {
     return _buildStatsCard(
-      '今日统计',
+      '${t.statistics.today}${t.statistics.overview}',
       Icons.today,
       [
-        _buildStatItem('今日营收', '¥2,345.00', AppTheme.successColor),
-        _buildStatItem('今日订单', '156', AppTheme.primaryColor),
-        _buildStatItem('今日顾客', '89', AppTheme.warningColor),
-        _buildStatItem('今日评价', '23', AppTheme.errorColor),
+        _buildStatItem(
+          '${t.statistics.today}${t.statistics.revenue}',
+          '¥2,345.00',
+          AppTheme.successColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.today}${t.statistics.orders}',
+          '156',
+          AppTheme.primaryColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.today}${t.statistics.customers}',
+          '89',
+          AppTheme.warningColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.today}${t.statistics.reviews}',
+          '23',
+          AppTheme.errorColor,
+        ),
       ],
     );
   }
 
-  Widget _buildWeeklyStats() {
+  Widget _buildWeeklyStats(Translations t) {
     return _buildStatsCard(
-      '本周统计',
+      '${t.statistics.weekly}${t.statistics.overview}',
       Icons.date_range,
       [
-        _buildStatItem('本周营收', '¥16,523.00', AppTheme.successColor),
-        _buildStatItem('本周订单', '1,092', AppTheme.primaryColor),
-        _buildStatItem('本周顾客', '623', AppTheme.warningColor),
-        _buildStatItem('本周评价', '161', AppTheme.errorColor),
+        _buildStatItem(
+          '${t.statistics.weekly}${t.statistics.revenue}',
+          '¥16,523.00',
+          AppTheme.successColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.weekly}${t.statistics.orders}',
+          '1,092',
+          AppTheme.primaryColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.weekly}${t.statistics.customers}',
+          '623',
+          AppTheme.warningColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.weekly}${t.statistics.reviews}',
+          '161',
+          AppTheme.errorColor,
+        ),
       ],
     );
   }
 
-  Widget _buildMonthlyStats() {
+  Widget _buildMonthlyStats(Translations t) {
     return _buildStatsCard(
-      '本月统计',
+      '${t.statistics.monthly}${t.statistics.overview}',
       Icons.calendar_month,
       [
-        _buildStatItem('本月营收', '¥66,892.00', AppTheme.successColor),
-        _buildStatItem('本月订单', '4,368', AppTheme.primaryColor),
-        _buildStatItem('本月顾客', '2,492', AppTheme.warningColor),
-        _buildStatItem('本月评价', '644', AppTheme.errorColor),
+        _buildStatItem(
+          '${t.statistics.monthly}${t.statistics.revenue}',
+          '¥66,892.00',
+          AppTheme.successColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.monthly}${t.statistics.orders}',
+          '4,368',
+          AppTheme.primaryColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.monthly}${t.statistics.customers}',
+          '2,492',
+          AppTheme.warningColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.monthly}${t.statistics.reviews}',
+          '644',
+          AppTheme.errorColor,
+        ),
       ],
     );
   }
 
-  Widget _buildYearlyStats() {
+  Widget _buildYearlyStats(Translations t) {
     return _buildStatsCard(
-      '本年统计',
+      '${t.statistics.yearly}${t.statistics.overview}',
       Icons.analytics,
       [
-        _buildStatItem('本年营收', '¥802,704.00', AppTheme.successColor),
-        _buildStatItem('本年订单', '52,416', AppTheme.primaryColor),
-        _buildStatItem('本年顾客', '29,904', AppTheme.warningColor),
-        _buildStatItem('本年评价', '7,728', AppTheme.errorColor),
+        _buildStatItem(
+          '${t.statistics.yearly}${t.statistics.revenue}',
+          '¥802,704.00',
+          AppTheme.successColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.yearly}${t.statistics.orders}',
+          '52,416',
+          AppTheme.primaryColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.yearly}${t.statistics.customers}',
+          '29,904',
+          AppTheme.warningColor,
+        ),
+        _buildStatItem(
+          '${t.statistics.yearly}${t.statistics.reviews}',
+          '7,728',
+          AppTheme.errorColor,
+        ),
       ],
     );
   }
@@ -109,11 +175,7 @@ class StatisticsOverviewScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(
-                  icon,
-                  size: 24,
-                  color: AppTheme.primaryColor,
-                ),
+                Icon(icon, size: 24, color: AppTheme.primaryColor),
                 const SizedBox(width: AppConstants.defaultPadding / 2),
                 Text(
                   title,

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:foodieconnect/core/constants/app_constants.dart';
 import 'package:foodieconnect/core/theme/app_theme.dart';
 import 'package:foodieconnect/core/utils/logger.dart';
+import 'package:foodieconnect/l10n/generated/translations.g.dart';
 import 'package:foodieconnect/presentation/providers/auth_provider.dart';
 import 'package:foodieconnect/presentation/screens/dashboard/dashboard_screen.dart';
 import 'package:foodieconnect/presentation/widgets/common/loading_indicator.dart';
@@ -50,24 +51,25 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final username = _usernameController.text.trim();
     final password = _passwordController.text;
+    final t = Translations.of(context);
 
     if (username.isEmpty || password.isEmpty) {
-      _showError('请输入用户名和密码');
+      _showError(t.auth.enterUsernameAndPassword);
       return;
     }
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    
+
     final success = await authProvider.login(
       username: username,
       password: password,
     );
 
     if (success && mounted) {
-      _showSuccess('登录成功');
+      _showSuccess(t.auth.loginSuccess);
       _navigateToDashboard();
     } else if (mounted) {
-      final errorMessage = authProvider.errorMessage ?? '登录失败';
+      final errorMessage = authProvider.errorMessage ?? t.auth.loginFailed;
       _showError(errorMessage);
     }
   }
@@ -75,9 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
   /// 导航到仪表盘
   void _navigateToDashboard() {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const DashboardScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const DashboardScreen()),
     );
   }
 
@@ -121,7 +121,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void _handleForgotPassword() {
     // 可以在这里添加忘记密码的逻辑
     AppLogger.debug('LoginScreen: 忘记密码被点击');
-    _showInfo('请联系管理员重置密码');
+    final t = Translations.of(context);
+    _showInfo(t.auth.resetPasswordContactAdmin);
   }
 
   /// 显示信息消息
@@ -153,19 +154,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   // Logo或标题
                   _buildHeader(),
-                  
+
                   const SizedBox(height: AppConstants.defaultPadding * 3),
-                  
+
                   // 登录表单
                   _buildLoginForm(authProvider),
-                  
+
                   const SizedBox(height: AppConstants.defaultPadding),
-                  
+
                   // 记住我和忘记密码
                   _buildOptions(),
-                  
+
                   const SizedBox(height: AppConstants.defaultPadding * 2),
-                  
+
                   // 登录按钮
                   _buildLoginButton(authProvider),
                 ],
@@ -179,6 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   /// 构建头部
   Widget _buildHeader() {
+    final t = Translations.of(context);
     return Column(
       children: [
         // 应用Logo（可以替换为实际的Logo）
@@ -189,15 +191,11 @@ class _LoginScreenState extends State<LoginScreen> {
             color: AppTheme.primaryColor,
             borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
           ),
-          child: const Icon(
-            Icons.restaurant,
-            size: 40,
-            color: Colors.white,
-          ),
+          child: const Icon(Icons.restaurant, size: 40, color: Colors.white),
         ),
-        
+
         const SizedBox(height: AppConstants.defaultPadding),
-        
+
         // 应用标题
         Text(
           AppConstants.appName,
@@ -206,15 +204,15 @@ class _LoginScreenState extends State<LoginScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        
+
         const SizedBox(height: AppConstants.defaultPadding / 2),
-        
+
         // 副标题
         Text(
-          '商家管理平台',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppTheme.textSecondary,
-          ),
+          t.auth.merchantPlatform,
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: AppTheme.textSecondary),
         ),
       ],
     );
@@ -222,6 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   /// 构建登录表单
   Widget _buildLoginForm(AuthProvider authProvider) {
+    final t = Translations.of(context);
     return Column(
       children: [
         // 用户名输入框
@@ -229,25 +228,25 @@ class _LoginScreenState extends State<LoginScreen> {
           controller: _usernameController,
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
-          decoration: const InputDecoration(
-            labelText: '用户名',
-            hintText: '请输入用户名',
-            prefixIcon: Icon(Icons.person_outline),
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: t.auth.username,
+            hintText: t.auth.enterUsername,
+            prefixIcon: const Icon(Icons.person_outline),
+            border: const OutlineInputBorder(),
           ),
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
-              return '请输入用户名';
+              return t.auth.enterUsername;
             }
             if (value.trim().length < 3) {
-              return '用户名至少3个字符';
+              return t.auth.usernameMinLength.replaceAll('{min}', '3');
             }
             return null;
           },
         ),
-        
+
         const SizedBox(height: AppConstants.defaultPadding),
-        
+
         // 密码输入框
         TextFormField(
           controller: _passwordController,
@@ -255,8 +254,8 @@ class _LoginScreenState extends State<LoginScreen> {
           keyboardType: TextInputType.visiblePassword,
           textInputAction: TextInputAction.done,
           decoration: InputDecoration(
-            labelText: '密码',
-            hintText: '请输入密码',
+            labelText: t.auth.password,
+            hintText: t.auth.enterPassword,
             prefixIcon: const Icon(Icons.lock_outline),
             suffixIcon: IconButton(
               icon: Icon(
@@ -268,10 +267,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return '请输入密码';
+              return t.auth.enterPassword;
             }
             if (value.length < 6) {
-              return '密码至少6个字符';
+              return t.auth.passwordMinLength.replaceAll('{min}', '6');
             }
             return null;
           },
@@ -283,6 +282,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   /// 构建选项区域
   Widget _buildOptions() {
+    final t = Translations.of(context);
     return Row(
       children: [
         // 记住我
@@ -290,16 +290,16 @@ class _LoginScreenState extends State<LoginScreen> {
           child: CheckboxListTile(
             value: _rememberMe,
             onChanged: (value) => _toggleRememberMe(),
-            title: const Text('记住我'),
+            title: Text(t.auth.rememberMe),
             contentPadding: EdgeInsets.zero,
             dense: true,
           ),
         ),
-        
+
         // 忘记密码
         TextButton(
           onPressed: _handleForgotPassword,
-          child: const Text('忘记密码？'),
+          child: Text(t.auth.forgotPasswordQuestion),
         ),
       ],
     );
@@ -307,6 +307,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   /// 构建登录按钮
   Widget _buildLoginButton(AuthProvider authProvider) {
+    final t = Translations.of(context);
     return SizedBox(
       width: double.infinity,
       height: 50,
@@ -320,13 +321,10 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         child: authProvider.isLoading
-            ? const LoadingIndicator(
-                color: Colors.white,
-                size: 24,
-              )
-            : const Text(
-                '登录',
-                style: TextStyle(
+            ? const LoadingIndicator(color: Colors.white, size: 24)
+            : Text(
+                t.auth.login,
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),

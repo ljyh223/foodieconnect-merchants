@@ -1,0 +1,9 @@
+{
+  "required": "此字段為必填項",
+  "email": "請輸入有效的郵箱地址",
+  "phone": "請輸入有效的手機號碼",
+  "minLength": "最少需要 {min} 個字符",
+  "maxLength": "最多只能輸入 {max} 個字符",
+  "numeric": "請輸入數字",
+  "positive": "請輸入正數"
+}

@@ -5,6 +5,7 @@ import 'package:foodieconnect/core/theme/app_theme.dart';
 import 'package:foodieconnect/core/utils/image_utils.dart';
 import 'package:foodieconnect/presentation/providers/staff_provider.dart';
 import 'package:foodieconnect/data/models/staff/staff_model.dart';
+import 'package:foodieconnect/l10n/generated/translations.g.dart';
 
 /// 员工列表页面
 class StaffListScreen extends StatefulWidget {
@@ -46,7 +47,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
         return Scaffold(
           backgroundColor: AppTheme.surfaceColor,
           appBar: AppBar(
-            title: const Text('员工管理'),
+            title: Text(Translations.of(context).staff.title),
             backgroundColor: AppTheme.primaryColor,
             foregroundColor: Colors.white,
             elevation: 0,
@@ -74,7 +75,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
           children: [
             CircularProgressIndicator(),
             const SizedBox(height: 16),
-            Text('加载员工列表中...'),
+            Text(Translations.of(context).staff.loadingStaffList),
           ],
         ),
       );
@@ -99,10 +100,10 @@ class _StaffListScreenState extends State<StaffListScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildStatCard('总员工', '${provider.totalCount}', Icons.people),
-            _buildStatCard('在线', '${provider.onlineStaffCount}', Icons.online_prediction, Colors.green),
-            _buildStatCard('离线', '${provider.offlineStaffCount}', Icons.offline_bolt, Colors.grey),
-            _buildStatCard('忙碌', '${provider.busyStaffCount}', Icons.work, Colors.orange),
+            _buildStatCard(Translations.of(context).staff.totalStaff, '${provider.totalCount}', Icons.people),
+            _buildStatCard(Translations.of(context).staff.onlineStaff, '${provider.onlineStaffCount}', Icons.online_prediction, Colors.green),
+            _buildStatCard(Translations.of(context).staff.offlineStaff, '${provider.offlineStaffCount}', Icons.offline_bolt, Colors.grey),
+            _buildStatCard(Translations.of(context).staff.busyStaff, '${provider.busyStaffCount}', Icons.work, Colors.orange),
           ],
         ),
       ),
@@ -267,7 +268,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
             onPressed: () {
               _updateStaffRating(staff);
             },
-            child: const Text('更新评分'),
+            child: Text(Translations.of(context).staff.updateRating),
           ),
         ),
       ],
@@ -306,13 +307,13 @@ class _StaffListScreenState extends State<StaffListScreen> {
   String _getStatusButtonText(String status) {
     switch (status.toUpperCase()) {
       case 'ONLINE':
-        return '设为离线';
+        return Translations.of(context).staff.setAsOffline;
       case 'OFFLINE':
-        return '设为在线';
+        return Translations.of(context).staff.setAsOnline;
       case 'BUSY':
         return '设为离线';
       default:
-        return '未知状态';
+        return Translations.of(context).staff.unknownStatus;
     }
   }
 
@@ -324,19 +325,19 @@ class _StaffListScreenState extends State<StaffListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('确认操作'),
-        content: Text('确定要将 ${staff.displayName} 的状态设置为 ${_getStatusDisplayText(newStatus)} 吗？'),
+        title: Text(Translations.of(context).staff.confirmOperation),
+        content: Text(Translations.of(context).staff.confirmStatusChange(staffName: staff.displayName, newStatus: _getStatusDisplayText(newStatus))),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
+            child: Text(Translations.of(context).staff.cancel),
           ),
           TextButton(
             onPressed: () async {
               Navigator.of(context).pop();
               await provider.updateStaffStatus(staff.id, newStatus);
             },
-            child: const Text('确定'),
+            child: Text(Translations.of(context).staff.confirm),
           ),
         ],
       ),
@@ -367,7 +368,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
       case 'BUSY':
         return '忙碌';
       default:
-        return '未知';
+        return Translations.of(context).staff.unknown;
     }
   }
 
@@ -381,18 +382,18 @@ class _StaffListScreenState extends State<StaffListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('更新评分'),
+        title: Text(Translations.of(context).staff.updateRatingTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('为 ${staff.displayName} 设置新评分：'),
+            Text(Translations.of(context).staff.setNewRating(staffName: staff.displayName)),
             const SizedBox(height: 16),
             TextField(
               controller: ratingController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: '评分 (0.0-5.0)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: Translations.of(context).staff.ratingInputHint,
+                border: const OutlineInputBorder(),
               ),
             ),
           ],
@@ -410,7 +411,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
                 await provider.updateStaffRating(staff.id, newRating);
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('请输入有效的评分 (0.0-5.0)')),
+                  SnackBar(content: Text(Translations.of(context).staff.validRatingRequired)),
                 );
               }
             },
@@ -447,7 +448,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
                 onPressed: () {
                   Provider.of<StaffProvider>(context, listen: false).refreshStaffList();
                 },
-                child: const Text('重试'),
+                child: Text(Translations.of(context).staff.retry),
               ),
             ],
           ),
@@ -457,18 +458,18 @@ class _StaffListScreenState extends State<StaffListScreen> {
   }
 
   Widget _buildEmptyWidget() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.people_outline,
             size: 64,
             color: AppTheme.textSecondary,
           ),
-          SizedBox(height: AppConstants.defaultPadding),
+          const SizedBox(height: AppConstants.defaultPadding),
           Text(
-            '暂无员工信息',
+            Translations.of(context).staff.noStaffInfo,
             style: TextStyle(
               fontSize: 16,
               color: AppTheme.textSecondary,
