@@ -16,6 +16,12 @@ class RestaurantInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RestaurantProvider>(
       builder: (context, provider, child) {
+        // 加载聊天室验证码
+        if (provider.chatRoomVerificationCode == null && !provider.isLoading) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            provider.loadChatRoomVerificationCode();
+          });
+        }
         return Scaffold(
           backgroundColor: AppTheme.surfaceColor,
           appBar: AppBar(
@@ -161,6 +167,39 @@ class RestaurantInfoScreen extends StatelessWidget {
               Expanded(child: _buildInfoRow('评分', restaurant.ratingDisplay)),
               Expanded(
                 child: _buildInfoRow('评价数', restaurant.reviewCountDisplay),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: AppConstants.defaultPadding * 2),
+
+          // 聊天室验证码
+          _buildSectionTitle('聊天室验证码'),
+          const SizedBox(height: AppConstants.defaultPadding / 2),
+          Row(
+            children: [
+              Expanded(
+                child: _buildInfoRow(
+                  '当前验证码',
+                  provider.chatRoomVerificationCode ?? '加载中...',
+                ),
+              ),
+              const SizedBox(width: AppConstants.defaultPadding),
+              ElevatedButton(
+                onPressed: () {
+                  // 修改验证码
+                  _showUpdateVerificationCodeDialog(context, provider);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  minimumSize: const Size(80, 40),
+                ),
+                child: const Text('修改'),
               ),
             ],
           ),
@@ -408,6 +447,87 @@ class RestaurantInfoScreen extends StatelessWidget {
       ),
     );
   }
-  
-}
 
+  /// 显示修改聊天室验证码对话框
+  void _showUpdateVerificationCodeDialog(
+    BuildContext context,
+    RestaurantProvider provider,
+  ) {
+    final TextEditingController _controller = TextEditingController(
+      text: provider.chatRoomVerificationCode,
+    );
+    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text('修改聊天室验证码'),
+        content: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextFormField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  labelText: '新验证码',
+                  hintText: '请输入新的聊天室验证码',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return '请输入验证码';
+                  }
+                  if (value.length < 4) {
+                    return '验证码长度不能少于4位';
+                  }
+                  return null;
+                },
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
+            child: const Text('取消'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (_formKey.currentState?.validate() == true) {
+                final newCode = _controller.text.trim();
+                provider.updateChatRoomVerificationCode(newCode).then((
+                  success,
+                ) {
+                  if (success) {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('验证码更新成功'),
+                        backgroundColor: AppTheme.successColor,
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(provider.errorMessage ?? '验证码更新失败'),
+                        backgroundColor: AppTheme.errorColor,
+                      ),
+                    );
+                  }
+                });
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('保存'),
+          ),
+        ],
+      ),
+    );
+  }
+}

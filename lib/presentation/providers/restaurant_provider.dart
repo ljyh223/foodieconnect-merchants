@@ -16,12 +16,14 @@ class RestaurantProvider extends ChangeNotifier {
   bool _isUpdating = false;
   String? _errorMessage;
   RestaurantModel? _restaurant;
+  String? _chatRoomVerificationCode;
 
   // Getters
   bool get isLoading => _isLoading;
   bool get isUpdating => _isUpdating;
   String? get errorMessage => _errorMessage;
   RestaurantModel? get restaurant => _restaurant;
+  String? get chatRoomVerificationCode => _chatRoomVerificationCode;
 
   /// 获取餐厅信息
   Future<void> loadRestaurant() async {
@@ -324,12 +326,76 @@ class RestaurantProvider extends ChangeNotifier {
     _clearError();
   }
 
+  /// 获取聊天室验证码
+  Future<void> loadChatRoomVerificationCode() async {
+    try {
+      _setLoading(true);
+      _clearError();
+
+      AppLogger.info('RestaurantProvider: 开始加载聊天室验证码');
+
+      final response = await _restaurantService.getChatRoomVerificationCode();
+
+      if (response.isSuccess && response.data?.isNotEmpty == true) {
+        _chatRoomVerificationCode = response.data;
+        AppLogger.info('RestaurantProvider: 聊天室验证码加载成功');
+      } else {
+        _setError(response.errorMessage);
+        AppLogger.warning(
+          'RestaurantProvider: 聊天室验证码加载失败 - ${response.errorMessage}',
+        );
+      }
+
+      notifyListeners();
+    } catch (e) {
+      AppLogger.error('RestaurantProvider: 加载聊天室验证码异常', error: e);
+      _setError('加载聊天室验证码失败，请稍后重试');
+      notifyListeners();
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// 更新聊天室验证码
+  Future<bool> updateChatRoomVerificationCode(String verificationCode) async {
+    try {
+      _setUpdating(true);
+      _clearError();
+
+      AppLogger.info('RestaurantProvider: 开始更新聊天室验证码');
+
+      final response = await _restaurantService.updateChatRoomVerificationCode(
+        verificationCode,
+      );
+
+      if (response.isSuccess) {
+        _chatRoomVerificationCode = verificationCode;
+        AppLogger.info('RestaurantProvider: 聊天室验证码更新成功');
+        notifyListeners();
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        AppLogger.warning(
+          'RestaurantProvider: 聊天室验证码更新失败 - ${response.errorMessage}',
+        );
+        return false;
+      }
+    } catch (e) {
+      AppLogger.error('RestaurantProvider: 更新聊天室验证码异常', error: e);
+      _setError('更新聊天室验证码失败，请稍后重试');
+      return false;
+    } finally {
+      _setUpdating(false);
+    }
+  }
+
   /// 重置状态
   void reset() {
     _isLoading = false;
     _isUpdating = false;
     _errorMessage = null;
     _restaurant = null;
+    _chatRoomVerificationCode = null;
     notifyListeners();
     AppLogger.info('RestaurantProvider: 状态已重置');
   }
