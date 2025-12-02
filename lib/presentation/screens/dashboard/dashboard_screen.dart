@@ -118,97 +118,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  /// 登出处理
-  Future<void> _handleLogout() async {
-    final confirmed = await _showLogoutConfirmation();
-    if (!confirmed) return;
-
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    await authProvider.logout();
-
-    // 重置所有Provider状态
-    if (mounted) {
-      if (context.mounted) {
-              Provider.of<RestaurantProvider>(context, listen: false).reset();
-              Provider.of<MenuProvider>(context, listen: false).reset();
-              Provider.of<StaffProvider>(context, listen: false).reset();
-            }
-    }
-  }
-
-  /// 显示登出确认对话框
-  Future<bool> _showLogoutConfirmation() async {
-    return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('确认登出'),
-        content: const Text('您确定要退出登录吗？'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('取消'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('确定'),
-          ),
-        ],
-      ),
-    ) ?? false;
-  }
-
-  /// 构建应用栏
-  PreferredSizeWidget _buildAppBar(AuthProvider authProvider) {
-    return AppBar(
-      title: Text(
-        AppConstants.appName,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      backgroundColor: AppTheme.primaryColor,
-      elevation: 0,
-      actions: [
-        // 用户信息或登出按钮
-        PopupMenuButton<String>(
-          icon: const Icon(Icons.account_circle, color: Colors.white),
-          onSelected: (value) async {
-            if (value == 'logout') {
-              await _handleLogout();
-            }
-          },
-          itemBuilder: (context) => [
-            const PopupMenuItem(
-              value: 'profile',
-              child: Row(
-                children: [
-                  Icon(Icons.person, size: 20),
-                  SizedBox(width: 8),
-                  Text('个人中心'),
-                ],
-              ),
-            ),
-            const PopupMenuItem(
-              value: 'logout',
-              child: Row(
-                children: [
-                  Icon(Icons.logout, size: 20),
-                  SizedBox(width: 8),
-                  Text('退出登录'),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   /// 构建页面内容
   Widget _buildPageContent() {
-    return Consumer4<AuthProvider, RestaurantProvider, MenuProvider, StaffProvider>(
+    return Consumer4<
+      AuthProvider,
+      RestaurantProvider,
+      MenuProvider,
+      StaffProvider
+    >(
       builder: (context, authProvider, restaurantProvider, menuProvider, staffProvider, child) {
         // 检查是否正在加载
         if (authProvider.isLoading ||
@@ -220,7 +137,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularProgressIndicator(),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Text('加载中...'),
               ],
             ),
@@ -296,11 +213,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
-
     return Scaffold(
       backgroundColor: AppTheme.surfaceColor,
-      appBar: _buildAppBar(authProvider),
       body: _buildPageContent(),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );

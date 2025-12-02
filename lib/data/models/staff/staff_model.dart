@@ -1,6 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../core/enums/staff_status_enum.dart';
+
 part 'staff_model.g.dart';
 
 /// 员工模型
@@ -83,37 +85,29 @@ class StaffModel extends Equatable {
     );
   }
 
+  /// 获取StaffStatus枚举
+  StaffStatus? get statusEnum => StaffStatus.fromValue(status);
+
   /// 检查员工是否在线
-  bool get isOnline => status.toUpperCase() == 'ONLINE';
+  bool get isOnline => statusEnum?.isOnline ?? false;
 
   /// 检查员工是否离线
-  bool get isOffline => status.toUpperCase() == 'OFFLINE';
+  bool get isOffline => statusEnum?.isOffline ?? false;
 
   /// 检查员工是否忙碌
-  bool get isBusy => status.toUpperCase() == 'BUSY';
+  bool get isBusy => statusEnum?.isBusy ?? false;
 
   /// 获取状态显示文本
-  String get statusDisplay {
-    switch (status.toUpperCase()) {
-      case 'ONLINE':
-        return '在线';
-      case 'OFFLINE':
-        return '离线';
-      case 'BUSY':
-        return '忙碌';
-      default:
-        return '未知';
-    }
-  }
+  String get statusDisplay => statusEnum?.displayName ?? '未知';
 
   /// 获取状态颜色
   String get statusColor {
-    switch (status.toUpperCase()) {
-      case 'ONLINE':
+    switch (statusEnum) {
+      case StaffStatus.online:
         return '#4CAF50'; // 绿色
-      case 'OFFLINE':
+      case StaffStatus.offline:
         return '#9E9E9E'; // 灰色
-      case 'BUSY':
+      case StaffStatus.busy:
         return '#FF9800'; // 橙色
       default:
         return '#9E9E9E'; // 灰色

@@ -114,7 +114,7 @@ class StaffService {
 
       final response = await _apiService.put<Map<String, dynamic>>(
         '/merchant/staff/$staffId/status',
-        data: {
+        queryParameters: {
           'status': status,
         },
       );
@@ -156,7 +156,7 @@ class StaffService {
 
       final response = await _apiService.put<Map<String, dynamic>>(
         '/merchant/staff/$staffId/rating',
-        data: {
+        queryParameters: {
           'rating': rating,
         },
       );

@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:foodieconnect/core/utils/logger.dart';
 import 'package:foodieconnect/data/models/restaurant/restaurant_model.dart';
@@ -36,7 +38,9 @@ class RestaurantProvider extends ChangeNotifier {
         AppLogger.info('RestaurantProvider: 餐厅信息加载成功');
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('RestaurantProvider: 餐厅信息加载失败 - ${response.errorMessage}');
+        AppLogger.warning(
+          'RestaurantProvider: 餐厅信息加载失败 - ${response.errorMessage}',
+        );
       }
 
       notifyListeners();
@@ -66,7 +70,9 @@ class RestaurantProvider extends ChangeNotifier {
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('RestaurantProvider: 餐厅信息更新失败 - ${response.errorMessage}');
+        AppLogger.warning(
+          'RestaurantProvider: 餐厅信息更新失败 - ${response.errorMessage}',
+        );
         return false;
       }
     } catch (e) {
@@ -98,7 +104,9 @@ class RestaurantProvider extends ChangeNotifier {
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('RestaurantProvider: 餐厅营业状态更新失败 - ${response.errorMessage}');
+        AppLogger.warning(
+          'RestaurantProvider: 餐厅营业状态更新失败 - ${response.errorMessage}',
+        );
         return false;
       }
     } catch (e) {
@@ -129,9 +137,23 @@ class RestaurantProvider extends ChangeNotifier {
 
       AppLogger.info('RestaurantProvider: 开始上传餐厅图片');
 
+      // 转换 XFile 为 File
+      File? file;
+      if (imageFile is XFile) {
+        file = File(imageFile.path);
+      } else if (imageFile is File) {
+        file = imageFile;
+      } else {
+        _setError('不支持的图片类型');
+        AppLogger.error(
+          'RestaurantProvider: 不支持的图片类型 - ${imageFile.runtimeType}',
+        );
+        return false;
+      }
+
       // 第一步：上传图片文件
-      final uploadResponse = await _restaurantService.uploadImage(imageFile);
-      
+      final uploadResponse = await _restaurantService.uploadImage(file);
+
       if (!uploadResponse.isSuccess || uploadResponse.data?.isEmpty != false) {
         final errorMessage = uploadResponse.errorMessage.isNotEmpty == true
             ? uploadResponse.errorMessage
@@ -145,7 +167,9 @@ class RestaurantProvider extends ChangeNotifier {
       AppLogger.info('RestaurantProvider: 图片上传成功，URL: $imageUrl');
 
       // 第二步：更新餐厅图片URL
-      final updateResponse = await _restaurantService.updateRestaurantImageUrl(imageUrl);
+      final updateResponse = await _restaurantService.updateRestaurantImageUrl(
+        imageUrl,
+      );
 
       if (updateResponse.isSuccess) {
         // 更新本地状态
@@ -157,7 +181,9 @@ class RestaurantProvider extends ChangeNotifier {
         return true;
       } else {
         _setError(updateResponse.errorMessage);
-        AppLogger.warning('RestaurantProvider: 餐厅图片URL更新失败 - ${updateResponse.errorMessage}');
+        AppLogger.warning(
+          'RestaurantProvider: 餐厅图片URL更新失败 - ${updateResponse.errorMessage}',
+        );
         return false;
       }
     } catch (e) {
@@ -177,48 +203,40 @@ class RestaurantProvider extends ChangeNotifier {
   /// 获取餐厅显示名称
   String get restaurantDisplayName {
     if (_restaurant == null) return '未知餐厅';
-    return _restaurant!.name.isNotEmpty 
-        ? _restaurant!.name 
-        : '未命名餐厅';
+    return _restaurant!.name.isNotEmpty ? _restaurant!.name : '未命名餐厅';
   }
 
   /// 获取餐厅类型显示
   String get restaurantTypeDisplay {
     if (_restaurant == null) return '';
-    return _restaurant!.type.isNotEmpty 
-        ? _restaurant!.type 
-        : '未分类';
+    return _restaurant!.type.isNotEmpty ? _restaurant!.type : '未分类';
   }
 
   /// 获取餐厅地址显示
   String get restaurantAddressDisplay {
     if (_restaurant == null) return '';
-    return _restaurant!.address.isNotEmpty 
-        ? _restaurant!.address 
-        : '地址未设置';
+    return _restaurant!.address.isNotEmpty ? _restaurant!.address : '地址未设置';
   }
 
   /// 获取餐厅电话显示
   String get restaurantPhoneDisplay {
     if (_restaurant == null) return '';
-    return _restaurant!.phone.isNotEmpty 
-        ? _restaurant!.phone 
-        : '电话未设置';
+    return _restaurant!.phone.isNotEmpty ? _restaurant!.phone : '电话未设置';
   }
 
   /// 获取餐厅营业时间显示
   String get restaurantHoursDisplay {
     if (_restaurant == null) return '';
-    return _restaurant!.hours?.isNotEmpty == true 
-        ? _restaurant!.hours! 
+    return _restaurant!.hours?.isNotEmpty == true
+        ? _restaurant!.hours!
         : '营业时间未设置';
   }
 
   /// 获取餐厅描述显示
   String get restaurantDescriptionDisplay {
     if (_restaurant == null) return '';
-    return _restaurant!.description?.isNotEmpty == true 
-        ? _restaurant!.description! 
+    return _restaurant!.description?.isNotEmpty == true
+        ? _restaurant!.description!
         : '暂无描述';
   }
 

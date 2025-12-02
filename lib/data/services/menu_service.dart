@@ -220,7 +220,7 @@ class MenuService {
 
       final response = await _apiService.put<Map<String, dynamic>>(
         '/merchant/menu/items/$itemId/status',
-        data: {
+        queryParameters: {
           'isAvailable': isAvailable,
         },
       );
@@ -262,7 +262,7 @@ class MenuService {
 
       final response = await _apiService.put<Map<String, dynamic>>(
         '/merchant/menu/items/$itemId/recommended',
-        data: {
+        queryParameters: {
           'isRecommended': isRecommended,
         },
       );

@@ -166,24 +166,28 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
       final restaurantProvider = Provider.of<RestaurantProvider>(context, listen: false);
       
       // 如果有新图片，先上传图片
-      if (_isImageChanged && _selectedImage != null) {
-        setState(() {
-          _isUploadingImage = true;
-        });
-        
-        final imageSuccess = await restaurantProvider.updateRestaurantImage(_selectedImage!);
-        
-        setState(() {
-          _isUploadingImage = false;
-        });
-        
-        if (!imageSuccess) {
-          if (mounted) {
-            _showErrorSnackBar(restaurantProvider.errorMessage ?? '图片上传失败');
+        if (_isImageChanged && _selectedImage != null) {
+          setState(() {
+            _isUploadingImage = true;
+          });
+          
+          final imageSuccess = await restaurantProvider.updateRestaurantImage(_selectedImage!);
+          
+          setState(() {
+            _isUploadingImage = false;
+            // 更新本地_imageUrl为新上传的图片URL
+            if (restaurantProvider.restaurant?.displayImage != null) {
+              _imageUrl = restaurantProvider.restaurant!.displayImage;
+            }
+          });
+          
+          if (!imageSuccess) {
+            if (mounted) {
+              _showErrorSnackBar(restaurantProvider.errorMessage ?? '图片上传失败');
+            }
+            return;
           }
-          return;
         }
-      }
 
       // 创建更新请求
       final request = RestaurantUpdateRequest(

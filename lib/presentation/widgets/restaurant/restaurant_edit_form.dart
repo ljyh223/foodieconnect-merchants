@@ -291,8 +291,7 @@ class _RestaurantEditFormState extends State<RestaurantEditForm> {
           ),
           keyboardType: TextInputType.phone,
           inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-            LengthLimitingTextInputFormatter(11),
+            FilteringTextInputFormatter.digitsOnly
           ],
           validator: (value) {
             if (value == null || value.trim().isEmpty) {

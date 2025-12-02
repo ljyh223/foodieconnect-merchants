@@ -20,10 +20,10 @@ class MenuItemFormScreen extends StatefulWidget {
   /// 静态跳转方法：方便你在原处直接调用
   /// 使用方法: MenuItemFormScreen.show(context, onSave: (req){...});
   static void show(
-      BuildContext context, {
-        MenuItemModel? item,
-        required Function(MenuItemRequest) onSave,
-      }) {
+    BuildContext context, {
+    MenuItemModel? item,
+    required Function(MenuItemRequest) onSave,
+  }) {
     // 使用 Navigator.push 打开新页面，自带原生流畅动画
     Navigator.of(context).push(
       MaterialPageRoute(
@@ -46,8 +46,8 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
   late final TextEditingController _sortController;
   late final TextEditingController _prepTimeController;
   late final TextEditingController _caloriesController;
-  late final TextEditingController _imageUrlController;
 
+  String? _imageUrl;
   int? _selectedCategoryId;
   bool _isAvailable = true;
   bool _isRecommended = false;
@@ -60,15 +60,22 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
     final item = widget.item;
     _nameController = TextEditingController(text: item?.name ?? '');
     _descController = TextEditingController(text: item?.description ?? '');
-    _priceController = TextEditingController(text: item?.price.toString() ?? '');
+    _priceController = TextEditingController(
+      text: item?.price.toString() ?? '',
+    );
     _originalPriceController = TextEditingController(
-        text: item?.originalPrice?.toString() ?? '');
-    _sortController = TextEditingController(text: item?.sortOrder.toString() ?? '0');
+      text: item?.originalPrice?.toString() ?? '',
+    );
+    _sortController = TextEditingController(
+      text: item?.sortOrder.toString() ?? '0',
+    );
     _prepTimeController = TextEditingController(
-        text: item?.preparationTime?.toString() ?? '');
+      text: item?.preparationTime?.toString() ?? '',
+    );
     _caloriesController = TextEditingController(
-        text: item?.calories?.toString() ?? '');
-    _imageUrlController = TextEditingController(text: item?.imageUrl ?? '');
+      text: item?.calories?.toString() ?? '',
+    );
+    _imageUrl = item?.imageUrl;
 
     _selectedCategoryId = item?.categoryId;
     _isAvailable = item?.isAvailable ?? true;
@@ -84,31 +91,67 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
     _sortController.dispose();
     _prepTimeController.dispose();
     _caloriesController.dispose();
-    _imageUrlController.dispose();
     super.dispose();
   }
 
   Future<void> _handleImageUpload() async {
+    // 显示选择菜单
+    final option = await showModalBottomSheet<int>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('从相册选择'),
+              onTap: () => Navigator.pop(context, 0),
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('拍照'),
+              onTap: () => Navigator.pop(context, 1),
+            ),
+            ListTile(
+              leading: const Icon(Icons.cancel),
+              title: const Text('取消'),
+              onTap: () => Navigator.pop(context, -1),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (option == null || option == -1) return;
+
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
+    final picked = await picker.pickImage(
+      source: option == 0 ? ImageSource.gallery : ImageSource.camera,
+      imageQuality: 80,
+    );
+
     if (picked == null) return;
 
     // 在异步操作前获取context引用
-    final context = this.context;
     final provider = Provider.of<MenuProvider>(context, listen: false);
     // 这里建议加一个 Loading 状态
     final url = await provider.uploadMenuItemImage(File(picked.path));
     if (!mounted) return;
     if (url != null) {
-      setState(() => _imageUrlController.text = url);
+      setState(() => _imageUrl = url);
     }
   }
 
   void _handleSubmit() {
     // 基础验证
-    if (_nameController.text.isEmpty || _priceController.text.isEmpty || _selectedCategoryId == null) {
+    if (_nameController.text.isEmpty ||
+        _priceController.text.isEmpty ||
+        _selectedCategoryId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请填写名称、价格并选择分类'), backgroundColor: Colors.red),
+        const SnackBar(
+          content: Text('请填写名称、价格并选择分类'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
@@ -118,7 +161,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
       price: double.tryParse(_priceController.text) ?? 0,
       categoryId: _selectedCategoryId!,
       description: _descController.text,
-      imageUrl: _imageUrlController.text,
+      imageUrl: _imageUrl,
       isAvailable: _isAvailable,
       isRecommended: _isRecommended,
       sortOrder: int.tryParse(_sortController.text) ?? 0,
@@ -148,7 +191,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<MenuProvider>(context, listen: false);
-    
+
     // 确保分类数据已加载
     if (provider.categories.isEmpty) {
       // 使用 Future.delayed 确保在 build 完成后执行
@@ -169,7 +212,11 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
             onPressed: _handleSubmit,
             child: const Text(
               "保存",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppTheme.primaryColor),
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.primaryColor,
+              ),
             ),
           ),
           const SizedBox(width: 8),
@@ -269,68 +316,110 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
             _buildSectionLabel("图片与设置"),
             _buildCard(
               children: [
-                Row(
+                // 图片上传区域
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: _EfficientTextField(
-                        controller: _imageUrlController,
-                        label: "图片地址",
-                        hint: "https://...",
-                        helperText: "支持网络链接或上传",
-                        icon: Icons.image_outlined,
+                    const Text(
+                      "菜品图片",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(height: 8),
+                    Text(
+                      "上传清晰的菜品照片，有助于提升销量",
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey.shade500,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     InkWell(
                       onTap: _handleImageUpload,
                       child: Container(
-                        width: 50, height: 50,
+                        height: 120,
+                        width: double.infinity,
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                          color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppTheme.primaryColor.withValues(alpha: 0.5)),
+                          border: Border.all(
+                            color: Colors.grey.shade300,
+                            width: 1,
+                            style: BorderStyle.solid,
+                          ),
                         ),
-                        child: const Icon(Icons.cloud_upload, color: AppTheme.primaryColor),
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.cloud_upload_outlined,
+                                size: 36,
+                                color: Colors.grey.shade400,
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                _imageUrl != null ? "点击更换图片" : "点击上传图片",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "支持相册选择或拍照",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey.shade500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
+                    // 图片预览区
+                    if (_imageUrl != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: Image.network(
+                            ImageUtils.getFullImageUrl(_imageUrl!),
+                            height: 150,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Container(
+                              height: 100,
+                              color: Colors.grey.shade200,
+                              alignment: Alignment.center,
+                              child: const Text(
+                                "图片无法加载",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
-                // 图片预览区
-                if (_imageUrlController.text.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        ImageUtils.getFullImageUrl(_imageUrlController.text),
-                        height: 150,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_,__,___) => Container(
-                          height: 100,
-                          color: Colors.grey.shade200,
-                          alignment: Alignment.center,
-                          child: const Text("图片无法加载", style: TextStyle(color: Colors.grey)),
-                        ),
-                      ),
-                    ),
-                  ),
 
                 const Divider(height: 32),
 
                 // 开关选项
                 _buildSwitchTile(
-                    "上架销售",
-                    "关闭后顾客端将不可见",
-                    _isAvailable,
-                        (v) => setState(() => _isAvailable = v)
+                  "上架销售",
+                  "关闭后顾客端将不可见",
+                  _isAvailable,
+                  (v) => setState(() => _isAvailable = v),
                 ),
                 _buildSwitchTile(
-                    "店长推荐",
-                    "在推荐栏目优先展示",
-                    _isRecommended,
-                        (v) => setState(() => _isRecommended = v)
+                  "店长推荐",
+                  "在推荐栏目优先展示",
+                  _isRecommended,
+                  (v) => setState(() => _isRecommended = v),
                 ),
                 // 排序放到最后，因为改动频率较低
                 const SizedBox(height: 8),
@@ -359,7 +448,11 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
       padding: const EdgeInsets.fromLTRB(4, 8, 0, 8),
       child: Text(
         title,
-        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey.shade600),
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey.shade600,
+        ),
       ),
     );
   }
@@ -373,17 +466,32 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 8, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: children),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      ),
     );
   }
 
-  Widget _buildSwitchTile(String title, String subtitle, bool value, Function(bool) onChanged) {
+  Widget _buildSwitchTile(
+    String title,
+    String subtitle,
+    bool value,
+    Function(bool) onChanged,
+  ) {
     return SwitchListTile.adaptive(
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-      subtitle: Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+      ),
       value: value,
       onChanged: onChanged,
       activeTrackColor: AppTheme.primaryColor,
@@ -405,7 +513,11 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
         ),
         child: Row(
           children: [
-            Icon(Icons.category_outlined, color: Colors.grey.shade500, size: 20),
+            Icon(
+              Icons.category_outlined,
+              color: Colors.grey.shade500,
+              size: 20,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -422,10 +534,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                   const SizedBox(height: 4),
                   Text(
                     "正在加载分类...",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey.shade600,
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -435,7 +544,9 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
               height: 24,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  AppTheme.primaryColor,
+                ),
               ),
             ),
           ],
@@ -487,7 +598,9 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _selectedCategoryId != null ? selectedCategory.name : "请选择分类",
+                    _selectedCategoryId != null
+                        ? selectedCategory.name
+                        : "请选择分类",
                     style: TextStyle(
                       fontSize: 16,
                       color: _selectedCategoryId != null
@@ -536,10 +649,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
             const SizedBox(height: 20),
             const Text(
               "选择分类",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             Flexible(
@@ -549,7 +659,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                 itemBuilder: (context, index) {
                   final category = provider.categories[index];
                   final isSelected = category.id == _selectedCategoryId;
-                  
+
                   return ListTile(
                     leading: Container(
                       width: 40,
@@ -562,14 +672,20 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                       ),
                       child: Icon(
                         Icons.category_outlined,
-                        color: isSelected ? AppTheme.primaryColor : Colors.grey.shade600,
+                        color: isSelected
+                            ? AppTheme.primaryColor
+                            : Colors.grey.shade600,
                       ),
                     ),
                     title: Text(
                       category.name,
                       style: TextStyle(
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        color: isSelected ? AppTheme.primaryColor : Colors.black87,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                        color: isSelected
+                            ? AppTheme.primaryColor
+                            : Colors.black87,
                       ),
                     ),
                     trailing: isSelected
@@ -616,19 +732,31 @@ class _EfficientTextField extends StatelessWidget {
     return TextField(
       controller: controller,
       maxLines: maxLines,
-      keyboardType: isNumber ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.text,
-      inputFormatters: isNumber ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))] : null,
+      keyboardType: isNumber
+          ? const TextInputType.numberWithOptions(decimal: true)
+          : TextInputType.text,
+      inputFormatters: isNumber
+          ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))]
+          : null,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         helperText: helperText,
-        helperStyle: TextStyle(color: Colors.grey.shade500, fontSize: 11), // 你的要求：提示文字可见且不拥挤
+        helperStyle: TextStyle(
+          color: Colors.grey.shade500,
+          fontSize: 11,
+        ), // 你的要求：提示文字可见且不拥挤
         helperMaxLines: 1,
-        prefixIcon: icon != null ? Icon(icon, size: 20, color: Colors.grey.shade500) : null,
+        prefixIcon: icon != null
+            ? Icon(icon, size: 20, color: Colors.grey.shade500)
+            : null,
         filled: true,
         fillColor: Colors.grey.shade50.withValues(alpha: 1.0), // 微微的灰色底色，区分输入区
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: Colors.grey.shade300),

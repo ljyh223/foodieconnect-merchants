@@ -95,65 +95,36 @@ class _StaffListScreenState extends State<StaffListScreen> {
     return Card(
       margin: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
       child: Padding(
-        padding: const EdgeInsets.all(AppConstants.defaultPadding),
-        child: Column(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            const Text(
-              '员工统计',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: AppConstants.defaultPadding),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard('总员工数', '${provider.totalCount}', Icons.people),
-                ),
-                const SizedBox(width: AppConstants.defaultPadding),
-                Expanded(
-                  child: _buildStatCard('在线员工', '${provider.onlineStaffCount}', Icons.online_prediction),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppConstants.defaultPadding),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatCard('离线员工', '${provider.offlineStaffCount}', Icons.offline_bolt),
-                ),
-                const SizedBox(width: AppConstants.defaultPadding),
-                Expanded(
-                  child: _buildStatCard('忙碌员工', '${provider.busyStaffCount}', Icons.work),
-                ),
-              ],
-            ),
+            _buildStatCard('总员工', '${provider.totalCount}', Icons.people),
+            _buildStatCard('在线', '${provider.onlineStaffCount}', Icons.online_prediction, Colors.green),
+            _buildStatCard('离线', '${provider.offlineStaffCount}', Icons.offline_bolt, Colors.grey),
+            _buildStatCard('忙碌', '${provider.busyStaffCount}', Icons.work, Colors.orange),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon) {
+  Widget _buildStatCard(String title, String value, IconData icon, [Color? color]) {
     return Container(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             icon,
-            size: 24,
-            color: AppTheme.primaryColor,
+            size: 18,
+            color: color ?? AppTheme.primaryColor,
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Text(
             title,
             style: TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               color: AppTheme.textSecondary,
             ),
           ),
@@ -161,9 +132,9 @@ class _StaffListScreenState extends State<StaffListScreen> {
           Text(
             value,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: AppTheme.primaryColor,
+              color: color ?? AppTheme.primaryColor,
             ),
           ),
         ],

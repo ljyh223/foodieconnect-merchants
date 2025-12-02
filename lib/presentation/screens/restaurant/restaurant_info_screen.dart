@@ -6,6 +6,8 @@ import 'package:foodieconnect/core/theme/app_theme.dart';
 import 'package:foodieconnect/presentation/providers/restaurant_provider.dart';
 import 'package:foodieconnect/presentation/screens/restaurant/restaurant_edit_screen.dart';
 
+import '../../../core/utils/image_utils.dart';
+
 /// 餐厅信息页面
 class RestaurantInfoScreen extends StatelessWidget {
   const RestaurantInfoScreen({super.key});
@@ -31,15 +33,15 @@ class RestaurantInfoScreen extends StatelessWidget {
   Widget _buildBody(RestaurantProvider provider) {
     if (provider.isLoading) {
       return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  const SizedBox(height: 16),
-                  Text('加载餐厅信息中...'),
-                ],
-              ),
-            );
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text('加载餐厅信息中...'),
+          ],
+        ),
+      );
     }
 
     if (provider.errorMessage != null) {
@@ -57,151 +59,114 @@ class RestaurantInfoScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildRestaurantInfo(BuildContext context, RestaurantProvider provider, dynamic restaurant) {
+  Widget _buildRestaurantInfo(
+    BuildContext context,
+    RestaurantProvider provider,
+    dynamic restaurant,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 餐厅基本信息卡片
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppConstants.defaultPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildInfoRow('餐厅名称', restaurant.name),
-                  _buildInfoRow('餐厅类型', restaurant.type),
-                  _buildInfoRow('地址', restaurant.address),
-                  _buildInfoRow('电话', restaurant.phone),
-                  _buildInfoRow('营业时间', restaurant.hours ?? '未设置'),
-                  _buildInfoRow('营业状态', restaurant.statusDisplay),
-                ],
-              ),
+          // 餐厅名称 - 大标题
+          Text(
+            restaurant.name,
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
             ),
           ),
-          
+
           const SizedBox(height: AppConstants.defaultPadding),
-          
-          // 餐厅图片卡片
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppConstants.defaultPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '餐厅图片',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: AppConstants.defaultPadding / 2),
-                  if (restaurant.displayImage?.isNotEmpty == true)
-                    GestureDetector(
-                      onTap: () {
-                        _showImagePreview(context, restaurant.displayImage!);
-                      },
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                        child: Image.network(
-                          restaurant.displayImage!,
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return _buildImagePlaceholder();
-                          },
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Container(
-                              height: 200,
-                              width: double.infinity,
-                              color: AppTheme.surfaceColor,
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    )
-                  else
-                    _buildImagePlaceholder(),
-                ],
-              ),
-            ),
-          ),
-          
-          const SizedBox(height: AppConstants.defaultPadding),
-          
-          // 餐厅描述卡片
-          if (restaurant.description?.isNotEmpty == true)
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      '餐厅描述',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: AppConstants.defaultPadding / 2),
-                    Text(
-                      restaurant.description!,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        height: 1.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          
-          const SizedBox(height: AppConstants.defaultPadding),
-          
-          // 评分和评价信息卡片
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(AppConstants.defaultPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '评价信息',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: AppConstants.defaultPadding / 2),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInfoRow('评分', restaurant.ratingDisplay),
-                      ),
-                      Expanded(
-                        child: _buildInfoRow('评价数', restaurant.reviewCountDisplay),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          
+
+          // 餐厅基本信息 - 扁平化布局
+          _buildSectionTitle('基本信息'),
+          _buildInfoRow('餐厅类型', restaurant.type),
+          _buildInfoRow('地址', restaurant.address),
+          _buildInfoRow('电话', restaurant.phone),
+          _buildInfoRow('营业时间', restaurant.hours ?? '未设置'),
+          _buildInfoRow('营业状态', restaurant.statusDisplay),
+
           const SizedBox(height: AppConstants.defaultPadding * 2),
-          
+
+          // 餐厅图片 - 仅当有图片时显示
+          if (restaurant.displayImage?.isNotEmpty == true)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildSectionTitle('餐厅图片'),
+                const SizedBox(height: AppConstants.defaultPadding / 2),
+                GestureDetector(
+                  onTap: () {
+                    _showImagePreview(context, restaurant.displayImage!);
+                  },
+                  child: Image.network(
+                    ImageUtils.getFullImageUrl(restaurant.displayImage!),
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(); // 如果图片加载失败，不显示任何内容
+                    },
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return Container(
+                        height: 200,
+                        width: double.infinity,
+                        color: Colors.grey[100],
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            value: loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
+                                : null,
+                            color: Colors.black,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+          // 餐厅描述 - 仅当有描述时显示
+          if (restaurant.description?.isNotEmpty == true)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: AppConstants.defaultPadding * 2),
+                _buildSectionTitle('餐厅描述'),
+                const SizedBox(height: AppConstants.defaultPadding / 2),
+                Text(
+                  restaurant.description!,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    height: 1.5,
+                    color: Colors.black,
+                  ),
+                ),
+              ],
+            ),
+
+          const SizedBox(height: AppConstants.defaultPadding * 2),
+
+          // 评价信息
+          _buildSectionTitle('评价信息'),
+          const SizedBox(height: AppConstants.defaultPadding / 2),
+          Row(
+            children: [
+              Expanded(child: _buildInfoRow('评分', restaurant.ratingDisplay)),
+              Expanded(
+                child: _buildInfoRow('评价数', restaurant.reviewCountDisplay),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: AppConstants.defaultPadding * 3),
+
           // 操作按钮
           Row(
             children: [
@@ -211,6 +176,14 @@ class RestaurantInfoScreen extends StatelessWidget {
                     // 编辑餐厅信息
                     _showEditRestaurantDialog(context, restaurant);
                   },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
                   child: const Text('编辑信息'),
                 ),
               ),
@@ -222,18 +195,33 @@ class RestaurantInfoScreen extends StatelessWidget {
                     _toggleRestaurantStatus(context, provider);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: restaurant.isCurrentlyOpen 
-                        ? AppTheme.warningColor 
-                        : AppTheme.successColor,
+                    backgroundColor: restaurant.isCurrentlyOpen
+                        ? Colors.black
+                        : Colors.black,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
-                  child: Text(
-                    restaurant.isCurrentlyOpen ? '设置打烊' : '设置营业',
-                  ),
+                  child: Text(restaurant.isCurrentlyOpen ? '设置打烊' : '设置营业'),
                 ),
               ),
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  /// 构建章节标题
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
       ),
     );
   }
@@ -248,19 +236,17 @@ class RestaurantInfoScreen extends StatelessWidget {
             width: 80,
             child: Text(
               '$label:',
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: AppTheme.textSecondary,
+                color: Colors.grey[700],
               ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 14,
-              ),
+              style: const TextStyle(fontSize: 14, color: Colors.black),
             ),
           ),
         ],
@@ -294,7 +280,10 @@ class RestaurantInfoScreen extends StatelessWidget {
                 onPressed: () {
                   // 重新加载
                   if (context.mounted) {
-                    Provider.of<RestaurantProvider>(context, listen: false).loadRestaurant();
+                    Provider.of<RestaurantProvider>(
+                      context,
+                      listen: false,
+                    ).loadRestaurant();
                   }
                 },
                 child: const Text('重试'),
@@ -311,18 +300,11 @@ class RestaurantInfoScreen extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.restaurant,
-            size: 64,
-            color: AppTheme.textSecondary,
-          ),
+          Icon(Icons.restaurant, size: 64, color: AppTheme.textSecondary),
           SizedBox(height: AppConstants.defaultPadding),
           Text(
             '暂无餐厅信息',
-            style: TextStyle(
-              fontSize: 16,
-              color: AppTheme.textSecondary,
-            ),
+            style: TextStyle(fontSize: 16, color: AppTheme.textSecondary),
           ),
         ],
       ),
@@ -330,21 +312,29 @@ class RestaurantInfoScreen extends StatelessWidget {
   }
 
   void _showEditRestaurantDialog(BuildContext context, dynamic restaurant) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => RestaurantEditScreen(restaurant: restaurant),
-      ),
-    ).then((result) {
-      if (result == true) {
-        // 编辑成功，刷新数据
-        if (context.mounted) {
-          Provider.of<RestaurantProvider>(context, listen: false).loadRestaurant();
-        }
-      }
-    });
+    Navigator.of(context)
+        .push(
+          MaterialPageRoute(
+            builder: (context) => RestaurantEditScreen(restaurant: restaurant),
+          ),
+        )
+        .then((result) {
+          if (result == true) {
+            // 编辑成功，刷新数据
+            if (context.mounted) {
+              Provider.of<RestaurantProvider>(
+                context,
+                listen: false,
+              ).loadRestaurant();
+            }
+          }
+        });
   }
 
-  void _toggleRestaurantStatus(BuildContext context, RestaurantProvider provider) {
+  void _toggleRestaurantStatus(
+    BuildContext context,
+    RestaurantProvider provider,
+  ) {
     provider.toggleRestaurantStatus().then((success) {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -366,32 +356,6 @@ class RestaurantInfoScreen extends StatelessWidget {
     });
   }
 
-  /// 构建图片占位符
-  Widget _buildImagePlaceholder() {
-    return Container(
-      height: 200,
-      width: double.infinity,
-      color: AppTheme.surfaceColor,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.photo_camera,
-            color: AppTheme.textSecondary,
-            size: 50,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '暂无餐厅图片',
-            style: TextStyle(
-              color: AppTheme.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   /// 显示图片预览对话框
   void _showImagePreview(BuildContext context, String imageUrl) {
     showDialog(
@@ -411,7 +375,7 @@ class RestaurantInfoScreen extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Image.network(
-                        imageUrl,
+                        ImageUtils.getFullImageUrl(imageUrl),
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
@@ -444,4 +408,6 @@ class RestaurantInfoScreen extends StatelessWidget {
       ),
     );
   }
+  
 }
+

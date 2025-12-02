@@ -137,7 +137,7 @@ class RestaurantService {
       AppLogger.info('RestaurantService: 上传图片文件');
       
       final response = await _apiService.uploadFile<Map<String, dynamic>>(
-        '/upload/image',
+        '/merchant/upload/image',
         imageFile,
       );
       
@@ -203,7 +203,7 @@ class RestaurantService {
       
       final response = await _apiService.put<Map<String, dynamic>>(
         '/merchant/restaurants/image',
-        data: {
+        queryParameters: {
           'imageUrl': imageUrl,
         },
       );
