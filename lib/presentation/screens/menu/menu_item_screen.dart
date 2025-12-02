@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/core/utils/image_utils.dart';
 import 'package:foodieconnect/core/utils/logger.dart';
 import 'package:foodieconnect/presentation/providers/menu_provider.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
 import 'package:foodieconnect/data/models/menu/menu_item_request.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:foodieconnect/l10n/generated/translations.g.dart';
-import 'dart:io';
+import 'package:foodieconnect/presentation/widgets/menu/efficient_text_field.dart';
+import 'package:foodieconnect/presentation/widgets/menu/category_selector.dart';
+import 'package:foodieconnect/presentation/widgets/menu/image_uploader.dart';
 
 /// 菜品表单页面 (全屏模式)
 class MenuItemFormScreen extends StatefulWidget {
@@ -93,54 +93,6 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
     _prepTimeController.dispose();
     _caloriesController.dispose();
     super.dispose();
-  }
-
-  Future<void> _handleImageUpload() async {
-    // 显示选择菜单
-    final option = await showModalBottomSheet<int>(
-      context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: Text(Translations.of(context).menu.selectFromAlbum),
-              onTap: () => Navigator.pop(context, 0),
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: Text(Translations.of(context).menu.takePhoto),
-              onTap: () => Navigator.pop(context, 1),
-            ),
-            ListTile(
-              leading: const Icon(Icons.cancel),
-              title: Text(Translations.of(context).menu.cancel),
-              onTap: () => Navigator.pop(context, -1),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (option == null || option == -1) return;
-
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(
-      source: option == 0 ? ImageSource.gallery : ImageSource.camera,
-      imageQuality: 80,
-    );
-
-    if (picked == null) return;
-
-    // 在异步操作前获取context引用
-    final provider = Provider.of<MenuProvider>(context, listen: false);
-    // 这里建议加一个 Loading 状态
-    final url = await provider.uploadMenuItemImage(File(picked.path));
-    if (!mounted) return;
-    if (url != null) {
-      setState(() => _imageUrl = url);
-    }
   }
 
   void _handleSubmit() {
@@ -238,7 +190,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
             _buildSectionLabel(Translations.of(context).menu.basicInfo),
             _buildCard(
               children: [
-                _EfficientTextField(
+                EfficientTextField(
                   controller: _nameController,
                   label: Translations.of(context).menu.itemName,
                   hint: Translations.of(context).menu.exampleItemName,
@@ -248,11 +200,17 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                 const SizedBox(height: 16),
                 Consumer<MenuProvider>(
                   builder: (context, provider, child) {
-                    return _buildModernCategorySelector(provider);
+                    return CategorySelector(
+                      provider: provider,
+                      selectedCategoryId: _selectedCategoryId,
+                      onCategorySelected: (id) {
+                        setState(() => _selectedCategoryId = id);
+                      },
+                    );
                   },
                 ),
                 const SizedBox(height: 16),
-                _EfficientTextField(
+                EfficientTextField(
                   controller: _descController,
                   label: Translations.of(context).menu.description,
                   hint: Translations.of(context).menu.enterDescription,
@@ -270,7 +228,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: _EfficientTextField(
+                      child: EfficientTextField(
                         controller: _priceController,
                         label: Translations.of(context).menu.currentPrice,
                         hint: "0.00",
@@ -281,7 +239,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: _EfficientTextField(
+                      child: EfficientTextField(
                         controller: _originalPriceController,
                         label: Translations.of(context).menu.originalPrice,
                         hint: "0.00",
@@ -298,7 +256,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: _EfficientTextField(
+                      child: EfficientTextField(
                         controller: _prepTimeController,
                         label: Translations.of(context).menu.prepTime,
                         hint: Translations.of(context).menu.minutes,
@@ -309,7 +267,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      child: _EfficientTextField(
+                      child: EfficientTextField(
                         controller: _caloriesController,
                         label: Translations.of(context).menu.caloriesLabel,
                         hint: Translations.of(context).menu.kcal,
@@ -326,102 +284,16 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
             _buildSectionLabel(Translations.of(context).menu.imageSettings),
             _buildCard(
               children: [
-                // 图片上传区域
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      Translations.of(context).menu.itemImage,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      Translations.of(context).menu.uploadClearPhoto,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade500,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    InkWell(
-                      onTap: _handleImageUpload,
-                      child: Container(
-                        height: 120,
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Colors.grey.shade300,
-                            width: 1,
-                            style: BorderStyle.solid,
-                          ),
-                        ),
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.cloud_upload_outlined,
-                                size: 36,
-                                color: Colors.grey.shade400,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                _imageUrl != null
-                                    ? Translations.of(
-                                        context,
-                                      ).menu.clickToChangeImage
-                                    : Translations.of(
-                                        context,
-                                      ).menu.clickToUploadImage,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                Translations.of(
-                                  context,
-                                ).menu.supportAlbumCamera,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey.shade500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    // 图片预览区
-                    if (_imageUrl != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 12),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.network(
-                            ImageUtils.getFullImageUrl(_imageUrl!),
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
-                              height: 100,
-                              color: Colors.grey.shade200,
-                              alignment: Alignment.center,
-                              child: Text(
-                                Translations.of(context).menu.imageLoadFailed,
-                                style: const TextStyle(color: Colors.grey),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
+                Consumer<MenuProvider>(
+                  builder: (context, provider, child) {
+                    return ImageUploader(
+                      imageUrl: _imageUrl,
+                      onImageUploaded: (url) {
+                        setState(() => _imageUrl = url);
+                      },
+                      provider: provider,
+                    );
+                  },
                 ),
 
                 const Divider(height: 32),
@@ -441,7 +313,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                 ),
                 // 排序放到最后，因为改动频率较低
                 const SizedBox(height: 8),
-                _EfficientTextField(
+                EfficientTextField(
                   controller: _sortController,
                   label: Translations.of(context).menu.sortOrder,
                   hint: "0",
@@ -487,7 +359,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
+            color: Colors.black.withOpacity(0.03),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -518,278 +390,6 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
       activeThumbColor: AppTheme.primaryColor,
       contentPadding: EdgeInsets.zero,
       dense: true,
-    );
-  }
-
-  /// 现代化的分类选择器
-  Widget _buildModernCategorySelector(MenuProvider provider) {
-    if (provider.categories.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade300),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.category_outlined,
-              color: Colors.grey.shade500,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    Translations.of(context).menu.category,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppTheme.primaryColor,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    Translations.of(context).menu.loadingCategories,
-                    style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  AppTheme.primaryColor,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    final selectedCategory = provider.categories.firstWhere(
-      (c) => c.id == _selectedCategoryId,
-      orElse: () => provider.categories.first,
-    );
-
-    return GestureDetector(
-      onTap: () => _showCategoryBottomSheet(provider),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-        decoration: BoxDecoration(
-          color: Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: _selectedCategoryId != null
-                ? AppTheme.primaryColor.withValues(alpha: 0.5)
-                : Colors.grey.shade300,
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              Icons.category_outlined,
-              color: _selectedCategoryId != null
-                  ? AppTheme.primaryColor
-                  : Colors.grey.shade500,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    Translations.of(context).menu.category,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: _selectedCategoryId != null
-                          ? AppTheme.primaryColor
-                          : Colors.grey.shade600,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _selectedCategoryId != null
-                        ? selectedCategory.name
-                        : Translations.of(context).menu.selectCategory,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: _selectedCategoryId != null
-                          ? Colors.black87
-                          : Colors.grey.shade600,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              Icons.keyboard_arrow_down,
-              color: _selectedCategoryId != null
-                  ? AppTheme.primaryColor
-                  : Colors.grey.shade500,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// 显示分类选择底部弹窗
-  void _showCategoryBottomSheet(MenuProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(top: 12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              Translations.of(context).menu.selectCategory,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: provider.categories.length,
-                itemBuilder: (context, index) {
-                  final category = provider.categories[index];
-                  final isSelected = category.id == _selectedCategoryId;
-
-                  return ListTile(
-                    leading: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppTheme.primaryColor.withValues(alpha: 0.1)
-                            : Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        Icons.category_outlined,
-                        color: isSelected
-                            ? AppTheme.primaryColor
-                            : Colors.grey.shade600,
-                      ),
-                    ),
-                    title: Text(
-                      category.name,
-                      style: TextStyle(
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        color: isSelected
-                            ? AppTheme.primaryColor
-                            : Colors.black87,
-                      ),
-                    ),
-                    trailing: isSelected
-                        ? Icon(Icons.check, color: AppTheme.primaryColor)
-                        : null,
-                    onTap: () {
-                      setState(() => _selectedCategoryId = category.id);
-                      Navigator.pop(context);
-                    },
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// 高效输入框组件 (保持不变，非常好用)
-class _EfficientTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final String? hint;
-  final String? helperText;
-  final IconData? icon;
-  final bool isNumber;
-  final int maxLines;
-
-  const _EfficientTextField({
-    required this.controller,
-    required this.label,
-    this.hint,
-    this.helperText,
-    this.icon,
-    this.isNumber = false,
-    this.maxLines = 1,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      maxLines: maxLines,
-      keyboardType: isNumber
-          ? const TextInputType.numberWithOptions(decimal: true)
-          : TextInputType.text,
-      inputFormatters: isNumber
-          ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))]
-          : null,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        helperText: helperText,
-        helperStyle: TextStyle(
-          color: Colors.grey.shade500,
-          fontSize: 11,
-        ), // 你的要求：提示文字可见且不拥挤
-        helperMaxLines: 1,
-        prefixIcon: icon != null
-            ? Icon(icon, size: 20, color: Colors.grey.shade500)
-            : null,
-        filled: true,
-        fillColor: Colors.grey.shade50.withValues(alpha: 1.0), // 微微的灰色底色，区分输入区
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 12,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none, // 平时不显示边框，更干净
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8)),
-          borderSide: BorderSide(color: AppTheme.primaryColor, width: 1.5),
-        ),
-      ),
     );
   }
 }
