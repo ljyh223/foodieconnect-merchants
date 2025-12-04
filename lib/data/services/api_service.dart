@@ -13,6 +13,9 @@ class ApiService {
 
   late Dio _dio;
   String? _accessToken;
+  
+  // 认证错误回调函数
+  Function()? onAuthError;
 
   /// 初始化API服务
   void init() {
@@ -54,6 +57,7 @@ class ApiService {
 
   /// 请求拦截器
   void _onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+    AppLogger.debug('token: $_accessToken');
     // 添加认证头
     if (_accessToken != null) {
       options.headers['Authorization'] = 'Bearer $_accessToken';
@@ -107,6 +111,13 @@ class ApiService {
         break;
       case DioExceptionType.badResponse:
         errorMessage = _handleHttpError(error.response);
+        
+        // 检测401和403错误，可能是token过期
+        if (error.response?.statusCode == 401 || error.response?.statusCode == 403) {
+          AppLogger.warning('API错误: ${error.response?.statusCode} - Token过期或权限不足');
+          // 调用认证错误回调
+          onAuthError?.call();
+        }
         break;
       case DioExceptionType.cancel:
         errorMessage = '请求已取消';

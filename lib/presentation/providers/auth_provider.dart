@@ -37,6 +37,9 @@ class AuthProvider extends ChangeNotifier {
     try {
       AppLogger.info('AuthProvider: 初始化认证状态');
       
+      // 注册API服务的认证错误回调
+      _apiService.onAuthError = handleTokenExpired;
+      
       // 检查本地存储的登录状态
       final isLoggedIn = await _authService.isLoggedIn();
       _isLoggedIn = isLoggedIn;
@@ -54,6 +57,12 @@ class AuthProvider extends ChangeNotifier {
       AppLogger.error('AuthProvider: 初始化失败', error: e);
       _setError('初始化失败');
     }
+  }
+  
+  /// 处理Token过期
+  Future<void> handleTokenExpired() async {
+    AppLogger.info('AuthProvider: 处理Token过期');
+    await logout();
   }
 
   /// 用户登录

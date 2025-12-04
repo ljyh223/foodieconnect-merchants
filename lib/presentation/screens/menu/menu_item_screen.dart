@@ -18,17 +18,14 @@ class MenuItemFormScreen extends StatefulWidget {
 
   const MenuItemFormScreen({super.key, this.item, required this.onSave});
 
-  /// 静态跳转方法：方便你在原处直接调用
-  /// 使用方法: MenuItemFormScreen.show(context, onSave: (req){...});
   static void show(
     BuildContext context, {
     MenuItemModel? item,
     required Function(MenuItemRequest) onSave,
   }) {
-    // 使用 Navigator.push 打开新页面，自带原生流畅动画
     Navigator.of(context).push(
       MaterialPageRoute(
-        fullscreenDialog: true, // 在iOS上呈现为模态页面效果(从下往上滑)，Android为普通页面
+        fullscreenDialog: true,
         builder: (ctx) => MenuItemFormScreen(item: item, onSave: onSave),
       ),
     );
