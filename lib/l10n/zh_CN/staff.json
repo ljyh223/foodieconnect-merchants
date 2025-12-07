@@ -35,5 +35,8 @@
   "noStaffInfo": "暂无员工信息",
   "retry": "重试",
   "unknownStatus": "未知状态",
-  "unknown": "未知"
+  "unknown": "未知",
+  "statusOnline": "在线",
+  "statusOffline": "离线",
+  "statusBusy": "忙碌"
 }

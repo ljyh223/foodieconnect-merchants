@@ -10,6 +10,7 @@
   "refresh": "刷新",
   "loading": "加载中...",
   "noData": "暂无数据",
+  "loadFailed": "加载失败",
   "error": "错误",
   "success": "成功",
   "warning": "警告",
@@ -18,5 +19,10 @@
   "close": "关闭",
   "ok": "确定",
   "yes": "是",
-  "no": "否"
+  "no": "否",
+  "imageChanged": "图片已更改",
+  "clickToUploadImage": "点击上传图片",
+  "basicInfo": "基本信息",
+  "contactInfo": "联系信息",
+  "example": "例如："
 }

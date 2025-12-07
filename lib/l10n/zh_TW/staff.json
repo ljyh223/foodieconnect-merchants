@@ -35,5 +35,8 @@
   "noStaffInfo": "暫無員工信息",
   "retry": "重試",
   "unknownStatus": "未知狀態",
-  "unknown": "未知"
+  "unknown": "未知",
+  "statusOnline": "在線",
+  "statusOffline": "離線",
+  "statusBusy": "忙碌"
 }

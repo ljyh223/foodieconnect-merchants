@@ -13,7 +13,7 @@ import 'package:foodieconnect/presentation/screens/restaurant/restaurant_info_sc
 import 'package:foodieconnect/presentation/screens/staff/staff_list_screen.dart';
 import 'package:foodieconnect/presentation/screens/statistics/statistics_overview_screen.dart';
 
-import '../menu/menu_list_screen_refactored.dart';
+import '../menu/menu_list_screen.dart';
 
 /// 仪表盘页面
 class DashboardScreen extends StatefulWidget {
@@ -30,7 +30,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // 页面列表
   final List<Widget> _pages = [
     const RestaurantInfoScreen(),
-    const MenuListScreenRefactored(),
+    const MenuListScreen(),
     const StaffListScreen(),
     const StatisticsOverviewScreen(),
   ];
@@ -115,13 +115,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             restaurantProvider.isLoading ||
             menuProvider.isLoading ||
             staffProvider.isLoading) {
-          return const Center(
+          final t = Translations.of(context);
+          return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('加载中...'),
+                const CircularProgressIndicator(),
+                const SizedBox(height: 16),
+                Text(t.common.loading),
               ],
             ),
           );
@@ -147,6 +148,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   /// 构建错误页面
   Widget _buildErrorWidget() {
+    final t = Translations.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -157,9 +159,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: AppTheme.errorColor,
           ),
           const SizedBox(height: AppConstants.defaultPadding),
-          const Text(
-            '加载失败',
-            style: TextStyle(
+          Text(
+            t.common.loadFailed,
+            style: const TextStyle(
               fontSize: 18,
               color: AppTheme.errorColor,
               fontWeight: FontWeight.w500,
@@ -173,7 +175,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 _initializeProviders();
               }
             },
-            child: const Text('重试'),
+            child: Text(t.common.retry),
           ),
         ],
       ),

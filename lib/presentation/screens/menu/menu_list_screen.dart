@@ -11,15 +11,15 @@ import 'menu_item_screen.dart';
 
 /// 重构后的菜单列表页面
 /// 使用提取的组件，代码更简洁、可维护
-class MenuListScreenRefactored extends StatefulWidget {
-  const MenuListScreenRefactored({super.key});
+class MenuListScreen extends StatefulWidget {
+  const MenuListScreen({super.key});
 
   @override
-  State<MenuListScreenRefactored> createState() =>
-      _MenuListScreenRefactoredState();
+  State<MenuListScreen> createState() =>
+      _MenuListScreenState();
 }
 
-class _MenuListScreenRefactoredState extends State<MenuListScreenRefactored> {
+class _MenuListScreenState extends State<MenuListScreen> {
   bool _isInitialized = false;
 
   @override
@@ -320,8 +320,8 @@ class _MenuListScreenRefactoredState extends State<MenuListScreenRefactored> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('操作失败，请重试'),
+        SnackBar(
+          content: Text(Translations.of(context).menu.operationFailed),
           backgroundColor: AppTheme.errorColor,
         ),
       );

@@ -54,7 +54,7 @@ class _RestaurantEditFormState extends State<RestaurantEditForm> {
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
-    
+
     return Form(
       key: widget.formKey,
       onChanged: () => widget.onChanged(true),
@@ -99,10 +99,10 @@ class _RestaurantEditFormState extends State<RestaurantEditForm> {
         if (widget.isImageChanged) ...[
           const SizedBox(height: 8),
           Text(
-            '图片已更改',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppTheme.successColor,
-            ),
+            t.common.imageChanged,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: AppTheme.successColor),
           ),
         ],
       ],
@@ -152,11 +152,8 @@ class _RestaurantEditFormState extends State<RestaurantEditForm> {
         ),
         const SizedBox(height: 8),
         Text(
-          '点击上传图片',
-          style: TextStyle(
-            color: Colors.grey[600],
-            fontSize: 16,
-          ),
+          t.common.clickToUploadImage,
+          style: TextStyle(color: Colors.grey[600], fontSize: 16),
         ),
       ],
     );
@@ -202,7 +199,7 @@ class _RestaurantEditFormState extends State<RestaurantEditForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '基本信息',
+          t.common.basicInfo,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 12),
@@ -219,7 +216,7 @@ class _RestaurantEditFormState extends State<RestaurantEditForm> {
               return '${t.restaurant.name}${t.validation.required}';
             }
             if (value.trim().length < 2) {
-              return '${t.restaurant.name}至少需要2个字符';
+              return t.validation.minLength.replaceAll('{min}', '2');
             }
             return null;
           },
@@ -261,7 +258,7 @@ class _RestaurantEditFormState extends State<RestaurantEditForm> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '联系信息',
+          t.common.contactInfo,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 12),
@@ -290,9 +287,7 @@ class _RestaurantEditFormState extends State<RestaurantEditForm> {
             prefixIcon: const Icon(Icons.phone),
           ),
           keyboardType: TextInputType.phone,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly
-          ],
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           validator: (value) {
             if (value == null || value.trim().isEmpty) {
               return '${t.restaurant.phone}${t.validation.required}';
@@ -321,10 +316,10 @@ class _RestaurantEditFormState extends State<RestaurantEditForm> {
           controller: widget.hoursController,
           decoration: InputDecoration(
             labelText: t.restaurant.hours,
-            hintText: '例如：09:00-22:00',
+            hintText: '${t.common.example}09:00-22:00',
             border: const OutlineInputBorder(),
             prefixIcon: const Icon(Icons.access_time),
-            helperText: '例如：09:00-22:00',
+            helperText: '${t.common.example}09:00-22:00',
           ),
         ),
       ],

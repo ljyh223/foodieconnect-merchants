@@ -98,6 +98,7 @@ class _TranslationsCommonZhCn implements TranslationsCommonEn {
 	@override String get refresh => '刷新';
 	@override String get loading => '加载中...';
 	@override String get noData => '暂无数据';
+	@override String get loadFailed => '加载失败';
 	@override String get error => '错误';
 	@override String get success => '成功';
 	@override String get warning => '警告';
@@ -107,6 +108,11 @@ class _TranslationsCommonZhCn implements TranslationsCommonEn {
 	@override String get ok => '确定';
 	@override String get yes => '是';
 	@override String get no => '否';
+	@override String get imageChanged => '图片已更改';
+	@override String get clickToUploadImage => '点击上传图片';
+	@override String get basicInfo => '基本信息';
+	@override String get contactInfo => '联系信息';
+	@override String get example => '例如：';
 }
 
 // Path: menu
@@ -299,6 +305,10 @@ class _TranslationsRestaurantZhCn implements TranslationsRestaurantEn {
 	@override String get setOpenSuccess => '已设置营业';
 	@override String get setClosedSuccess => '已设置打烊';
 	@override String get statusToggleFailed => '状态切换失败';
+	@override String get selectImageFailed => '选择图片失败';
+	@override String get takePhotoFailed => '拍照失败';
+	@override String get uploadingImage => '图片上传中...';
+	@override String get uploadImageInProgress => '正在上传图片...';
 }
 
 // Path: staff
@@ -345,6 +355,9 @@ class _TranslationsStaffZhCn implements TranslationsStaffEn {
 	@override String get retry => '重试';
 	@override String get unknownStatus => '未知状态';
 	@override String get unknown => '未知';
+	@override String get statusOnline => '在线';
+	@override String get statusOffline => '离线';
+	@override String get statusBusy => '忙碌';
 }
 
 // Path: statistics
@@ -426,6 +439,7 @@ extension on TranslationsZhCn {
 			'common.refresh' => '刷新',
 			'common.loading' => '加载中...',
 			'common.noData' => '暂无数据',
+			'common.loadFailed' => '加载失败',
 			'common.error' => '错误',
 			'common.success' => '成功',
 			'common.warning' => '警告',
@@ -435,6 +449,11 @@ extension on TranslationsZhCn {
 			'common.ok' => '确定',
 			'common.yes' => '是',
 			'common.no' => '否',
+			'common.imageChanged' => '图片已更改',
+			'common.clickToUploadImage' => '点击上传图片',
+			'common.basicInfo' => '基本信息',
+			'common.contactInfo' => '联系信息',
+			'common.example' => '例如：',
 			'menu.title' => '菜单管理',
 			'menu.items' => '菜品列表',
 			'menu.categories' => '分类管理',
@@ -600,6 +619,10 @@ extension on TranslationsZhCn {
 			'restaurant.setOpenSuccess' => '已设置营业',
 			'restaurant.setClosedSuccess' => '已设置打烊',
 			'restaurant.statusToggleFailed' => '状态切换失败',
+			'restaurant.selectImageFailed' => '选择图片失败',
+			'restaurant.takePhotoFailed' => '拍照失败',
+			'restaurant.uploadingImage' => '图片上传中...',
+			'restaurant.uploadImageInProgress' => '正在上传图片...',
 			'staff.title' => '员工管理',
 			'staff.list' => '员工列表',
 			'staff.addStaff' => '添加员工',
@@ -637,6 +660,9 @@ extension on TranslationsZhCn {
 			'staff.retry' => '重试',
 			'staff.unknownStatus' => '未知状态',
 			'staff.unknown' => '未知',
+			'staff.statusOnline' => '在线',
+			'staff.statusOffline' => '离线',
+			'staff.statusBusy' => '忙碌',
 			'statistics.title' => '统计',
 			'statistics.overview' => '概览',
 			'statistics.today' => '今日',

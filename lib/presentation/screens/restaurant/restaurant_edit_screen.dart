@@ -12,10 +12,7 @@ import 'package:foodieconnect/l10n/generated/translations.g.dart';
 class RestaurantEditScreen extends StatefulWidget {
   final RestaurantModel? restaurant;
 
-  const RestaurantEditScreen({
-    super.key,
-    this.restaurant,
-  });
+  const RestaurantEditScreen({super.key, this.restaurant});
 
   @override
   State<RestaurantEditScreen> createState() => _RestaurantEditScreenState();
@@ -100,7 +97,7 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
         maxHeight: 600,
         imageQuality: 85,
       );
-      
+
       if (image != null) {
         setState(() {
           _selectedImage = image;
@@ -109,7 +106,7 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
         });
       }
     } catch (e) {
-      _showErrorSnackBar('选择图片失败');
+      _showErrorSnackBar(Translations.of(context).restaurant.selectImageFailed);
     }
   }
 
@@ -123,7 +120,7 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
         maxHeight: 600,
         imageQuality: 85,
       );
-      
+
       if (photo != null) {
         setState(() {
           _selectedImage = photo;
@@ -132,7 +129,7 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
         });
       }
     } catch (e) {
-      _showErrorSnackBar('拍照失败');
+      _showErrorSnackBar(Translations.of(context).restaurant.takePhotoFailed);
     }
   }
 
@@ -163,31 +160,39 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
     });
 
     try {
-      final restaurantProvider = Provider.of<RestaurantProvider>(context, listen: false);
-      
+      final restaurantProvider = Provider.of<RestaurantProvider>(
+        context,
+        listen: false,
+      );
+
       // 如果有新图片，先上传图片
-        if (_isImageChanged && _selectedImage != null) {
-          setState(() {
-            _isUploadingImage = true;
-          });
-          
-          final imageSuccess = await restaurantProvider.updateRestaurantImage(_selectedImage!);
-          
-          setState(() {
-            _isUploadingImage = false;
-            // 更新本地_imageUrl为新上传的图片URL
-            if (restaurantProvider.restaurant?.displayImage != null) {
-              _imageUrl = restaurantProvider.restaurant!.displayImage;
-            }
-          });
-          
-          if (!imageSuccess) {
-            if (mounted) {
-              _showErrorSnackBar(restaurantProvider.errorMessage ?? '图片上传失败');
-            }
-            return;
+      if (_isImageChanged && _selectedImage != null) {
+        setState(() {
+          _isUploadingImage = true;
+        });
+
+        final imageSuccess = await restaurantProvider.updateRestaurantImage(
+          _selectedImage!,
+        );
+
+        setState(() {
+          _isUploadingImage = false;
+          // 更新本地_imageUrl为新上传的图片URL
+          if (restaurantProvider.restaurant?.displayImage != null) {
+            _imageUrl = restaurantProvider.restaurant!.displayImage;
           }
+        });
+
+        if (!imageSuccess) {
+          if (mounted) {
+            _showErrorSnackBar(
+              restaurantProvider.errorMessage ??
+                  Translations.of(context).restaurant.imageUploadFailed,
+            );
+          }
+          return;
         }
+      }
 
       // 创建更新请求
       final request = RestaurantUpdateRequest(
@@ -206,17 +211,20 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
 
       // 更新餐厅信息
       final success = await restaurantProvider.updateRestaurant(request);
-      
+
       if (success) {
         _showSuccessSnackBar('餐厅信息更新成功');
         if (mounted) {
           Navigator.of(context).pop(true);
         }
       } else {
-        _showErrorSnackBar('餐厅信息更新失败');
+        _showErrorSnackBar(
+          restaurantProvider.errorMessage ??
+              Translations.of(context).restaurant.editFailed,
+        );
       }
     } catch (e) {
-      _showErrorSnackBar('保存失败，请稍后重试');
+      _showErrorSnackBar(Translations.of(context).restaurant.updateFailed);
     } finally {
       if (mounted) {
         setState(() {
@@ -256,27 +264,21 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
   /// 显示成功提示
   void _showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppTheme.successColor,
-      ),
+      SnackBar(content: Text(message), backgroundColor: AppTheme.successColor),
     );
   }
 
   /// 显示错误提示
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppTheme.errorColor,
-      ),
+      SnackBar(content: Text(message), backgroundColor: AppTheme.errorColor),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(t.restaurant.editTitle),
@@ -332,9 +334,11 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (_isUploadingImage) ...[
-                        const Text(
-                          '正在上传图片...',
-                          style: TextStyle(
+                        Text(
+                          Translations.of(
+                            context,
+                          ).restaurant.uploadImageInProgress,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
@@ -347,7 +351,9 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        _isUploadingImage ? '图片上传中...' : '正在保存...',
+                        _isUploadingImage
+                            ? Translations.of(context).restaurant.uploadingImage
+                            : Translations.of(context).restaurant.saving,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 16,

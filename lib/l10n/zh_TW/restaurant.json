@@ -24,7 +24,7 @@
   "removeImage": "移除圖片",
   "openTime": "開始時間",
   "closeTime": "結束時間",
-  "customType": "自定義類型",
+  "customType": "自訂類型",
   "pleaseSelect": "請選擇",
   "pleaseEnter": "請輸入",
   "required": "必填",
@@ -68,5 +68,9 @@
   "codeUpdateFailed": "驗證碼更新失敗",
   "setOpenSuccess": "已設置營業",
   "setClosedSuccess": "已設置打烊",
-  "statusToggleFailed": "狀態切換失敗"
+  "statusToggleFailed": "狀態切換失敗",
+  "selectImageFailed": "選擇圖片失敗",
+  "takePhotoFailed": "拍照失敗",
+  "uploadingImage": "圖片上傳中...",
+  "uploadImageInProgress": "正在上傳圖片..."
 }

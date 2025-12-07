@@ -68,5 +68,10 @@
   "codeUpdateFailed": "验证码更新失败",
   "setOpenSuccess": "已设置营业",
   "setClosedSuccess": "已设置打烊",
-  "statusToggleFailed": "状态切换失败"
+  "statusToggleFailed": "状态切换失败",
+  "selectImageFailed": "选择图片失败",
+  "takePhotoFailed": "拍照失败",
+  "saving": "保存中...",
+  "uploadingImage": "图片上传中...",
+  "uploadImageInProgress": "正在上传图片..."
 }

@@ -169,8 +169,11 @@ class TranslationsCommonEn {
 	/// en: 'Loading...'
 	String get loading => 'Loading...';
 
-	/// en: 'No Data'
-	String get noData => 'No Data';
+	/// en: 'No data available'
+	String get noData => 'No data available';
+
+	/// en: 'Load failed'
+	String get loadFailed => 'Load failed';
 
 	/// en: 'Error'
 	String get error => 'Error';
@@ -198,6 +201,21 @@ class TranslationsCommonEn {
 
 	/// en: 'No'
 	String get no => 'No';
+
+	/// en: 'Image changed'
+	String get imageChanged => 'Image changed';
+
+	/// en: 'Click to upload image'
+	String get clickToUploadImage => 'Click to upload image';
+
+	/// en: 'Basic Information'
+	String get basicInfo => 'Basic Information';
+
+	/// en: 'Contact Information'
+	String get contactInfo => 'Contact Information';
+
+	/// en: 'Example: '
+	String get example => 'Example: ';
 }
 
 // Path: menu
@@ -720,6 +738,18 @@ class TranslationsRestaurantEn {
 
 	/// en: 'Failed to toggle status'
 	String get statusToggleFailed => 'Failed to toggle status';
+
+	/// en: 'Failed to select image'
+	String get selectImageFailed => 'Failed to select image';
+
+	/// en: 'Failed to take photo'
+	String get takePhotoFailed => 'Failed to take photo';
+
+	/// en: 'Uploading image...'
+	String get uploadingImage => 'Uploading image...';
+
+	/// en: 'Uploading image...'
+	String get uploadImageInProgress => 'Uploading image...';
 }
 
 // Path: staff
@@ -796,11 +826,11 @@ class TranslationsStaffEn {
 	/// en: 'Busy'
 	String get busyStaff => 'Busy';
 
-	/// en: 'Set as Offline'
-	String get setAsOffline => 'Set as Offline';
+	/// en: 'Set Offline'
+	String get setAsOffline => 'Set Offline';
 
-	/// en: 'Set as Online'
-	String get setAsOnline => 'Set as Online';
+	/// en: 'Set Online'
+	String get setAsOnline => 'Set Online';
 
 	/// en: 'Update Rating'
 	String get updateRating => 'Update Rating';
@@ -820,8 +850,8 @@ class TranslationsStaffEn {
 	/// en: 'Update Rating'
 	String get updateRatingTitle => 'Update Rating';
 
-	/// en: 'Set new rating for ${staffName}: '
-	String setNewRating({required Object staffName}) => 'Set new rating for ${staffName}: ';
+	/// en: 'Set new rating for ${staffName}:'
+	String setNewRating({required Object staffName}) => 'Set new rating for ${staffName}:';
 
 	/// en: 'Rating (0.0-5.0)'
 	String get ratingInputHint => 'Rating (0.0-5.0)';
@@ -840,6 +870,15 @@ class TranslationsStaffEn {
 
 	/// en: 'Unknown'
 	String get unknown => 'Unknown';
+
+	/// en: 'Online'
+	String get statusOnline => 'Online';
+
+	/// en: 'Offline'
+	String get statusOffline => 'Offline';
+
+	/// en: 'Busy'
+	String get statusBusy => 'Busy';
 }
 
 // Path: statistics
@@ -956,7 +995,8 @@ extension on Translations {
 			'common.filter' => 'Filter',
 			'common.refresh' => 'Refresh',
 			'common.loading' => 'Loading...',
-			'common.noData' => 'No Data',
+			'common.noData' => 'No data available',
+			'common.loadFailed' => 'Load failed',
 			'common.error' => 'Error',
 			'common.success' => 'Success',
 			'common.warning' => 'Warning',
@@ -966,6 +1006,11 @@ extension on Translations {
 			'common.ok' => 'OK',
 			'common.yes' => 'Yes',
 			'common.no' => 'No',
+			'common.imageChanged' => 'Image changed',
+			'common.clickToUploadImage' => 'Click to upload image',
+			'common.basicInfo' => 'Basic Information',
+			'common.contactInfo' => 'Contact Information',
+			'common.example' => 'Example: ',
 			'menu.title' => 'Menu Management',
 			'menu.items' => 'Menu Items',
 			'menu.categories' => 'Categories',
@@ -1131,6 +1176,10 @@ extension on Translations {
 			'restaurant.setOpenSuccess' => 'Set to Open',
 			'restaurant.setClosedSuccess' => 'Set to Closed',
 			'restaurant.statusToggleFailed' => 'Failed to toggle status',
+			'restaurant.selectImageFailed' => 'Failed to select image',
+			'restaurant.takePhotoFailed' => 'Failed to take photo',
+			'restaurant.uploadingImage' => 'Uploading image...',
+			'restaurant.uploadImageInProgress' => 'Uploading image...',
 			'staff.title' => 'Staff Management',
 			'staff.list' => 'Staff List',
 			'staff.addStaff' => 'Add Staff',
@@ -1153,21 +1202,24 @@ extension on Translations {
 			'staff.onlineStaff' => 'Online',
 			'staff.offlineStaff' => 'Offline',
 			'staff.busyStaff' => 'Busy',
-			'staff.setAsOffline' => 'Set as Offline',
-			'staff.setAsOnline' => 'Set as Online',
+			'staff.setAsOffline' => 'Set Offline',
+			'staff.setAsOnline' => 'Set Online',
 			'staff.updateRating' => 'Update Rating',
 			'staff.confirmOperation' => 'Confirm Operation',
 			'staff.confirmStatusChange' => ({required Object staffName, required Object newStatus}) => 'Are you sure you want to set ${staffName}\'s status to ${newStatus}?',
 			'staff.cancel' => 'Cancel',
 			'staff.confirm' => 'Confirm',
 			'staff.updateRatingTitle' => 'Update Rating',
-			'staff.setNewRating' => ({required Object staffName}) => 'Set new rating for ${staffName}: ',
+			'staff.setNewRating' => ({required Object staffName}) => 'Set new rating for ${staffName}:',
 			'staff.ratingInputHint' => 'Rating (0.0-5.0)',
 			'staff.validRatingRequired' => 'Please enter a valid rating (0.0-5.0)',
 			'staff.noStaffInfo' => 'No staff information available',
 			'staff.retry' => 'Retry',
 			'staff.unknownStatus' => 'Unknown Status',
 			'staff.unknown' => 'Unknown',
+			'staff.statusOnline' => 'Online',
+			'staff.statusOffline' => 'Offline',
+			'staff.statusBusy' => 'Busy',
 			'statistics.title' => 'Statistics',
 			'statistics.overview' => 'Overview',
 			'statistics.today' => 'Today',

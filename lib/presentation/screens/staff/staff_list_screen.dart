@@ -311,7 +311,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
       case 'OFFLINE':
         return Translations.of(context).staff.setAsOnline;
       case 'BUSY':
-        return '设为离线';
+        return Translations.of(context).staff.setAsOffline;
       default:
         return Translations.of(context).staff.unknownStatus;
     }
@@ -360,15 +360,16 @@ class _StaffListScreenState extends State<StaffListScreen> {
 
   /// 获取状态显示文本
   String _getStatusDisplayText(String status) {
+    final t = Translations.of(context);
     switch (status.toUpperCase()) {
       case 'ONLINE':
-        return '在线';
+        return t.staff.online;
       case 'OFFLINE':
-        return '离线';
+        return t.staff.offline;
       case 'BUSY':
-        return '忙碌';
+        return t.staff.busy;
       default:
-        return Translations.of(context).staff.unknown;
+        return t.staff.unknown;
     }
   }
 
@@ -401,7 +402,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
+            child: Text(Translations.of(context).staff.cancel),
           ),
           TextButton(
             onPressed: () async {
@@ -415,7 +416,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
                 );
               }
             },
-            child: const Text('确定'),
+            child: Text(Translations.of(context).staff.confirm),
           ),
         ],
       ),

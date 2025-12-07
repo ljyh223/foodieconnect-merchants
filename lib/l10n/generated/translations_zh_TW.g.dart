@@ -98,6 +98,7 @@ class _TranslationsCommonZhTw implements TranslationsCommonEn {
 	@override String get refresh => '刷新';
 	@override String get loading => '加載中...';
 	@override String get noData => '暫無數據';
+	@override String get loadFailed => '加載失敗';
 	@override String get error => '錯誤';
 	@override String get success => '成功';
 	@override String get warning => '警告';
@@ -107,6 +108,11 @@ class _TranslationsCommonZhTw implements TranslationsCommonEn {
 	@override String get ok => '確定';
 	@override String get yes => '是';
 	@override String get no => '否';
+	@override String get imageChanged => '圖片已更改';
+	@override String get clickToUploadImage => '點擊上傳圖片';
+	@override String get basicInfo => '基本資訊';
+	@override String get contactInfo => '聯繫資訊';
+	@override String get example => '例如：';
 }
 
 // Path: menu
@@ -254,7 +260,7 @@ class _TranslationsRestaurantZhTw implements TranslationsRestaurantEn {
 	@override String get removeImage => '移除圖片';
 	@override String get openTime => '開始時間';
 	@override String get closeTime => '結束時間';
-	@override String get customType => '自定義類型';
+	@override String get customType => '自訂類型';
 	@override String get pleaseSelect => '請選擇';
 	@override String get pleaseEnter => '請輸入';
 	@override String get required => '必填';
@@ -299,6 +305,10 @@ class _TranslationsRestaurantZhTw implements TranslationsRestaurantEn {
 	@override String get setOpenSuccess => '已設置營業';
 	@override String get setClosedSuccess => '已設置打烊';
 	@override String get statusToggleFailed => '狀態切換失敗';
+	@override String get selectImageFailed => '選擇圖片失敗';
+	@override String get takePhotoFailed => '拍照失敗';
+	@override String get uploadingImage => '圖片上傳中...';
+	@override String get uploadImageInProgress => '正在上傳圖片...';
 }
 
 // Path: staff
@@ -345,6 +355,9 @@ class _TranslationsStaffZhTw implements TranslationsStaffEn {
 	@override String get retry => '重試';
 	@override String get unknownStatus => '未知狀態';
 	@override String get unknown => '未知';
+	@override String get statusOnline => '在線';
+	@override String get statusOffline => '離線';
+	@override String get statusBusy => '忙碌';
 }
 
 // Path: statistics
@@ -426,6 +439,7 @@ extension on TranslationsZhTw {
 			'common.refresh' => '刷新',
 			'common.loading' => '加載中...',
 			'common.noData' => '暫無數據',
+			'common.loadFailed' => '加載失敗',
 			'common.error' => '錯誤',
 			'common.success' => '成功',
 			'common.warning' => '警告',
@@ -435,6 +449,11 @@ extension on TranslationsZhTw {
 			'common.ok' => '確定',
 			'common.yes' => '是',
 			'common.no' => '否',
+			'common.imageChanged' => '圖片已更改',
+			'common.clickToUploadImage' => '點擊上傳圖片',
+			'common.basicInfo' => '基本資訊',
+			'common.contactInfo' => '聯繫資訊',
+			'common.example' => '例如：',
 			'menu.title' => '菜單管理',
 			'menu.items' => '菜品列表',
 			'menu.categories' => '分類管理',
@@ -555,7 +574,7 @@ extension on TranslationsZhTw {
 			'restaurant.removeImage' => '移除圖片',
 			'restaurant.openTime' => '開始時間',
 			'restaurant.closeTime' => '結束時間',
-			'restaurant.customType' => '自定義類型',
+			'restaurant.customType' => '自訂類型',
 			'restaurant.pleaseSelect' => '請選擇',
 			'restaurant.pleaseEnter' => '請輸入',
 			'restaurant.required' => '必填',
@@ -600,6 +619,10 @@ extension on TranslationsZhTw {
 			'restaurant.setOpenSuccess' => '已設置營業',
 			'restaurant.setClosedSuccess' => '已設置打烊',
 			'restaurant.statusToggleFailed' => '狀態切換失敗',
+			'restaurant.selectImageFailed' => '選擇圖片失敗',
+			'restaurant.takePhotoFailed' => '拍照失敗',
+			'restaurant.uploadingImage' => '圖片上傳中...',
+			'restaurant.uploadImageInProgress' => '正在上傳圖片...',
 			'staff.title' => '員工管理',
 			'staff.list' => '員工列表',
 			'staff.addStaff' => '添加員工',
@@ -637,6 +660,9 @@ extension on TranslationsZhTw {
 			'staff.retry' => '重試',
 			'staff.unknownStatus' => '未知狀態',
 			'staff.unknown' => '未知',
+			'staff.statusOnline' => '在線',
+			'staff.statusOffline' => '離線',
+			'staff.statusBusy' => '忙碌',
 			'statistics.title' => '統計',
 			'statistics.overview' => '概覽',
 			'statistics.today' => '今日',

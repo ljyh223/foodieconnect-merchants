@@ -68,5 +68,10 @@
   "codeUpdateFailed": "Failed to update verification code",
   "setOpenSuccess": "Set to Open",
   "setClosedSuccess": "Set to Closed",
-  "statusToggleFailed": "Failed to toggle status"
+  "statusToggleFailed": "Failed to toggle status",
+  "selectImageFailed": "Failed to select image",
+  "takePhotoFailed": "Failed to take photo",
+  "saving": "Saving...",
+  "uploadingImage": "Uploading image...",
+  "uploadImageInProgress": "Uploading image..."
 }
