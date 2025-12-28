@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class AppTheme {
   // 配色方案 - 黑白灰系统
   static const Color primaryColor = Color(0xFF212121); // 深黑色
+  static const Color primaryLight = Color(0xFFE3F2FD); // 浅蓝色（用于提示背景）
   static const Color secondaryColor = Color(0xFF757575); // 中灰色
   static const Color backgroundColor = Color(0xFFFFFFFF); // 纯白色
   static const Color surfaceColor = Color(0xFFF5F5F5); // 浅灰色

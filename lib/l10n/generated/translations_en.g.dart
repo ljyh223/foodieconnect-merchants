@@ -519,6 +519,9 @@ class TranslationsNavigationEn {
 
 	/// en: 'Profile'
 	String get profile => 'Profile';
+
+	/// en: 'Chat'
+	String get chat => 'Chat';
 }
 
 // Path: restaurant
@@ -1106,6 +1109,7 @@ extension on Translations {
 			'navigation.staff' => 'Staff',
 			'navigation.statistics' => 'Statistics',
 			'navigation.profile' => 'Profile',
+			'navigation.chat' => 'Chat',
 			'restaurant.title' => 'Restaurant Management',
 			'restaurant.name' => 'Restaurant Name',
 			'restaurant.type' => 'Restaurant Type',

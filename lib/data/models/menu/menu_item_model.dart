@@ -172,6 +172,7 @@ class MenuItemModel extends Equatable {
     }
   }
 
+
   /// 获取制作时间显示文本
   String get preparationTimeDisplay {
     if (preparationTime == null) return '';

@@ -9,11 +9,13 @@ import 'package:foodieconnect/presentation/providers/auth_provider.dart';
 import 'package:foodieconnect/presentation/providers/restaurant_provider.dart';
 import 'package:foodieconnect/presentation/providers/menu_provider.dart';
 import 'package:foodieconnect/presentation/providers/staff_provider.dart';
+import 'package:foodieconnect/presentation/providers/chat_provider.dart';
 import 'package:foodieconnect/presentation/screens/restaurant/restaurant_info_screen.dart';
 import 'package:foodieconnect/presentation/screens/staff/staff_list_screen.dart';
 import 'package:foodieconnect/presentation/screens/statistics/statistics_overview_screen.dart';
 
 import '../menu/menu_list_screen.dart';
+import '../chat/chat_screen.dart';
 
 /// 仪表盘页面
 class DashboardScreen extends StatefulWidget {
@@ -33,6 +35,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     const MenuListScreen(),
     const StaffListScreen(),
     const StatisticsOverviewScreen(),
+    const ChatScreen(),
   ];
 
   // 底部导航项 - 动态创建，使用多语言资源
@@ -72,14 +75,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       // AuthProvider已经在应用启动时初始化，这里需要加载餐厅、菜单和员工信息
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final restaurantProvider = Provider.of<RestaurantProvider>(context, listen: false);
+      final restaurantProvider = Provider.of<RestaurantProvider>(
+        context,
+        listen: false,
+      );
       final menuProvider = Provider.of<MenuProvider>(context, listen: false);
       final staffProvider = Provider.of<StaffProvider>(context, listen: false);
-      
+      final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+
       if (authProvider.isLoggedIn) {
         restaurantProvider.loadRestaurant();
         menuProvider.loadMenuItems(refresh: true);
         staffProvider.loadStaffList(refresh: true);
+        chatProvider.init();
       }
 
       _isInitialized = true; // 设置初始化完成标志
@@ -103,46 +111,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   /// 构建页面内容
   Widget _buildPageContent() {
-    return Consumer4<
+    return Consumer5<
       AuthProvider,
       RestaurantProvider,
       MenuProvider,
-      StaffProvider
+      StaffProvider,
+      ChatProvider
     >(
-      builder: (context, authProvider, restaurantProvider, menuProvider, staffProvider, child) {
-        // 检查是否正在加载
-        if (authProvider.isLoading ||
-            restaurantProvider.isLoading ||
-            menuProvider.isLoading ||
-            staffProvider.isLoading) {
-          final t = Translations.of(context);
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const CircularProgressIndicator(),
-                const SizedBox(height: 16),
-                Text(t.common.loading),
-              ],
-            ),
-          );
-        }
+      builder:
+          (
+            context,
+            authProvider,
+            restaurantProvider,
+            menuProvider,
+            staffProvider,
+            chatProvider,
+            child,
+          ) {
+            // 检查是否正在加载
+            if (authProvider.isLoading ||
+                restaurantProvider.isLoading ||
+                menuProvider.isLoading ||
+                staffProvider.isLoading ||
+                chatProvider.isLoading) {
+              final t = Translations.of(context);
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    Text(t.common.loading),
+                  ],
+                ),
+              );
+            }
 
-        // 检查是否有错误
-        final hasError = authProvider.errorMessage != null ||
-            restaurantProvider.errorMessage != null ||
-            menuProvider.errorMessage != null ||
-            staffProvider.errorMessage != null;
+            // 检查是否有错误
+            final hasError =
+                authProvider.errorMessage != null ||
+                restaurantProvider.errorMessage != null ||
+                menuProvider.errorMessage != null ||
+                staffProvider.errorMessage != null ||
+                chatProvider.errorMessage != null;
 
-        if (hasError) {
-          return _buildErrorWidget();
-        }
+            if (hasError) {
+              return _buildErrorWidget();
+            }
 
-        return IndexedStack(
-          index: _currentIndex,
-          children: _pages,
-        );
-      },
+            return IndexedStack(index: _currentIndex, children: _pages);
+          },
     );
   }
 
@@ -153,11 +171,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: AppTheme.errorColor,
-          ),
+          const Icon(Icons.error_outline, size: 64, color: AppTheme.errorColor),
           const SizedBox(height: AppConstants.defaultPadding),
           Text(
             t.common.loadFailed,
@@ -185,7 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   /// 构建底部导航栏
   Widget _buildBottomNavigationBar() {
     final t = Translations.of(context);
-    
+
     final List<BottomNavigationBarItem> items = [
       BottomNavigationBarItem(
         icon: const Icon(Icons.restaurant),
@@ -203,8 +217,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         icon: const Icon(Icons.analytics),
         label: t.navigation.statistics,
       ),
+      BottomNavigationBarItem(
+        icon: const Icon(Icons.chat),
+        label: t.navigation.chat,
+      ),
     ];
-    
+
     return BottomNavigationBar(
       currentIndex: _currentIndex,
       onTap: _onBottomNavTap,

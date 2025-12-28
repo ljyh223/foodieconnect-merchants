@@ -4,5 +4,6 @@
   "menu": "菜单管理",
   "staff": "员工管理",
   "statistics": "数据统计",
-  "profile": "个人中心"
+  "profile": "个人中心",
+  "chat": "聊天室"
 }

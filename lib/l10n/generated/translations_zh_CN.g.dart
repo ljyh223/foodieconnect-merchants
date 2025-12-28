@@ -226,6 +226,7 @@ class _TranslationsNavigationZhCn implements TranslationsNavigationEn {
 	@override String get staff => '员工管理';
 	@override String get statistics => '数据统计';
 	@override String get profile => '个人中心';
+	@override String get chat => '聊天室';
 }
 
 // Path: restaurant
@@ -549,6 +550,7 @@ extension on TranslationsZhCn {
 			'navigation.staff' => '员工管理',
 			'navigation.statistics' => '数据统计',
 			'navigation.profile' => '个人中心',
+			'navigation.chat' => '聊天室',
 			'restaurant.title' => '餐厅管理',
 			'restaurant.name' => '餐厅名称',
 			'restaurant.type' => '餐厅类型',

@@ -10,6 +10,7 @@ import 'presentation/providers/auth_provider.dart';
 import 'presentation/providers/restaurant_provider.dart';
 import 'presentation/providers/menu_provider.dart';
 import 'presentation/providers/staff_provider.dart';
+import 'presentation/providers/chat_provider.dart';
 import 'presentation/screens/auth/login_screen.dart';
 import 'presentation/screens/dashboard/dashboard_screen.dart';
 import 'presentation/screens/restaurant/restaurant_edit_screen.dart';
@@ -65,6 +66,7 @@ class FoodieConnectApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => RestaurantProvider()),
         ChangeNotifierProvider(create: (_) => MenuProvider()),
         ChangeNotifierProvider(create: (_) => StaffProvider()),
+        ChangeNotifierProvider(create: (_) => ChatProvider()),
       ],
       child: TranslationProvider(
         child: MaterialApp(
