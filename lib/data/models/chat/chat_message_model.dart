@@ -1,56 +1,40 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-// 生成代码指令
+part 'chat_message_model.freezed.dart';
 part 'chat_message_model.g.dart';
 
 /// 聊天室消息模型
-@JsonSerializable()
-class ChatMessageModel {
-  /// 消息ID
-  final int? id;
+@freezed
+class ChatMessageModel with _$ChatMessageModel {
+  const factory ChatMessageModel({
+    /// 消息ID
+    int? id,
 
-  /// 房间ID
-  final int? roomId;
+    /// 房间ID
+    int? roomId,
 
-  /// 发送者ID
-  final int? senderId;
+    /// 发送者ID
+    int? senderId,
 
-  /// 发送者名称
-  final String? senderName;
+    /// 发送者名称
+    String? senderName,
 
-  /// 消息内容
-  final String? content;
+    /// 消息内容
+    String? content,
 
-  /// 消息类型
-  @JsonKey(name: 'messageType')
-  final String? type;
+    /// 消息类型
+    @JsonKey(name: 'messageType') String? type,
 
-  /// 创建时间
-  final DateTime? createdAt;
+    /// 创建时间
+    DateTime? createdAt,
 
-  /// 更新时间
-  final DateTime? updatedAt;
+    /// 更新时间
+    DateTime? updatedAt,
 
-  /// 发送者头像
-  final String? senderAvatar;
+    /// 发送者头像
+    String? senderAvatar,
+  }) = _ChatMessageModel;
 
-  /// 构造函数
-  ChatMessageModel({
-    this.id,
-    this.roomId,
-    this.senderId,
-    this.senderName,
-    this.content,
-    this.type,
-    this.createdAt,
-    this.updatedAt,
-    this.senderAvatar,
-  });
-
-  /// 从JSON转换
   factory ChatMessageModel.fromJson(Map<String, dynamic> json) =>
       _$ChatMessageModelFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$ChatMessageModelToJson(this);
 }

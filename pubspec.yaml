@@ -73,6 +73,7 @@ dependencies:
   logger: ^2.6.2
   equatable: ^2.0.7
   json_annotation: ^4.9.0
+  freezed_annotation: ^2.4.1
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +89,7 @@ dev_dependencies:
   # 代码生成
   build_runner: ^2.4.7
   json_serializable: ^6.7.1
+  freezed: ^2.4.5
   slang_build_runner: ^4.11.0
   protoc_plugin: ^21.0.0
 

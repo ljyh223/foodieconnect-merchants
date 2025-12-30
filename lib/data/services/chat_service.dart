@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
-import '../models/chat/chat_models.dart';
 import '../models/chat/chat_message_model.dart';
 import '../models/chat/chat_room_model.dart';
-import 'api_service.dart';
+import '../models/chat/chat_ws_models.dart';
+import '../repository/chat_repository.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/utils/logger.dart';
 
@@ -22,6 +22,9 @@ class ChatService {
   bool _isConnected = false;
   bool _isConnecting = false;
   int? _currentRoomId;
+
+  // Repository实例
+  final ChatRepository _chatRepository = ChatRepository();
 
   // 消息流控制器
   final StreamController<List<ChatMessageModel>> _messagesController =
@@ -50,38 +53,9 @@ class ChatService {
   // 获取聊天室信息
   Future<ChatRoomModel?> getChatRoomInfo() async {
     try {
-      final apiService = ApiService();
-      final response = await apiService.get('/merchant/chat-rooms');
-
-      // 检查响应数据是否为空
-      if (response.data == null) {
-        AppLogger.error('ChatService: 获取聊天室信息失败 - 响应数据为空');
-        return null;
-      }
-
-      // 检查响应格式是否为Map
-      if (response.data is! Map<String, dynamic>) {
-        AppLogger.error('ChatService: 获取聊天室信息失败 - 响应数据格式不正确');
-        return null;
-      }
-      
-      final Map<String, dynamic> dataMap = response.data as Map<String, dynamic>;
-      AppLogger.debug('ChatService: 获取聊天室信息响应数据: $dataMap');
-
-      // 检查请求是否成功
-      if (dataMap['success'] != true) {
-        final errorMessage = dataMap['error'] ?? '未知错误';
-        AppLogger.error('ChatService: 获取聊天室信息失败 - 服务器返回错误: $errorMessage');
-        return null;
-      }
-
-      // 检查data字段是否存在且不为空
-      if (dataMap['data'] == null) {
-        AppLogger.error('ChatService: 获取聊天室信息失败 - 响应中缺少data字段');
-        return null;
-      }
-      
-      return ChatRoomModel.fromJson(dataMap['data']);
+      final chatRoom = await _chatRepository.fetchChatRoomInfo();
+      AppLogger.info('ChatService: 获取聊天室信息成功');
+      return chatRoom;
     } catch (e) {
       AppLogger.error('ChatService: 获取聊天室信息失败', error: e);
       return null;
@@ -91,60 +65,13 @@ class ChatService {
   // 获取历史消息
   Future<void> getHistoryMessages() async {
     try {
-      final apiService = ApiService();
-      final response = await apiService.get('/merchant/chat-rooms/messages');
-
-      // 检查响应数据是否为空
-      if (response.data == null) {
-        AppLogger.error('ChatService: 获取历史消息失败 - 响应数据为空');
-        return;
-      }
-      AppLogger.debug(response.toString());
-
-      // 检查响应格式是否为Map
-      if (response.data is! Map<String, dynamic>) {
-        AppLogger.error('ChatService: 获取历史消息失败 - 响应数据格式不正确');
-        return;
-      }
-
-      final Map<String, dynamic> dataMap = response.data as Map<String, dynamic>;
-      // 记录完整的响应数据，方便调试
-      AppLogger.debug('ChatService: 获取历史消息响应数据: $dataMap');
-
-      // 检查响应是否成功
-      if (!dataMap.containsKey('success') || dataMap['success'] != true) {
-        final errorMessage = dataMap.containsKey('error') ? dataMap['error'] : '未知错误';
-        AppLogger.error('ChatService: 获取历史消息失败 - 服务器返回错误: $errorMessage');
-        return;
-      }
-
-      // 检查data字段
-      if (!dataMap.containsKey('data') || dataMap['data'] is! Map<String, dynamic>) {
-        AppLogger.error('ChatService: 获取历史消息失败 - 响应中缺少data字段或数据格式不正确');
-        return;
-      }
-
-      final Map<String, dynamic> dataContent = dataMap['data'] as Map<String, dynamic>;
-
-      // 检查records字段
-      if (!dataContent.containsKey('records') || dataContent['records'] is! List) {
-        AppLogger.error('ChatService: 获取历史消息失败 - 响应中缺少records字段或数据格式不正确');
-        return;
-      }
-
-      final List<dynamic> messagesData = dataContent['records'] as List<dynamic>;
+      final messages = await _chatRepository.fetchHistoryMessages();
 
       // 清空现有消息列表
       _messages.clear();
 
-      // 转换并添加历史消息
-      for (var messageData in messagesData) {
-        if (messageData is Map<String, dynamic>) {
-          // 直接使用fromJson方法解析消息，确保所有字段都被正确处理
-          final chatMessageModel = ChatMessageModel.fromJson(messageData);
-          _messages.add(chatMessageModel);
-        }
-      }
+      // 添加历史消息
+      _messages.addAll(messages);
 
       // 发送更新后的消息列表
       _messagesController.add(List.from(_messages));

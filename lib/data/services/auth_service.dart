@@ -1,31 +1,30 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:foodieconnect/core/constants/app_constants.dart';
 import 'package:foodieconnect/core/utils/logger.dart';
 import 'package:foodieconnect/data/models/auth/merchant_login_request.dart';
 import 'package:foodieconnect/data/models/auth/merchant_login_response.dart';
 import 'package:foodieconnect/data/models/auth/user_dto.dart';
 import 'package:foodieconnect/data/models/common/api_response.dart';
-import 'package:foodieconnect/data/services/api_service.dart';
+import 'package:foodieconnect/data/network/dio_client.dart';
+import 'package:foodieconnect/data/repository/auth_repository.dart';
 import 'package:foodieconnect/data/storage/secure_storage.dart';
 
 /// 认证服务类
 class AuthService {
-  final ApiService _apiService = ApiService();
+  final AuthRepository _authRepository = AuthRepository();
 
   /// 商家登录
-  Future<ApiResponse<MerchantLoginResponse>> login(MerchantLoginRequest request) async {
+  Future<ApiResponse<MerchantLoginResponse>> login(
+    MerchantLoginRequest request,
+  ) async {
     try {
       AppLogger.info('AuthService: 开始商家登录 - ${request.username}');
 
-      final response = await _apiService.post<Map<String, dynamic>>(
-        '/merchant/auth/login',
-        data: request.toJson(),
-      );
+      final responseData = await _authRepository.login(request);
 
       final apiResponse = ApiResponse<MerchantLoginResponse>.fromJson(
-        response.data!,
+        responseData,
         (json) => MerchantLoginResponse.fromJson(json as Map<String, dynamic>),
       );
 
@@ -38,37 +37,23 @@ class AuthService {
       }
 
       return apiResponse;
-    } on DioException catch (e) {
-      AppLogger.error('AuthService: 登录网络错误', error: e);
-      
-      // 尝试从错误响应中解析错误信息
-      if (e.response?.data is Map<String, dynamic>) {
-        final errorData = e.response!.data as Map<String, dynamic>;
-        return ApiResponse.error(
-          _extractErrorMessage(errorData),
-          code: e.response?.statusCode,
-        );
-      }
-      
-      return ApiResponse.error('登录请求失败，请检查网络连接');
     } catch (e) {
-      AppLogger.error('AuthService: 登录未知错误', error: e);
+      AppLogger.error('AuthService: 登录错误', error: e);
       return ApiResponse.error('登录失败，请稍后重试');
     }
   }
 
   /// 商家注册
-  Future<ApiResponse<UserDTO>> register(Map<String, dynamic> registerData) async {
+  Future<ApiResponse<UserDTO>> register(
+    Map<String, dynamic> registerData,
+  ) async {
     try {
       AppLogger.info('AuthService: 开始商家注册');
 
-      final response = await _apiService.post<Map<String, dynamic>>(
-        '/merchant/auth/register',
-        data: registerData,
-      );
+      final responseData = await _authRepository.register(registerData);
 
       final apiResponse = ApiResponse<UserDTO>.fromJson(
-        response.data!,
+        responseData,
         (json) => UserDTO.fromJson(json as Map<String, dynamic>),
       );
 
@@ -79,20 +64,8 @@ class AuthService {
       }
 
       return apiResponse;
-    } on DioException catch (e) {
-      AppLogger.error('AuthService: 注册网络错误', error: e);
-      
-      if (e.response?.data is Map<String, dynamic>) {
-        final errorData = e.response!.data as Map<String, dynamic>;
-        return ApiResponse.error(
-          _extractErrorMessage(errorData),
-          code: e.response?.statusCode,
-        );
-      }
-      
-      return ApiResponse.error('注册请求失败，请检查网络连接');
     } catch (e) {
-      AppLogger.error('AuthService: 注册未知错误', error: e);
+      AppLogger.error('AuthService: 注册错误', error: e);
       return ApiResponse.error('注册失败，请稍后重试');
     }
   }
@@ -102,36 +75,24 @@ class AuthService {
     try {
       AppLogger.info('AuthService: 获取当前商家信息');
 
-      final response = await _apiService.get<Map<String, dynamic>>(
-        '/merchant/auth/profile',
-      );
+      final responseData = await _authRepository.getCurrentMerchant();
 
       final apiResponse = ApiResponse<UserDTO>.fromJson(
-        response.data!,
+        responseData,
         (json) => UserDTO.fromJson(json as Map<String, dynamic>),
       );
 
       if (apiResponse.isSuccess) {
         AppLogger.info('AuthService: 获取商家信息成功');
       } else {
-        AppLogger.warning('AuthService: 获取商家信息失败 - ${apiResponse.errorMessage}');
+        AppLogger.warning(
+          'AuthService: 获取商家信息失败 - ${apiResponse.errorMessage}',
+        );
       }
 
       return apiResponse;
-    } on DioException catch (e) {
-      AppLogger.error('AuthService: 获取商家信息网络错误', error: e);
-      
-      if (e.response?.data is Map<String, dynamic>) {
-        final errorData = e.response!.data as Map<String, dynamic>;
-        return ApiResponse.error(
-          _extractErrorMessage(errorData),
-          code: e.response?.statusCode,
-        );
-      }
-      
-      return ApiResponse.error('获取商家信息失败，请检查网络连接');
     } catch (e) {
-      AppLogger.error('AuthService: 获取商家信息未知错误', error: e);
+      AppLogger.error('AuthService: 获取商家信息错误', error: e);
       return ApiResponse.error('获取商家信息失败，请稍后重试');
     }
   }
@@ -144,18 +105,12 @@ class AuthService {
     try {
       AppLogger.info('AuthService: 开始修改密码');
 
-      final response = await _apiService.put<Map<String, dynamic>>(
-        '/merchant/auth/change-password',
-        data: {
-          'currentPassword': currentPassword,
-          'newPassword': newPassword,
-        },
+      final responseData = await _authRepository.changePassword(
+        currentPassword: currentPassword,
+        newPassword: newPassword,
       );
 
-      final apiResponse = ApiResponse<void>.fromJson(
-        response.data!,
-        (json) {},
-      );
+      final apiResponse = ApiResponse<void>.fromJson(responseData, (json) {});
 
       if (apiResponse.isSuccess) {
         AppLogger.info('AuthService: 修改密码成功');
@@ -164,20 +119,8 @@ class AuthService {
       }
 
       return apiResponse;
-    } on DioException catch (e) {
-      AppLogger.error('AuthService: 修改密码网络错误', error: e);
-      
-      if (e.response?.data is Map<String, dynamic>) {
-        final errorData = e.response!.data as Map<String, dynamic>;
-        return ApiResponse.error(
-          _extractErrorMessage(errorData),
-          code: e.response?.statusCode,
-        );
-      }
-      
-      return ApiResponse.error('修改密码失败，请检查网络连接');
     } catch (e) {
-      AppLogger.error('AuthService: 修改密码未知错误', error: e);
+      AppLogger.error('AuthService: 修改密码错误', error: e);
       return ApiResponse.error('修改密码失败，请稍后重试');
     }
   }
@@ -187,41 +130,21 @@ class AuthService {
     try {
       AppLogger.info('AuthService: 开始商家登出');
 
-      final response = await _apiService.post<Map<String, dynamic>>(
-        '/merchant/auth/logout',
-      );
+      final responseData = await _authRepository.logout();
 
-      final apiResponse = ApiResponse<void>.fromJson(
-        response.data!,
-        (json) {},
-      );
+      final apiResponse = ApiResponse<void>.fromJson(responseData, (json) {});
 
       // 无论API调用是否成功，都清除本地数据
       await _clearLoginData();
       AppLogger.info('AuthService: 登出成功');
 
       return apiResponse;
-    } on DioException catch (e) {
-      AppLogger.error('AuthService: 登出网络错误', error: e);
-      
-      // 即使网络请求失败，也要清除本地数据
-      await _clearLoginData();
-      
-      if (e.response?.data is Map<String, dynamic>) {
-        final errorData = e.response!.data as Map<String, dynamic>;
-        return ApiResponse.error(
-          _extractErrorMessage(errorData),
-          code: e.response?.statusCode,
-        );
-      }
-      
-      return ApiResponse.error('登出请求失败，但本地数据已清除');
     } catch (e) {
-      AppLogger.error('AuthService: 登出未知错误', error: e);
-      
-      // 即使发生未知错误，也要清除本地数据
+      AppLogger.error('AuthService: 登出错误', error: e);
+
+      // 即使发生错误，也要清除本地数据
       await _clearLoginData();
-      
+
       return ApiResponse.error('登出失败，但本地数据已清除');
     }
   }
@@ -257,7 +180,7 @@ class AuthService {
   Future<void> _saveLoginData(MerchantLoginResponse loginResponse) async {
     try {
       await SecureStorage.setString(AppConstants.tokenKey, loginResponse.token);
-      
+
       // 创建用户信息对象
       final userInfo = {
         'id': loginResponse.merchantId,
@@ -271,12 +194,15 @@ class AuthService {
         'createdAt': DateTime.now().toIso8601String(),
         'updatedAt': DateTime.now().toIso8601String(),
       };
-      
-      await SecureStorage.setString(AppConstants.userInfoKey, jsonEncode(userInfo));
-      
+
+      await SecureStorage.setString(
+        AppConstants.userInfoKey,
+        jsonEncode(userInfo),
+      );
+
       // 设置API服务的访问令牌
-      _apiService.setAccessToken(loginResponse.token);
-      
+      DioClient.setAccessToken(loginResponse.token);
+
       AppLogger.debug('AuthService: 登录数据保存成功');
     } catch (e) {
       AppLogger.error('AuthService: 保存登录数据失败', error: e);
@@ -289,29 +215,13 @@ class AuthService {
     try {
       await SecureStorage.remove(AppConstants.tokenKey);
       await SecureStorage.remove(AppConstants.userInfoKey);
-      
+
       // 清除API服务的访问令牌
-      _apiService.clearAccessToken();
-      
+      DioClient.clearAccessToken();
+
       AppLogger.debug('AuthService: 登录数据清除成功');
     } catch (e) {
       AppLogger.error('AuthService: 清除登录数据失败', error: e);
     }
-  }
-
-  /// 从错误响应中提取错误信息
-  String _extractErrorMessage(Map<String, dynamic> errorData) {
-    if (errorData.containsKey('error') && errorData['error'] is Map) {
-      final error = errorData['error'] as Map;
-      if (error.containsKey('message')) {
-        return error['message'] as String;
-      }
-    }
-    
-    if (errorData.containsKey('message')) {
-      return errorData['message'] as String;
-    }
-    
-    return '未知错误';
   }
 }

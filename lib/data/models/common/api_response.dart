@@ -75,14 +75,6 @@ class ApiResponse<T> extends Equatable {
     return '未知错误';
   }
 
-  /// 获取错误代码
-  int get errorCode {
-    if (error != null) {
-      return error!.code;
-    }
-    return -1;
-  }
-
   @override
   List<Object?> get props => [success, data, error, timestamp];
 
@@ -123,5 +115,51 @@ class ErrorInfo extends Equatable {
   @override
   String toString() {
     return 'ErrorInfo(code: $code, message: $message, details: $details)';
+  }
+}
+
+/// 分页API响应模型
+@JsonSerializable(genericArgumentFactories: true)
+class PaginatedResponse<T> extends Equatable {
+  @JsonKey(name: 'records')
+  final List<T> records;
+  
+  @JsonKey(name: 'total')
+  final int total;
+  
+  @JsonKey(name: 'size')
+  final int size;
+  
+  @JsonKey(name: 'current')
+  final int current;
+  
+  @JsonKey(name: 'pages')
+  final int pages;
+
+  const PaginatedResponse({
+    required this.records,
+    required this.total,
+    required this.size,
+    required this.current,
+    required this.pages,
+  });
+
+  /// 从JSON创建实例
+  factory PaginatedResponse.fromJson(
+    Map<String, dynamic> json,
+    T Function(Object? json) fromJsonT,
+  ) =>
+      _$PaginatedResponseFromJson(json, fromJsonT);
+
+  /// 转换为JSON
+  Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
+      _$PaginatedResponseToJson(this, toJsonT);
+
+  @override
+  List<Object?> get props => [records, total, size, current, pages];
+
+  @override
+  String toString() {
+    return 'PaginatedResponse(records: $records, total: $total, size: $size, current: $current, pages: $pages)';
   }
 }

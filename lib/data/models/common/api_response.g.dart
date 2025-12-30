@@ -51,3 +51,25 @@ Map<String, dynamic> _$ErrorInfoToJson(ErrorInfo instance) => <String, dynamic>{
   'message': instance.message,
   'details': instance.details,
 };
+
+PaginatedResponse<T> _$PaginatedResponseFromJson<T>(
+  Map<String, dynamic> json,
+  T Function(Object? json) fromJsonT,
+) => PaginatedResponse<T>(
+  records: (json['records'] as List<dynamic>).map(fromJsonT).toList(),
+  total: (json['total'] as num).toInt(),
+  size: (json['size'] as num).toInt(),
+  current: (json['current'] as num).toInt(),
+  pages: (json['pages'] as num).toInt(),
+);
+
+Map<String, dynamic> _$PaginatedResponseToJson<T>(
+  PaginatedResponse<T> instance,
+  Object? Function(T value) toJsonT,
+) => <String, dynamic>{
+  'records': instance.records.map(toJsonT).toList(),
+  'total': instance.total,
+  'size': instance.size,
+  'current': instance.current,
+  'pages': instance.pages,
+};

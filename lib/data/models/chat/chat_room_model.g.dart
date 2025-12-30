@@ -6,8 +6,8 @@ part of 'chat_room_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-ChatRoomModel _$ChatRoomModelFromJson(Map<String, dynamic> json) =>
-    ChatRoomModel(
+_$ChatRoomModelImpl _$$ChatRoomModelImplFromJson(Map<String, dynamic> json) =>
+    _$ChatRoomModelImpl(
       id: (json['id'] as num?)?.toInt(),
       restaurantId: (json['restaurantId'] as num?)?.toInt(),
       name: json['name'] as String?,
@@ -21,7 +21,7 @@ ChatRoomModel _$ChatRoomModelFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['updatedAt'] as String),
     );
 
-Map<String, dynamic> _$ChatRoomModelToJson(ChatRoomModel instance) =>
+Map<String, dynamic> _$$ChatRoomModelImplToJson(_$ChatRoomModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'restaurantId': instance.restaurantId,
