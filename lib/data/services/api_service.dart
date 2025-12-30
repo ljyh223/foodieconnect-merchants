@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:foodieconnect/core/constants/app_constants.dart';
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/data/models/common/api_response.dart';
+import '../../core/constants/app_constants.dart';
+import '../../core/utils/logger.dart';
+import '../models/common/api_response.dart';
 
 /// 基础API服务类
 class ApiService {
@@ -13,29 +13,80 @@ class ApiService {
 
   late Dio _dio;
   String? _accessToken;
-  
+
   // 认证错误回调函数
   Function()? onAuthError;
 
   /// 初始化API服务
-  void init() {
-    _dio = Dio(BaseOptions(
-      baseUrl: AppConstants.baseUrl,
-      connectTimeout: AppConstants.apiTimeout,
-      receiveTimeout: AppConstants.apiTimeout,
-      sendTimeout: AppConstants.apiTimeout,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    ));
+  Future<void> init() async {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: AppConstants.baseUrl,
+        connectTimeout: AppConstants.apiTimeout,
+        receiveTimeout: AppConstants.apiTimeout,
+        sendTimeout: AppConstants.apiTimeout,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
 
-    // 添加请求拦截器
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: _onRequest,
-      onResponse: _onResponse,
-      onError: _onError,
-    ));
+    // 添加重试拦截器
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (DioException error, ErrorInterceptorHandler handler) async {
+          // 只对特定错误类型进行重试
+          final shouldRetry =
+              error.type == DioExceptionType.connectionTimeout ||
+              error.type == DioExceptionType.receiveTimeout ||
+              error.type == DioExceptionType.sendTimeout ||
+              error.type == DioExceptionType.connectionError;
+
+          if (shouldRetry) {
+            // 重试次数
+            const maxRetries = 3;
+            int retryCount = 0;
+
+            while (retryCount < maxRetries) {
+              retryCount++;
+              AppLogger.debug(
+                'ApiService: 重试请求 ($retryCount/$maxRetries): ${error.requestOptions.uri}',
+              );
+
+              try {
+                // 重试请求
+                final response = await _dio.fetch(
+                  error.requestOptions.copyWith(),
+                );
+                // 重试成功，返回响应
+                return handler.resolve(response);
+              } catch (e) {
+                // 重试失败，继续重试
+                if (retryCount == maxRetries) {
+                  // 达到最大重试次数，返回错误
+                  return handler.next(error);
+                }
+                // 等待一段时间后重试
+                await Future.delayed(Duration(seconds: retryCount));
+              }
+            }
+          }
+
+          // 不需要重试或重试失败，继续处理错误
+          return handler.next(error);
+        },
+      ),
+    );
+
+    // 添加请求、响应、错误拦截器
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: _onRequest,
+        onResponse: _onResponse,
+        onError: _onError,
+      ),
+    );
 
     AppLogger.info('ApiService: 初始化完成');
   }
@@ -56,7 +107,10 @@ class ApiService {
   }
 
   /// 请求拦截器
-  void _onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void _onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
     AppLogger.debug('token: $_accessToken');
     // 添加认证头
     if (_accessToken != null) {
@@ -74,12 +128,14 @@ class ApiService {
 
   /// 响应拦截器
   void _onResponse(Response response, ResponseInterceptorHandler handler) {
-    AppLogger.debug('API响应: ${response.statusCode} ${response.requestOptions.uri}');
-    
+    AppLogger.debug(
+      'API响应: ${response.statusCode} ${response.requestOptions.uri}',
+    );
+
     // 尝试解析通用响应格式
     if (response.data is Map<String, dynamic>) {
       final data = response.data as Map<String, dynamic>;
-      
+
       // 检查是否为标准API响应格式
       if (data.containsKey('success')) {
         // 这里可以添加统一的响应处理逻辑
@@ -88,7 +144,7 @@ class ApiService {
         }
       }
     }
-    
+
     handler.next(response);
   }
 
@@ -98,7 +154,7 @@ class ApiService {
 
     // 处理不同类型的错误
     String errorMessage = '网络请求失败';
-    
+
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
         errorMessage = '连接超时';
@@ -111,10 +167,13 @@ class ApiService {
         break;
       case DioExceptionType.badResponse:
         errorMessage = _handleHttpError(error.response);
-        
+
         // 检测401和403错误，可能是token过期
-        if (error.response?.statusCode == 401 || error.response?.statusCode == 403) {
-          AppLogger.warning('API错误: ${error.response?.statusCode} - Token过期或权限不足');
+        if (error.response?.statusCode == 401 ||
+            error.response?.statusCode == 403) {
+          AppLogger.warning(
+            'API错误: ${error.response?.statusCode} - Token过期或权限不足',
+          );
           // 调用认证错误回调
           onAuthError?.call();
         }
@@ -135,7 +194,7 @@ class ApiService {
 
     // 创建自定义错误响应
     final errorResponse = ApiResponse<dynamic>.error(errorMessage);
-    
+
     // 将DioException转换为自定义错误
     final customError = DioException(
       requestOptions: error.requestOptions,
@@ -269,7 +328,7 @@ class ApiService {
   }) async {
     try {
       final fileName = file.path.split('/').last;
-      
+
       // 为图片上传创建特殊的请求选项
       final uploadOptions = Options(
         headers: {
@@ -281,13 +340,10 @@ class ApiService {
         sendTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
       );
-      
+
       final formData = FormData.fromMap({
         ...?data,
-        'file': await MultipartFile.fromFile(
-          file.path,
-          filename: fileName,
-        ),
+        'file': await MultipartFile.fromFile(file.path, filename: fileName),
       });
 
       return await _dio.post<T>(
@@ -311,7 +367,7 @@ class ApiService {
   }) async {
     try {
       final Map<String, dynamic> formDataMap = {...?data};
-      
+
       for (int i = 0; i < files.length; i++) {
         final file = files[i];
         final fileName = file.path.split('/').last;

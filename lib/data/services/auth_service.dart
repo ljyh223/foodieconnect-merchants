@@ -6,8 +6,9 @@ import 'package:foodieconnect/data/models/auth/merchant_login_request.dart';
 import 'package:foodieconnect/data/models/auth/merchant_login_response.dart';
 import 'package:foodieconnect/data/models/auth/user_dto.dart';
 import 'package:foodieconnect/data/models/common/api_response.dart';
-import 'package:foodieconnect/data/network/dio_client.dart';
+
 import 'package:foodieconnect/data/repository/auth_repository.dart';
+import 'package:foodieconnect/data/services/api_service.dart';
 import 'package:foodieconnect/data/storage/secure_storage.dart';
 
 /// 认证服务类
@@ -201,7 +202,7 @@ class AuthService {
       );
 
       // 设置API服务的访问令牌
-      DioClient.setAccessToken(loginResponse.token);
+      ApiService().setAccessToken(loginResponse.token);
 
       AppLogger.debug('AuthService: 登录数据保存成功');
     } catch (e) {
@@ -217,7 +218,7 @@ class AuthService {
       await SecureStorage.remove(AppConstants.userInfoKey);
 
       // 清除API服务的访问令牌
-      DioClient.clearAccessToken();
+      ApiService().clearAccessToken();
 
       AppLogger.debug('AuthService: 登录数据清除成功');
     } catch (e) {

@@ -1,12 +1,12 @@
 import '../models/chat/chat_message_model.dart';
 import '../models/chat/chat_room_model.dart';
-import '../network/dio_client.dart';
+import '../services/api_service.dart';
 
 /// 聊天室API服务
 class ChatApi {
   /// 获取聊天室信息
   static Future<ChatRoomModel> getChatRoomInfo() async {
-    final response = await DioClient.dio.get<Map<String, dynamic>>(
+    final response = await ApiService().get<Map<String, dynamic>>(
       '/merchant/chat-rooms',
     );
     final data = response.data!;
@@ -15,7 +15,7 @@ class ChatApi {
 
   /// 获取历史消息
   static Future<List<ChatMessageModel>> getHistoryMessages() async {
-    final response = await DioClient.dio.get<Map<String, dynamic>>(
+    final response = await ApiService().get<Map<String, dynamic>>(
       '/merchant/chat-rooms/messages',
     );
     final data = response.data!;

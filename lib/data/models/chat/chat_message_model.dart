@@ -23,7 +23,7 @@ class ChatMessageModel with _$ChatMessageModel {
     String? content,
 
     /// 消息类型
-    @JsonKey(name: 'messageType') String? type,
+    @JsonKey(name: 'messageType')String? type,  // 这里正确
 
     /// 创建时间
     DateTime? createdAt,

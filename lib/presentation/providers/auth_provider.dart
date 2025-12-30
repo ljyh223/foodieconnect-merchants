@@ -7,8 +7,9 @@ import 'package:foodieconnect/core/utils/logger.dart';
 import 'package:foodieconnect/data/models/auth/merchant_login_request.dart';
 import 'package:foodieconnect/data/models/auth/merchant_login_response.dart';
 import 'package:foodieconnect/data/models/auth/user_dto.dart';
-import 'package:foodieconnect/data/network/dio_client.dart';
+
 import 'package:foodieconnect/data/services/auth_service.dart';
+import 'package:foodieconnect/data/services/api_service.dart';
 import 'package:foodieconnect/data/storage/secure_storage.dart';
 
 /// 认证状态管理Provider
@@ -40,8 +41,8 @@ class AuthProvider extends ChangeNotifier {
       _isLoggedIn = isLoggedIn;
 
       if (isLoggedIn) {
-        // 加载token到DioClient
-        await _loadTokenToDioClient();
+        // 加载token到ApiService
+        await _loadTokenToApiService();
         // 获取用户信息
         await _loadUserInfo();
       }
@@ -97,8 +98,8 @@ class AuthProvider extends ChangeNotifier {
 
         _isLoggedIn = true;
 
-        // 设置DioClient的访问令牌
-        DioClient.setAccessToken(response.data!.token);
+        // 设置ApiService的访问令牌
+        ApiService().setAccessToken(response.data!.token);
 
         AppLogger.info('AuthProvider: 登录成功');
         notifyListeners();
@@ -129,8 +130,8 @@ class AuthProvider extends ChangeNotifier {
 
       // 无论API调用是否成功，都清除本地状态
       _clearAuthState();
-      // 清除DioClient的访问令牌
-      DioClient.clearAccessToken();
+      // 清除ApiService的访问令牌
+      ApiService().clearAccessToken();
 
       if (response.isSuccess) {
         AppLogger.info('AuthProvider: 登出成功');
@@ -143,8 +144,8 @@ class AuthProvider extends ChangeNotifier {
       AppLogger.error('AuthProvider: 登出异常', error: e);
       // 即使发生异常，也要清除本地状态
       _clearAuthState();
-      // 清除DioClient的访问令牌
-      DioClient.clearAccessToken();
+      // 清除ApiService的访问令牌
+      ApiService().clearAccessToken();
       notifyListeners();
     } finally {
       _setLoading(false);
@@ -303,17 +304,17 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// 加载token到DioClient
-  Future<void> _loadTokenToDioClient() async {
+  /// 加载token到ApiService
+  Future<void> _loadTokenToApiService() async {
     try {
       final token = await SecureStorage.getString(AppConstants.tokenKey);
       if (token != null && token.isNotEmpty) {
-        // 设置DioClient的访问令牌
-        DioClient.setAccessToken(token);
-        AppLogger.info('AuthProvider: Token已加载到DioClient');
+        // 设置ApiService的访问令牌
+        ApiService().setAccessToken(token);
+        AppLogger.info('AuthProvider: Token已加载到ApiService');
       }
     } catch (e) {
-      AppLogger.error('AuthProvider: 加载Token到DioClient失败', error: e);
+      AppLogger.error('AuthProvider: 加载Token到ApiService失败', error: e);
     }
   }
 

@@ -6,24 +6,25 @@ part of 'staff_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-StaffModel _$StaffModelFromJson(Map<String, dynamic> json) => StaffModel(
-  id: (json['id'] as num).toInt(),
-  restaurantId: (json['restaurantId'] as num).toInt(),
-  name: json['name'] as String,
-  position: json['position'] as String?,
-  status: json['status'] as String,
-  experience: json['experience'] as String?,
-  rating: (json['rating'] as num?)?.toDouble(),
-  avatarUrl: json['avatarUrl'] as String?,
-  createdAt: json['createdAt'] == null
-      ? null
-      : DateTime.parse(json['createdAt'] as String),
-  updatedAt: json['updatedAt'] == null
-      ? null
-      : DateTime.parse(json['updatedAt'] as String),
-);
+_$StaffModelImpl _$$StaffModelImplFromJson(Map<String, dynamic> json) =>
+    _$StaffModelImpl(
+      id: (json['id'] as num).toInt(),
+      restaurantId: (json['restaurantId'] as num).toInt(),
+      name: json['name'] as String,
+      position: json['position'] as String?,
+      status: json['status'] as String,
+      experience: json['experience'] as String?,
+      rating: (json['rating'] as num?)?.toDouble(),
+      avatarUrl: json['avatarUrl'] as String?,
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] == null
+          ? null
+          : DateTime.parse(json['updatedAt'] as String),
+    );
 
-Map<String, dynamic> _$StaffModelToJson(StaffModel instance) =>
+Map<String, dynamic> _$$StaffModelImplToJson(_$StaffModelImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'restaurantId': instance.restaurantId,

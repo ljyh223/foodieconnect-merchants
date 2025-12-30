@@ -2,13 +2,15 @@ import 'dart:io';
 import '../api/menu_api.dart';
 import '../models/menu/menu_item_request.dart';
 import '../models/menu/menu_category_request.dart';
-import '../models/common/api_error.dart';
-import 'package:dio/dio.dart';
+import '../models/menu/menu_item_model.dart';
+import '../models/menu/menu_category_model.dart';
+import '../models/common/api_result.dart';
+import 'base_repository.dart';
 
 /// 菜单Repository
-class MenuRepository {
+class MenuRepository extends BaseRepository {
   /// 获取菜品列表
-  Future<Map<String, dynamic>> getMenuItems({
+  Future<ApiResult<List<MenuItemModel>>> getMenuItems({
     int page = 0,
     int size = 20,
     String? categoryId,
@@ -16,142 +18,127 @@ class MenuRepository {
     bool? isAvailable,
     bool? isRecommended,
   }) async {
-    try {
-      return await MenuApi.getMenuItems(
+    return safeListApiCall(
+      () => MenuApi.getMenuItems(
         page: page,
         size: size,
         categoryId: categoryId,
         keyword: keyword,
         isAvailable: isAvailable,
         isRecommended: isRecommended,
-      );
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+      ),
+      (data) => MenuItemModel.fromJson(data),
+    );
   }
 
   /// 创建菜品
-  Future<Map<String, dynamic>> createMenuItem(MenuItemRequest request) async {
-    try {
-      return await MenuApi.createMenuItem(request);
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+  Future<ApiResult<MenuItemModel>> createMenuItem(
+    MenuItemRequest request,
+  ) async {
+    return safeApiCall(
+      () => MenuApi.createMenuItem(request),
+      (data) => MenuItemModel.fromJson(data),
+    );
   }
 
   /// 更新菜品
-  Future<Map<String, dynamic>> updateMenuItem(
+  Future<ApiResult<MenuItemModel>> updateMenuItem(
     int itemId,
     MenuItemRequest request,
   ) async {
-    try {
-      return await MenuApi.updateMenuItem(itemId, request);
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+    return safeApiCall(
+      () => MenuApi.updateMenuItem(itemId, request),
+      (data) => MenuItemModel.fromJson(data),
+    );
   }
 
   /// 删除菜品
-  Future<Map<String, dynamic>> deleteMenuItem(int itemId) async {
-    try {
-      return await MenuApi.deleteMenuItem(itemId);
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+  Future<ApiResult<void>> deleteMenuItem(int itemId) async {
+    return safeApiCall(() => MenuApi.deleteMenuItem(itemId), (_) => null);
   }
 
   /// 切换菜品状态
-  Future<Map<String, dynamic>> toggleMenuItemStatus(
+  Future<ApiResult<void>> toggleMenuItemStatus(
     int itemId,
     bool isAvailable,
   ) async {
-    try {
-      return await MenuApi.toggleMenuItemStatus(itemId, isAvailable);
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+    return safeApiCall(
+      () => MenuApi.toggleMenuItemStatus(itemId, isAvailable),
+      (_) => null,
+    );
   }
 
   /// 设置推荐菜品
-  Future<Map<String, dynamic>> setRecommendedMenuItem(
+  Future<ApiResult<void>> setRecommendedMenuItem(
     int itemId,
     bool isRecommended,
   ) async {
-    try {
-      return await MenuApi.setRecommendedMenuItem(itemId, isRecommended);
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+    return safeApiCall(
+      () => MenuApi.setRecommendedMenuItem(itemId, isRecommended),
+      (_) => null,
+    );
   }
 
   /// 获取所有菜品
-  Future<Map<String, dynamic>> getAllMenuItems() async {
-    try {
-      return await MenuApi.getAllMenuItems();
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+  Future<ApiResult<List<MenuItemModel>>> getAllMenuItems() async {
+    return safeListApiCall(
+      () => MenuApi.getAllMenuItems(),
+      (data) => MenuItemModel.fromJson(data),
+    );
   }
 
   /// 获取分类列表
-  Future<Map<String, dynamic>> getCategories() async {
-    try {
-      return await MenuApi.getCategories();
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+  Future<ApiResult<List<MenuCategoryModel>>> getCategories() async {
+    return safeListApiCall(
+      () => MenuApi.getCategories(),
+      (data) => MenuCategoryModel.fromJson(data),
+    );
   }
 
   /// 创建分类
-  Future<Map<String, dynamic>> createCategory(
+  Future<ApiResult<MenuCategoryModel>> createCategory(
     MenuCategoryRequest request,
   ) async {
-    try {
-      return await MenuApi.createCategory(request);
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+    return safeApiCall(
+      () => MenuApi.createCategory(request),
+      (data) => MenuCategoryModel.fromJson(data),
+    );
   }
 
   /// 更新分类
-  Future<Map<String, dynamic>> updateCategory(
+  Future<ApiResult<MenuCategoryModel>> updateCategory(
     int categoryId,
     MenuCategoryRequest request,
   ) async {
-    try {
-      return await MenuApi.updateCategory(categoryId, request);
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+    return safeApiCall(
+      () => MenuApi.updateCategory(categoryId, request),
+      (data) => MenuCategoryModel.fromJson(data),
+    );
   }
 
   /// 删除分类
-  Future<Map<String, dynamic>> deleteCategory(int categoryId) async {
-    try {
-      return await MenuApi.deleteCategory(categoryId);
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+  Future<ApiResult<void>> deleteCategory(int categoryId) async {
+    return safeApiCall(() => MenuApi.deleteCategory(categoryId), (_) => null);
   }
 
   /// 切换分类状态
-  Future<Map<String, dynamic>> toggleCategoryStatus(
+  Future<ApiResult<void>> toggleCategoryStatus(
     int categoryId,
     bool isActive,
   ) async {
-    try {
-      return await MenuApi.toggleCategoryStatus(categoryId, isActive);
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+    return safeApiCall(
+      () => MenuApi.toggleCategoryStatus(categoryId, isActive),
+      (_) => null,
+    );
   }
 
   /// 上传菜品图片
-  Future<Map<String, dynamic>> uploadMenuItemImage(File imageFile) async {
-    try {
-      return await MenuApi.uploadMenuItemImage(imageFile);
-    } on DioException catch (e) {
-      throw ApiError.fromDio(e);
-    }
+  Future<ApiResult<Map<String, dynamic>>> uploadMenuItemImage(
+    File imageFile,
+  ) async {
+    return safeApiCall(
+      () => MenuApi.uploadMenuItemImage(imageFile),
+      (data) => data,
+    );
   }
 }

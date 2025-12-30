@@ -24,7 +24,7 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 获取菜品列表');
 
-      final responseData = await _menuRepository.getMenuItems(
+      final result = await _menuRepository.getMenuItems(
         page: page,
         size: size,
         categoryId: categoryId,
@@ -33,37 +33,19 @@ class MenuService {
         isRecommended: isRecommended,
       );
 
-      AppLogger.debug('MenuService: API响应数据 - $responseData');
-
-      final apiResponse = ApiResponse<List<MenuItemModel>>.fromJson(
-        responseData,
-        (json) {
-          if (json is List) {
-            AppLogger.debug('MenuService: 解析菜品列表 - ${json.length} 项');
-            if (json.isNotEmpty) {
-              AppLogger.debug('MenuService: 第一项数据 - ${json.first}');
-            }
-            return (json)
-                .map(
-                  (item) =>
-                      MenuItemModel.fromJson(item as Map<String, dynamic>),
-                )
-                .toList();
-          }
-          AppLogger.debug('MenuService: 返回数据不是列表格式');
-          return <MenuItemModel>[];
+      return result.when(
+        loading: () {
+          return ApiResponse.error('加载中');
+        },
+        success: (data) {
+          AppLogger.info('MenuService: 获取菜品列表成功 - ${data.length} 项');
+          return ApiResponse.success(data);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 获取菜品列表失败 - $message');
+          return ApiResponse.error(message, code: code);
         },
       );
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 获取菜品列表成功 - ${apiResponse.data?.length} 项');
-      } else {
-        AppLogger.warning(
-          'MenuService: 获取菜品列表失败 - ${apiResponse.errorMessage}',
-        );
-      }
-
-      return apiResponse;
     } catch (e) {
       AppLogger.error('MenuService: 获取菜品列表错误', error: e);
       return ApiResponse.error('获取菜品列表失败，请稍后重试');
@@ -77,20 +59,19 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 创建菜品 - ${request.name}');
 
-      final responseData = await _menuRepository.createMenuItem(request);
+      final result = await _menuRepository.createMenuItem(request);
 
-      final apiResponse = ApiResponse<MenuItemModel>.fromJson(
-        responseData,
-        (json) => MenuItemModel.fromJson(json as Map<String, dynamic>),
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (data) {
+          AppLogger.info('MenuService: 创建菜品成功');
+          return ApiResponse.success(data);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 创建菜品失败 - $message');
+          return ApiResponse.error(message, code: code);
+        },
       );
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 创建菜品成功');
-      } else {
-        AppLogger.warning('MenuService: 创建菜品失败 - ${apiResponse.errorMessage}');
-      }
-
-      return apiResponse;
     } catch (e) {
       AppLogger.error('MenuService: 创建菜品错误', error: e);
       return ApiResponse.error('创建菜品失败，请稍后重试');
@@ -105,23 +86,19 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 更新菜品 - $itemId');
 
-      final responseData = await _menuRepository.updateMenuItem(
-        itemId,
-        request,
+      final result = await _menuRepository.updateMenuItem(itemId, request);
+
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (data) {
+          AppLogger.info('MenuService: 更新菜品成功');
+          return ApiResponse.success(data);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 更新菜品失败 - $message');
+          return ApiResponse.error(message, code: code);
+        },
       );
-
-      final apiResponse = ApiResponse<MenuItemModel>.fromJson(
-        responseData,
-        (json) => MenuItemModel.fromJson(json as Map<String, dynamic>),
-      );
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 更新菜品成功');
-      } else {
-        AppLogger.warning('MenuService: 更新菜品失败 - ${apiResponse.errorMessage}');
-      }
-
-      return apiResponse;
     } catch (e) {
       AppLogger.error('MenuService: 更新菜品错误', error: e);
       return ApiResponse.error('更新菜品失败，请稍后重试');
@@ -133,17 +110,19 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 删除菜品 - $itemId');
 
-      final responseData = await _menuRepository.deleteMenuItem(itemId);
+      final result = await _menuRepository.deleteMenuItem(itemId);
 
-      final apiResponse = ApiResponse<void>.fromJson(responseData, (json) {});
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 删除菜品成功');
-      } else {
-        AppLogger.warning('MenuService: 删除菜品失败 - ${apiResponse.errorMessage}');
-      }
-
-      return apiResponse;
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (_) {
+          AppLogger.info('MenuService: 删除菜品成功');
+          return ApiResponse.success(null);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 删除菜品失败 - $message');
+          return ApiResponse.error(message, code: code);
+        },
+      );
     } catch (e) {
       AppLogger.error('MenuService: 删除菜品错误', error: e);
       return ApiResponse.error('删除菜品失败，请稍后重试');
@@ -158,22 +137,22 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 切换菜品状态 - $itemId, $isAvailable');
 
-      final responseData = await _menuRepository.toggleMenuItemStatus(
+      final result = await _menuRepository.toggleMenuItemStatus(
         itemId,
         isAvailable,
       );
 
-      final apiResponse = ApiResponse<void>.fromJson(responseData, (json) {});
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 切换菜品状态成功');
-      } else {
-        AppLogger.warning(
-          'MenuService: 切换菜品状态失败 - ${apiResponse.errorMessage}',
-        );
-      }
-
-      return apiResponse;
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (_) {
+          AppLogger.info('MenuService: 切换菜品状态成功');
+          return ApiResponse.success(null);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 切换菜品状态失败 - $message');
+          return ApiResponse.error(message, code: code);
+        },
+      );
     } catch (e) {
       AppLogger.error('MenuService: 切换菜品状态错误', error: e);
       return ApiResponse.error('切换菜品状态失败，请稍后重试');
@@ -188,22 +167,22 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 设置推荐菜品 - $itemId, $isRecommended');
 
-      final responseData = await _menuRepository.setRecommendedMenuItem(
+      final result = await _menuRepository.setRecommendedMenuItem(
         itemId,
         isRecommended,
       );
 
-      final apiResponse = ApiResponse<void>.fromJson(responseData, (json) {});
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 设置推荐菜品成功');
-      } else {
-        AppLogger.warning(
-          'MenuService: 设置推荐菜品失败 - ${apiResponse.errorMessage}',
-        );
-      }
-
-      return apiResponse;
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (_) {
+          AppLogger.info('MenuService: 设置推荐菜品成功');
+          return ApiResponse.success(null);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 设置推荐菜品失败 - $message');
+          return ApiResponse.error(message, code: code);
+        },
+      );
     } catch (e) {
       AppLogger.error('MenuService: 设置推荐菜品错误', error: e);
       return ApiResponse.error('设置推荐菜品失败，请稍后重试');
@@ -241,32 +220,19 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 获取所有菜品');
 
-      final responseData = await _menuRepository.getAllMenuItems();
+      final result = await _menuRepository.getAllMenuItems();
 
-      final apiResponse = ApiResponse<List<MenuItemModel>>.fromJson(
-        responseData,
-        (json) {
-          if (json is List) {
-            return (json)
-                .map(
-                  (item) =>
-                      MenuItemModel.fromJson(item as Map<String, dynamic>),
-                )
-                .toList();
-          }
-          return <MenuItemModel>[];
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (data) {
+          AppLogger.info('MenuService: 获取所有菜品成功 - ${data.length} 项');
+          return ApiResponse.success(data);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 获取所有菜品失败 - $message');
+          return ApiResponse.error(message, code: code);
         },
       );
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 获取所有菜品成功 - ${apiResponse.data?.length} 项');
-      } else {
-        AppLogger.warning(
-          'MenuService: 获取所有菜品失败 - ${apiResponse.errorMessage}',
-        );
-      }
-
-      return apiResponse;
     } catch (e) {
       AppLogger.error('MenuService: 获取所有菜品错误', error: e);
       return ApiResponse.error('获取所有菜品失败，请稍后重试');
@@ -296,32 +262,19 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 获取分类列表');
 
-      final responseData = await _menuRepository.getCategories();
+      final result = await _menuRepository.getCategories();
 
-      final apiResponse = ApiResponse<List<MenuCategoryModel>>.fromJson(
-        responseData,
-        (json) {
-          if (json is List) {
-            return (json)
-                .map(
-                  (item) =>
-                      MenuCategoryModel.fromJson(item as Map<String, dynamic>),
-                )
-                .toList();
-          }
-          return <MenuCategoryModel>[];
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (data) {
+          AppLogger.info('MenuService: 获取分类列表成功 - ${data.length} 项');
+          return ApiResponse.success(data);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 获取分类列表失败 - $message');
+          return ApiResponse.error(message, code: code);
         },
       );
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 获取分类列表成功 - ${apiResponse.data?.length} 项');
-      } else {
-        AppLogger.warning(
-          'MenuService: 获取分类列表失败 - ${apiResponse.errorMessage}',
-        );
-      }
-
-      return apiResponse;
     } catch (e) {
       AppLogger.error('MenuService: 获取分类列表错误', error: e);
       return ApiResponse.error('获取分类列表失败，请稍后重试');
@@ -337,71 +290,52 @@ class MenuService {
         'MenuService: 上传菜品图片 - 文件大小: ${imageFile.lengthSync()} bytes',
       );
 
-      final responseData = await _menuRepository.uploadMenuItemImage(imageFile);
+      final result = await _menuRepository.uploadMenuItemImage(imageFile);
 
-      AppLogger.debug('MenuService: 图片上传响应 - $responseData');
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (data) {
+          AppLogger.debug('MenuService: 图片上传成功响应 - $data');
+          String imageUrl = '';
 
-      final apiResponse = ApiResponse<String>.fromJson(responseData, (json) {
-        AppLogger.debug('MenuService: 解析图片上传响应 - $json');
-
-        // 根据API契约，/upload/image返回ApiResponseMapStringString格式
-        if (json is Map<String, dynamic>) {
           // 尝试从data字段中获取图片URL
-          if (json.containsKey('data') && json['data'] is Map) {
-            final data = json['data'] as Map<String, dynamic>;
-            AppLogger.debug('MenuService: 解析data字段 - $data');
+          if (data.containsKey('data') && data['data'] is Map) {
+            final responseData = data['data'] as Map<String, dynamic>;
+            AppLogger.debug('MenuService: 解析data字段 - $responseData');
 
             // 常见的字段名可能是imageUrl、url、path等
-            if (data.containsKey('imageUrl')) {
-              final url = data['imageUrl'] as String;
-              AppLogger.info('MenuService: 从imageUrl字段获取URL - $url');
-              return url;
-            } else if (data.containsKey('url')) {
-              final url = data['url'] as String;
-              AppLogger.info('MenuService: 从url字段获取URL - $url');
-              return url;
-            } else if (data.containsKey('path')) {
-              final url = data['path'] as String;
-              AppLogger.info('MenuService: 从path字段获取URL - $url');
-              return url;
+            if (responseData.containsKey('imageUrl')) {
+              imageUrl = responseData['imageUrl'] as String;
+            } else if (responseData.containsKey('url')) {
+              imageUrl = responseData['url'] as String;
+            } else if (responseData.containsKey('path')) {
+              imageUrl = responseData['path'] as String;
+            } else if (responseData.isNotEmpty) {
+              // 如果没有找到明确的字段，取第一个值
+              imageUrl = responseData.values.first as String;
             }
-            // 如果没有找到明确的字段，取第一个值
-            if (data.isNotEmpty) {
-              final url = data.values.first as String;
-              AppLogger.info('MenuService: 从第一个值获取URL - $url');
-              return url;
-            }
+          } else if (data.containsKey('imageUrl')) {
+            // 直接在根级别查找
+            imageUrl = data['imageUrl'] as String;
+          } else if (data.containsKey('url')) {
+            imageUrl = data['url'] as String;
+          } else if (data.containsKey('path')) {
+            imageUrl = data['path'] as String;
           }
 
-          // 直接在根级别查找
-          if (json.containsKey('imageUrl')) {
-            final url = json['imageUrl'] as String;
-            AppLogger.info('MenuService: 从根级别imageUrl字段获取URL - $url');
-            return url;
-          } else if (json.containsKey('url')) {
-            final url = json['url'] as String;
-            AppLogger.info('MenuService: 从根级别url字段获取URL - $url');
-            return url;
-          } else if (json.containsKey('path')) {
-            final url = json['path'] as String;
-            AppLogger.info('MenuService: 从根级别path字段获取URL - $url');
-            return url;
+          if (imageUrl.isEmpty) {
+            AppLogger.warning('MenuService: 无法解析图片URL，返回空字符串');
+          } else {
+            AppLogger.info('MenuService: 菜品图片上传成功 - $imageUrl');
           }
-        }
 
-        AppLogger.warning('MenuService: 无法解析图片URL，返回原始响应');
-        return json.toString();
-      });
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 菜品图片上传成功 - ${apiResponse.data}');
-      } else {
-        AppLogger.warning(
-          'MenuService: 菜品图片上传失败 - ${apiResponse.errorMessage}',
-        );
-      }
-
-      return apiResponse;
+          return ApiResponse.success(imageUrl);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 菜品图片上传失败 - $message');
+          return ApiResponse.error(message, code: code);
+        },
+      );
     } on DioException catch (e) {
       AppLogger.error('MenuService: 菜品图片上传网络错误', error: e);
       AppLogger.error('MenuService: HTTP状态码 - ${e.response?.statusCode}');
@@ -428,20 +362,19 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 创建分类 - ${request.name}');
 
-      final responseData = await _menuRepository.createCategory(request);
+      final result = await _menuRepository.createCategory(request);
 
-      final apiResponse = ApiResponse<MenuCategoryModel>.fromJson(
-        responseData,
-        (json) => MenuCategoryModel.fromJson(json as Map<String, dynamic>),
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (data) {
+          AppLogger.info('MenuService: 创建分类成功');
+          return ApiResponse.success(data);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 创建分类失败 - $message');
+          return ApiResponse.error(message, code: code);
+        },
       );
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 创建分类成功');
-      } else {
-        AppLogger.warning('MenuService: 创建分类失败 - ${apiResponse.errorMessage}');
-      }
-
-      return apiResponse;
     } catch (e) {
       AppLogger.error('MenuService: 创建分类错误', error: e);
       return ApiResponse.error('创建分类失败，请稍后重试');
@@ -456,23 +389,19 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 更新分类 - $categoryId');
 
-      final responseData = await _menuRepository.updateCategory(
-        categoryId,
-        request,
+      final result = await _menuRepository.updateCategory(categoryId, request);
+
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (data) {
+          AppLogger.info('MenuService: 更新分类成功');
+          return ApiResponse.success(data);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 更新分类失败 - $message');
+          return ApiResponse.error(message, code: code);
+        },
       );
-
-      final apiResponse = ApiResponse<MenuCategoryModel>.fromJson(
-        responseData,
-        (json) => MenuCategoryModel.fromJson(json as Map<String, dynamic>),
-      );
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 更新分类成功');
-      } else {
-        AppLogger.warning('MenuService: 更新分类失败 - ${apiResponse.errorMessage}');
-      }
-
-      return apiResponse;
     } catch (e) {
       AppLogger.error('MenuService: 更新分类错误', error: e);
       return ApiResponse.error('更新分类失败，请稍后重试');
@@ -484,17 +413,19 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 删除分类 - $categoryId');
 
-      final responseData = await _menuRepository.deleteCategory(categoryId);
+      final result = await _menuRepository.deleteCategory(categoryId);
 
-      final apiResponse = ApiResponse<void>.fromJson(responseData, (json) {});
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 删除分类成功');
-      } else {
-        AppLogger.warning('MenuService: 删除分类失败 - ${apiResponse.errorMessage}');
-      }
-
-      return apiResponse;
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (_) {
+          AppLogger.info('MenuService: 删除分类成功');
+          return ApiResponse.success(null);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 删除分类失败 - $message');
+          return ApiResponse.error(message, code: code);
+        },
+      );
     } catch (e) {
       AppLogger.error('MenuService: 删除分类错误', error: e);
       return ApiResponse.error('删除分类失败，请稍后重试');
@@ -509,22 +440,22 @@ class MenuService {
     try {
       AppLogger.info('MenuService: 切换分类状态 - $categoryId, $isActive');
 
-      final responseData = await _menuRepository.toggleCategoryStatus(
+      final result = await _menuRepository.toggleCategoryStatus(
         categoryId,
         isActive,
       );
 
-      final apiResponse = ApiResponse<void>.fromJson(responseData, (json) {});
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('MenuService: 切换分类状态成功');
-      } else {
-        AppLogger.warning(
-          'MenuService: 切换分类状态失败 - ${apiResponse.errorMessage}',
-        );
-      }
-
-      return apiResponse;
+      return result.when(
+        loading: () => ApiResponse.error('加载中'),
+        success: (_) {
+          AppLogger.info('MenuService: 切换分类状态成功');
+          return ApiResponse.success(null);
+        },
+        error: (message, code, details) {
+          AppLogger.warning('MenuService: 切换分类状态失败 - $message');
+          return ApiResponse.error(message, code: code);
+        },
+      );
     } catch (e) {
       AppLogger.error('MenuService: 切换分类状态错误', error: e);
       return ApiResponse.error('切换分类状态失败，请稍后重试');

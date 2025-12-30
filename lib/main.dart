@@ -23,8 +23,11 @@ Future<void> main() async {
   // 初始化本地存储
   await PrefsStorage.init();
 
+  // 初始化缓存服务
+  // await CacheService().init();
+
   // 初始化API服务
-  ApiService().init();
+  await ApiService().init();
 
   // 创建并初始化AuthProvider
   final authProvider = AuthProvider();

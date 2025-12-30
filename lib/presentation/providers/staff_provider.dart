@@ -5,44 +5,33 @@ import 'package:foodieconnect/data/api/staff_api.dart';
 import 'package:foodieconnect/data/models/staff/staff_model.dart';
 import 'package:foodieconnect/data/repository/staff_repository.dart';
 import 'package:foodieconnect/data/services/staff_service.dart';
-import 'package:foodieconnect/data/network/dio_client.dart';
+import 'staff_state.dart';
 
 /// 员工状态管理Provider
 class StaffProvider extends ChangeNotifier {
   late final StaffService _staffService;
 
+  // 使用Freezed状态模型管理状态
+  StaffState _state = const StaffState();
+
   StaffProvider() {
-    final dio = DioClient.dio;
-    final staffApi = StaffApi(dio);
+    final staffApi = StaffApi();
     final staffRepository = StaffRepository(staffApi);
     _staffService = StaffService(staffRepository);
   }
 
-  // 状态变量
-  bool _isLoading = false;
-  bool _isUpdating = false;
-  String? _errorMessage;
-  List<StaffModel> _staffList = [];
-  StaffModel? _selectedStaff;
-  String? _filterStatus;
-
-  // 分页相关
-  int _currentPage = 0;
-  final int _pageSize = 20;
-  bool _hasMore = true;
-  int _totalCount = 0;
-
   // Getters
-  bool get isLoading => _isLoading;
-  bool get isUpdating => _isUpdating;
-  String? get errorMessage => _errorMessage;
-  List<StaffModel> get staffList => _staffList;
-  StaffModel? get selectedStaff => _selectedStaff;
-  String? get filterStatus => _filterStatus;
-  int get currentPage => _currentPage;
-  int get pageSize => _pageSize;
-  bool get hasMore => _hasMore;
-  int get totalCount => _totalCount;
+  bool get isLoading => _state.isLoading;
+  bool get isUpdating => _state.isUpdating;
+  String? get errorMessage => _state.errorMessage;
+  List<StaffModel> get staffList => _state.staffList;
+  StaffModel? get selectedStaff => _state.selectedStaff;
+  String? get filterStatus => _state.filterStatus;
+  int get currentPage => _state.currentPage;
+  int get pageSize => _state.pageSize;
+  bool get hasMore => _state.hasMore;
+  int get totalCount => _state.totalCount;
+  StaffState get state => _state;
 
   /// 获取员工列表
   Future<void> loadStaffList({bool refresh = false, String? status}) async {
@@ -50,33 +39,45 @@ class StaffProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
+      int currentPage = _state.currentPage;
+      List<StaffModel> staffList = List.from(_state.staffList);
+      bool hasMore = _state.hasMore;
+
       if (refresh) {
-        _currentPage = 0;
-        _staffList.clear();
-        _hasMore = true;
+        currentPage = 0;
+        staffList.clear();
+        hasMore = true;
       }
 
-      AppLogger.info('StaffProvider: 开始加载员工列表 - 页码: $_currentPage');
+      AppLogger.info('StaffProvider: 开始加载员工列表 - 页码: $currentPage');
 
       final response = await _staffService.getStaff(
-        page: _currentPage,
-        size: _pageSize,
-        status: status ?? _filterStatus,
+        page: currentPage,
+        size: _state.pageSize,
+        status: status ?? _state.filterStatus,
       );
 
       if (response.isSuccess && response.data != null) {
         final newStaff = response.data!;
 
         if (refresh) {
-          _staffList = newStaff;
+          staffList = newStaff;
         } else {
-          _staffList.addAll(newStaff);
+          staffList.addAll(newStaff);
         }
 
-        _currentPage++;
-        _hasMore = newStaff.length >= _pageSize;
+        currentPage++;
+        hasMore = newStaff.length >= _state.pageSize;
 
         AppLogger.info('StaffProvider: 员工列表加载成功 - ${newStaff.length} 项');
+
+        // 更新状态
+        _state = _state.copyWith(
+          currentPage: currentPage,
+          staffList: staffList,
+          hasMore: hasMore,
+          filterStatus: status,
+        );
       } else {
         _setError(response.errorMessage);
         AppLogger.warning('StaffProvider: 员工列表加载失败 - ${response.errorMessage}');
@@ -103,7 +104,7 @@ class StaffProvider extends ChangeNotifier {
       final response = await _staffService.getStaffDetail(staffId);
 
       if (response.isSuccess && response.data != null) {
-        _selectedStaff = response.data!;
+        _state = _state.copyWith(selectedStaff: response.data!);
         AppLogger.info('StaffProvider: 员工详情加载成功');
       } else {
         _setError(response.errorMessage);
@@ -132,19 +133,25 @@ class StaffProvider extends ChangeNotifier {
 
       if (response.isSuccess) {
         // 更新本地状态
-        final staffIndex = _staffList.indexWhere(
-          (staff) => staff.id == staffId,
-        );
+        final staffList = List<StaffModel>.from(_state.staffList);
+        final staffIndex = staffList.indexWhere((staff) => staff.id == staffId);
         if (staffIndex != -1) {
-          _staffList[staffIndex] = _staffList[staffIndex].copyWith(
+          staffList[staffIndex] = staffList[staffIndex].copyWith(
             status: status,
           );
         }
 
         // 更新选中的员工
-        if (_selectedStaff?.id == staffId) {
-          _selectedStaff = _selectedStaff!.copyWith(status: status);
+        StaffModel? selectedStaff = _state.selectedStaff;
+        if (selectedStaff?.id == staffId) {
+          selectedStaff = selectedStaff!.copyWith(status: status);
         }
+
+        // 更新状态
+        _state = _state.copyWith(
+          staffList: staffList,
+          selectedStaff: selectedStaff,
+        );
 
         AppLogger.info('StaffProvider: 员工状态更新成功');
         notifyListeners();
@@ -175,19 +182,25 @@ class StaffProvider extends ChangeNotifier {
 
       if (response.isSuccess) {
         // 更新本地状态
-        final staffIndex = _staffList.indexWhere(
-          (staff) => staff.id == staffId,
-        );
+        final staffList = List<StaffModel>.from(_state.staffList);
+        final staffIndex = staffList.indexWhere((staff) => staff.id == staffId);
         if (staffIndex != -1) {
-          _staffList[staffIndex] = _staffList[staffIndex].copyWith(
+          staffList[staffIndex] = staffList[staffIndex].copyWith(
             rating: rating,
           );
         }
 
         // 更新选中的员工
-        if (_selectedStaff?.id == staffId) {
-          _selectedStaff = _selectedStaff!.copyWith(rating: rating);
+        StaffModel? selectedStaff = _state.selectedStaff;
+        if (selectedStaff?.id == staffId) {
+          selectedStaff = selectedStaff!.copyWith(rating: rating);
         }
+
+        // 更新状态
+        _state = _state.copyWith(
+          staffList: staffList,
+          selectedStaff: selectedStaff,
+        );
 
         AppLogger.info('StaffProvider: 员工评分更新成功');
         notifyListeners();
@@ -208,8 +221,8 @@ class StaffProvider extends ChangeNotifier {
 
   /// 根据状态筛选员工
   Future<void> filterByStatus(String? status) async {
-    _filterStatus = status;
-    _currentPage = 0;
+    // 更新筛选状态和页码
+    _state = _state.copyWith(filterStatus: status, currentPage: 0);
     await loadStaffList(refresh: true);
   }
 
@@ -230,21 +243,21 @@ class StaffProvider extends ChangeNotifier {
 
   /// 清除筛选条件
   Future<void> clearFilters() async {
-    _filterStatus = null;
-    _currentPage = 0;
+    // 清除筛选状态和重置页码
+    _state = _state.copyWith(filterStatus: null, currentPage: 0);
     await loadStaffList(refresh: true);
   }
 
   /// 选择员工
   void selectStaff(StaffModel? staff) {
-    _selectedStaff = staff;
+    _state = _state.copyWith(selectedStaff: staff);
     notifyListeners();
     AppLogger.info('StaffProvider: 已选择员工 - ${staff?.name}');
   }
 
   /// 加载更多员工
   Future<void> loadMoreStaff() async {
-    if (!_hasMore || _isLoading) return;
+    if (!_state.hasMore || _state.isLoading) return;
     await loadStaffList();
   }
 
@@ -255,27 +268,27 @@ class StaffProvider extends ChangeNotifier {
 
   /// 获取在线员工数量
   int get onlineStaffCount {
-    return _staffList.where((staff) => staff.isOnline).length;
+    return _state.staffList.where((staff) => staff.isOnline).length;
   }
 
   /// 获取离线员工数量
   int get offlineStaffCount {
-    return _staffList.where((staff) => staff.isOffline).length;
+    return _state.staffList.where((staff) => staff.isOffline).length;
   }
 
   /// 获取忙碌员工数量
   int get busyStaffCount {
-    return _staffList.where((staff) => staff.isBusy).length;
+    return _state.staffList.where((staff) => staff.isBusy).length;
   }
 
   /// 获取有评分员工数量
   int get ratedStaffCount {
-    return _staffList.where((staff) => staff.rating != null).length;
+    return _state.staffList.where((staff) => staff.rating != null).length;
   }
 
   /// 获取平均评分
   double get averageRating {
-    final ratedStaff = _staffList.where((staff) => staff.rating != null);
+    final ratedStaff = _state.staffList.where((staff) => staff.rating != null);
     if (ratedStaff.isEmpty) return 0.0;
 
     final totalRating = ratedStaff
@@ -312,8 +325,14 @@ class StaffProvider extends ChangeNotifier {
 
       if (response.isSuccess && response.data != null) {
         // 添加到本地列表
-        _staffList.add(response.data!);
-        _totalCount++;
+        final staffList = List<StaffModel>.from(_state.staffList);
+        staffList.add(response.data!);
+
+        // 更新状态
+        _state = _state.copyWith(
+          staffList: staffList,
+          totalCount: _state.totalCount + 1,
+        );
 
         AppLogger.info('StaffProvider: 员工创建成功 - ${response.data!.name}');
         notifyListeners();
@@ -344,17 +363,23 @@ class StaffProvider extends ChangeNotifier {
 
       if (response.isSuccess && response.data != null) {
         // 更新本地列表
-        final staffIndex = _staffList.indexWhere(
-          (staff) => staff.id == staffId,
-        );
+        final staffList = List<StaffModel>.from(_state.staffList);
+        final staffIndex = staffList.indexWhere((staff) => staff.id == staffId);
         if (staffIndex != -1) {
-          _staffList[staffIndex] = response.data!;
+          staffList[staffIndex] = response.data!;
         }
 
         // 更新选中的员工
-        if (_selectedStaff?.id == staffId) {
-          _selectedStaff = response.data!;
+        StaffModel? selectedStaff = _state.selectedStaff;
+        if (selectedStaff?.id == staffId) {
+          selectedStaff = response.data!;
         }
+
+        // 更新状态
+        _state = _state.copyWith(
+          staffList: staffList,
+          selectedStaff: selectedStaff,
+        );
 
         AppLogger.info('StaffProvider: 员工信息更新成功 - ${response.data!.name}');
         notifyListeners();
@@ -385,13 +410,21 @@ class StaffProvider extends ChangeNotifier {
 
       if (response.isSuccess) {
         // 从本地列表中删除
-        _staffList.removeWhere((staff) => staff.id == staffId);
-        _totalCount--;
+        final staffList = List<StaffModel>.from(_state.staffList)
+          ..removeWhere((staff) => staff.id == staffId);
 
-        // 如果删除的是选中的员工，清除选中状态
-        if (_selectedStaff?.id == staffId) {
-          _selectedStaff = null;
+        // 更新选中的员工
+        StaffModel? selectedStaff = _state.selectedStaff;
+        if (selectedStaff?.id == staffId) {
+          selectedStaff = null;
         }
+
+        // 更新状态
+        _state = _state.copyWith(
+          staffList: staffList,
+          totalCount: _state.totalCount - 1,
+          selectedStaff: selectedStaff,
+        );
 
         AppLogger.info('StaffProvider: 员工删除成功');
         notifyListeners();
@@ -447,25 +480,25 @@ class StaffProvider extends ChangeNotifier {
 
   /// 设置加载状态
   void _setLoading(bool loading) {
-    _isLoading = loading;
+    _state = _state.copyWith(isLoading: loading);
     notifyListeners();
   }
 
   /// 设置更新状态
   void _setUpdating(bool updating) {
-    _isUpdating = updating;
+    _state = _state.copyWith(isUpdating: updating);
     notifyListeners();
   }
 
   /// 设置错误信息
   void _setError(String error) {
-    _errorMessage = error;
+    _state = _state.copyWith(errorMessage: error);
     notifyListeners();
   }
 
   /// 清除错误信息
   void _clearError() {
-    _errorMessage = null;
+    _state = _state.copyWith(errorMessage: null);
     notifyListeners();
   }
 
@@ -476,16 +509,7 @@ class StaffProvider extends ChangeNotifier {
 
   /// 重置状态
   void reset() {
-    _isLoading = false;
-    _isUpdating = false;
-    _errorMessage = null;
-    _staffList.clear();
-    _selectedStaff = null;
-    _filterStatus = null;
-    _currentPage = 0;
-    _hasMore = true;
-    _totalCount = 0;
-
+    _state = const StaffState();
     notifyListeners();
     AppLogger.info('StaffProvider: 状态已重置');
   }

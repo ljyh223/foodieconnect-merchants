@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
+import '../services/api_service.dart';
 
 /// 员工API接口
 class StaffApi {
-  final Dio _dio;
-
-  StaffApi(this._dio);
+  final ApiService _apiService = ApiService();
 
   /// 获取员工列表
   Future<Response<Map<String, dynamic>>> getStaff({
@@ -18,7 +17,7 @@ class StaffApi {
       queryParameters['status'] = status;
     }
 
-    return await _dio.get<Map<String, dynamic>>(
+    return await _apiService.get<Map<String, dynamic>>(
       '/merchant/staff',
       queryParameters: queryParameters,
     );
@@ -26,14 +25,16 @@ class StaffApi {
 
   /// 获取员工详情
   Future<Response<Map<String, dynamic>>> getStaffDetail(int staffId) async {
-    return await _dio.get<Map<String, dynamic>>('/merchant/staff/$staffId');
+    return await _apiService.get<Map<String, dynamic>>(
+      '/merchant/staff/$staffId',
+    );
   }
 
   /// 创建员工
   Future<Response<Map<String, dynamic>>> createStaff(
     Map<String, dynamic> staffData,
   ) async {
-    return await _dio.post<Map<String, dynamic>>(
+    return await _apiService.post<Map<String, dynamic>>(
       '/merchant/staff',
       data: staffData,
     );
@@ -44,7 +45,7 @@ class StaffApi {
     int staffId,
     Map<String, dynamic> staffData,
   ) async {
-    return await _dio.put<Map<String, dynamic>>(
+    return await _apiService.put<Map<String, dynamic>>(
       '/merchant/staff/$staffId',
       data: staffData,
     );
@@ -52,7 +53,9 @@ class StaffApi {
 
   /// 删除员工
   Future<Response<Map<String, dynamic>>> deleteStaff(int staffId) async {
-    return await _dio.delete<Map<String, dynamic>>('/merchant/staff/$staffId');
+    return await _apiService.delete<Map<String, dynamic>>(
+      '/merchant/staff/$staffId',
+    );
   }
 
   /// 更新员工状态
@@ -60,7 +63,7 @@ class StaffApi {
     int staffId,
     String status,
   ) async {
-    return await _dio.put<Map<String, dynamic>>(
+    return await _apiService.put<Map<String, dynamic>>(
       '/merchant/staff/$staffId/status',
       queryParameters: {'status': status},
     );
@@ -71,7 +74,7 @@ class StaffApi {
     int staffId,
     double rating,
   ) async {
-    return await _dio.put<Map<String, dynamic>>(
+    return await _apiService.put<Map<String, dynamic>>(
       '/merchant/staff/$staffId/rating',
       queryParameters: {'rating': rating},
     );

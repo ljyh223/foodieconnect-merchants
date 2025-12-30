@@ -1,5 +1,5 @@
 import '../models/auth/merchant_login_request.dart';
-import '../network/dio_client.dart';
+import '../services/api_service.dart';
 
 /// 认证API服务
 class AuthApi {
@@ -7,7 +7,7 @@ class AuthApi {
   static Future<Map<String, dynamic>> login(
     MerchantLoginRequest request,
   ) async {
-    final response = await DioClient.dio.post<Map<String, dynamic>>(
+    final response = await ApiService().post<Map<String, dynamic>>(
       '/merchant/auth/login',
       data: request.toJson(),
     );
@@ -18,7 +18,7 @@ class AuthApi {
   static Future<Map<String, dynamic>> register(
     Map<String, dynamic> registerData,
   ) async {
-    final response = await DioClient.dio.post<Map<String, dynamic>>(
+    final response = await ApiService().post<Map<String, dynamic>>(
       '/merchant/auth/register',
       data: registerData,
     );
@@ -27,7 +27,7 @@ class AuthApi {
 
   /// 获取当前商家信息
   static Future<Map<String, dynamic>> getCurrentMerchant() async {
-    final response = await DioClient.dio.get<Map<String, dynamic>>(
+    final response = await ApiService().get<Map<String, dynamic>>(
       '/merchant/auth/profile',
     );
     return response.data!;
@@ -38,7 +38,7 @@ class AuthApi {
     required String currentPassword,
     required String newPassword,
   }) async {
-    final response = await DioClient.dio.put<Map<String, dynamic>>(
+    final response = await ApiService().put<Map<String, dynamic>>(
       '/merchant/auth/change-password',
       data: {'currentPassword': currentPassword, 'newPassword': newPassword},
     );
@@ -47,7 +47,7 @@ class AuthApi {
 
   /// 商家登出
   static Future<Map<String, dynamic>> logout() async {
-    final response = await DioClient.dio.post<Map<String, dynamic>>(
+    final response = await ApiService().post<Map<String, dynamic>>(
       '/merchant/auth/logout',
     );
     return response.data!;

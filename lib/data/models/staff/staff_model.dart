@@ -1,89 +1,30 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../core/enums/staff_status_enum.dart';
 
+part 'staff_model.freezed.dart';
 part 'staff_model.g.dart';
 
 /// 员工模型
-@JsonSerializable()
-class StaffModel extends Equatable {
-  @JsonKey(name: 'id')
-  final int id;
-  
-  @JsonKey(name: 'restaurantId')
-  final int restaurantId;
-  
-  @JsonKey(name: 'name')
-  final String name;
-  
-  @JsonKey(name: 'position')
-  final String? position;
-  
-  @JsonKey(name: 'status')
-  final String status;
-  
-  @JsonKey(name: 'experience')
-  final String? experience;
-  
-  @JsonKey(name: 'rating')
-  final double? rating;
-  
-  @JsonKey(name: 'avatarUrl')
-  final String? avatarUrl;
-  
-  @JsonKey(name: 'createdAt')
-  final DateTime? createdAt;
-  
-  @JsonKey(name: 'updatedAt')
-  final DateTime? updatedAt;
+@freezed
+class StaffModel with _$StaffModel {
+  const StaffModel._();
 
-  const StaffModel({
-    required this.id,
-    required this.restaurantId,
-    required this.name,
-    this.position,
-    required this.status,
-    this.experience,
-    this.rating,
-    this.avatarUrl,
-    this.createdAt,
-    this.updatedAt,
-  });
+  const factory StaffModel({
+    @JsonKey(name: 'id') required int id,
+    @JsonKey(name: 'restaurantId') required int restaurantId,
+    @JsonKey(name: 'name') required String name,
+    @JsonKey(name: 'position') String? position,
+    @JsonKey(name: 'status') required String status,
+    @JsonKey(name: 'experience') String? experience,
+    @JsonKey(name: 'rating') double? rating,
+    @JsonKey(name: 'avatarUrl') String? avatarUrl,
+    @JsonKey(name: 'createdAt') DateTime? createdAt,
+    @JsonKey(name: 'updatedAt') DateTime? updatedAt,
+  }) = _StaffModel;
 
-  /// 从JSON创建实例
   factory StaffModel.fromJson(Map<String, dynamic> json) =>
       _$StaffModelFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$StaffModelToJson(this);
-
-  /// 创建副本
-  StaffModel copyWith({
-    int? id,
-    int? restaurantId,
-    String? name,
-    String? position,
-    String? status,
-    String? experience,
-    double? rating,
-    String? avatarUrl,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return StaffModel(
-      id: id ?? this.id,
-      restaurantId: restaurantId ?? this.restaurantId,
-      name: name ?? this.name,
-      position: position ?? this.position,
-      status: status ?? this.status,
-      experience: experience ?? this.experience,
-      rating: rating ?? this.rating,
-      avatarUrl: avatarUrl ?? this.avatarUrl,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
 
   /// 获取StaffStatus枚举
   StaffStatus? get statusEnum => StaffStatus.fromValue(status);
@@ -102,23 +43,4 @@ class StaffModel extends Equatable {
 
   /// 获取头像URL
   String get displayAvatar => avatarUrl ?? '';
-
-  @override
-  List<Object?> get props => [
-        id,
-        restaurantId,
-        name,
-        position,
-        status,
-        experience,
-        rating,
-        avatarUrl,
-        createdAt,
-        updatedAt,
-      ];
-
-  @override
-  String toString() {
-    return 'StaffModel(id: $id, name: $name, position: $position, status: $status, rating: $rating)';
-  }
 }

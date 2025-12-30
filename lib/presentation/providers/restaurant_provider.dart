@@ -8,15 +8,13 @@ import 'package:foodieconnect/data/models/restaurant/restaurant_model.dart';
 import 'package:foodieconnect/data/models/restaurant/restaurant_update_request.dart';
 import 'package:foodieconnect/data/repository/restaurant_repository.dart';
 import 'package:foodieconnect/data/services/restaurant_service.dart';
-import 'package:foodieconnect/data/network/dio_client.dart';
 
 /// 餐厅状态管理Provider
 class RestaurantProvider extends ChangeNotifier {
   late final RestaurantService _restaurantService;
 
   RestaurantProvider() {
-    final dio = DioClient.dio;
-    final restaurantApi = RestaurantApi(dio);
+    final restaurantApi = RestaurantApi();
     final restaurantRepository = RestaurantRepository(restaurantApi);
     _restaurantService = RestaurantService(restaurantRepository);
   }

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import '../models/menu/menu_item_request.dart';
 import '../models/menu/menu_category_request.dart';
-import '../network/dio_client.dart';
+import '../services/api_service.dart';
 
 /// 菜单API服务
 class MenuApi {
@@ -30,7 +30,7 @@ class MenuApi {
       queryParameters['isRecommended'] = isRecommended;
     }
 
-    final response = await DioClient.dio.get<Map<String, dynamic>>(
+    final response = await ApiService().get<Map<String, dynamic>>(
       '/merchant/menu/items',
       queryParameters: queryParameters,
     );
@@ -41,7 +41,7 @@ class MenuApi {
   static Future<Map<String, dynamic>> createMenuItem(
     MenuItemRequest request,
   ) async {
-    final response = await DioClient.dio.post<Map<String, dynamic>>(
+    final response = await ApiService().post<Map<String, dynamic>>(
       '/merchant/menu/items',
       data: request.toJson(),
     );
@@ -53,7 +53,7 @@ class MenuApi {
     int itemId,
     MenuItemRequest request,
   ) async {
-    final response = await DioClient.dio.put<Map<String, dynamic>>(
+    final response = await ApiService().put<Map<String, dynamic>>(
       '/merchant/menu/items/$itemId',
       data: request.toJson(),
     );
@@ -62,7 +62,7 @@ class MenuApi {
 
   /// 删除菜品
   static Future<Map<String, dynamic>> deleteMenuItem(int itemId) async {
-    final response = await DioClient.dio.delete<Map<String, dynamic>>(
+    final response = await ApiService().delete<Map<String, dynamic>>(
       '/merchant/menu/items/$itemId',
     );
     return response.data!;
@@ -73,7 +73,7 @@ class MenuApi {
     int itemId,
     bool isAvailable,
   ) async {
-    final response = await DioClient.dio.put<Map<String, dynamic>>(
+    final response = await ApiService().put<Map<String, dynamic>>(
       '/merchant/menu/items/$itemId/status',
       queryParameters: {'isAvailable': isAvailable},
     );
@@ -85,7 +85,7 @@ class MenuApi {
     int itemId,
     bool isRecommended,
   ) async {
-    final response = await DioClient.dio.put<Map<String, dynamic>>(
+    final response = await ApiService().put<Map<String, dynamic>>(
       '/merchant/menu/items/$itemId/recommended',
       queryParameters: {'isRecommended': isRecommended},
     );
@@ -94,7 +94,7 @@ class MenuApi {
 
   /// 获取所有菜品
   static Future<Map<String, dynamic>> getAllMenuItems() async {
-    final response = await DioClient.dio.get<Map<String, dynamic>>(
+    final response = await ApiService().get<Map<String, dynamic>>(
       '/merchant/menu/items/all',
     );
     return response.data!;
@@ -102,7 +102,7 @@ class MenuApi {
 
   /// 获取分类列表
   static Future<Map<String, dynamic>> getCategories() async {
-    final response = await DioClient.dio.get<Map<String, dynamic>>(
+    final response = await ApiService().get<Map<String, dynamic>>(
       '/merchant/menu/categories',
     );
     return response.data!;
@@ -112,7 +112,7 @@ class MenuApi {
   static Future<Map<String, dynamic>> createCategory(
     MenuCategoryRequest request,
   ) async {
-    final response = await DioClient.dio.post<Map<String, dynamic>>(
+    final response = await ApiService().post<Map<String, dynamic>>(
       '/merchant/menu/categories',
       data: request.toJson(),
     );
@@ -124,7 +124,7 @@ class MenuApi {
     int categoryId,
     MenuCategoryRequest request,
   ) async {
-    final response = await DioClient.dio.put<Map<String, dynamic>>(
+    final response = await ApiService().put<Map<String, dynamic>>(
       '/merchant/menu/categories/$categoryId',
       data: request.toJson(),
     );
@@ -133,7 +133,7 @@ class MenuApi {
 
   /// 删除分类
   static Future<Map<String, dynamic>> deleteCategory(int categoryId) async {
-    final response = await DioClient.dio.delete<Map<String, dynamic>>(
+    final response = await ApiService().delete<Map<String, dynamic>>(
       '/merchant/menu/categories/$categoryId',
     );
     return response.data!;
@@ -144,7 +144,7 @@ class MenuApi {
     int categoryId,
     bool isActive,
   ) async {
-    final response = await DioClient.dio.put<Map<String, dynamic>>(
+    final response = await ApiService().put<Map<String, dynamic>>(
       '/merchant/menu/categories/$categoryId/status',
       data: {'isActive': isActive},
     );
@@ -155,7 +155,7 @@ class MenuApi {
   static Future<Map<String, dynamic>> uploadMenuItemImage(
     File imageFile,
   ) async {
-    final response = await DioClient.dio.post<Map<String, dynamic>>(
+    final response = await ApiService().post<Map<String, dynamic>>(
       '/merchant/upload/image',
       data: FormData.fromMap({
         'file': await MultipartFile.fromFile(imageFile.path),
