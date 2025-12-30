@@ -11,12 +11,12 @@ class AppTheme {
   static const Color errorColor = Color(0xFFD32F2F); // 错误红色
   static const Color successColor = Color(0xFF388E3C); // 成功绿色
   static const Color warningColor = Color(0xFFF57C00); // 警告橙色
-  
+
   // 文字颜色
   static const Color textPrimary = Color(0xFF212121); // 主要文字
   static const Color textSecondary = Color(0xFF757575); // 次要文字
   static const Color textDisabled = Color(0xFFBDBDBD); // 禁用文字
-  
+
   // 边框颜色
   static const Color borderColor = Color(0xFFE0E0E0);
   static const Color dividerColor = Color(0xFFEEEEEE);
@@ -36,7 +36,7 @@ class AppTheme {
         onSurface: textPrimary,
         onError: Colors.white,
       ),
-      
+
       // AppBar主题
       appBarTheme: const AppBarTheme(
         backgroundColor: primaryColor,
@@ -49,7 +49,7 @@ class AppTheme {
           fontWeight: FontWeight.w500,
         ),
       ),
-      
+
       // Card主题
       cardTheme: CardThemeData(
         color: Colors.white,
@@ -60,7 +60,7 @@ class AppTheme {
         ),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
-      
+
       // 按钮主题
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -71,13 +71,10 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
       ),
-      
+
       // 输入框主题
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -98,10 +95,13 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: errorColor),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
         hintStyle: const TextStyle(color: textSecondary),
       ),
-      
+
       // 文字主题
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
@@ -134,45 +134,33 @@ class AppTheme {
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
-        bodyLarge: TextStyle(
-          color: textPrimary,
-          fontSize: 16,
-        ),
-        bodyMedium: TextStyle(
-          color: textPrimary,
-          fontSize: 14,
-        ),
-        bodySmall: TextStyle(
-          color: textSecondary,
-          fontSize: 12,
-        ),
+        bodyLarge: TextStyle(color: textPrimary, fontSize: 16),
+        bodyMedium: TextStyle(color: textPrimary, fontSize: 14),
+        bodySmall: TextStyle(color: textSecondary, fontSize: 12),
         labelLarge: TextStyle(
           color: textPrimary,
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
       ),
-      
+
       // 分割线主题
       dividerTheme: const DividerThemeData(
         color: dividerColor,
         thickness: 1,
         space: 1,
       ),
-      
+
       // 图标主题
-      iconTheme: const IconThemeData(
-        color: textSecondary,
-        size: 24,
-      ),
-      
+      iconTheme: const IconThemeData(color: textSecondary, size: 24),
+
       // 浮动按钮主题
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         elevation: 4,
       ),
-      
+
       // 底部导航栏主题
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: Colors.white,

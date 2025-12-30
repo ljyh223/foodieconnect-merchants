@@ -64,6 +64,10 @@ dependencies:
   
   # WebSocket支持
   web_socket_channel: ^2.4.0
+  
+  # Protobuf支持
+  protobuf: ^3.1.0
+  fixnum: ^1.1.0
 
   # 工具类
   logger: ^2.6.2
@@ -85,6 +89,7 @@ dev_dependencies:
   build_runner: ^2.4.7
   json_serializable: ^6.7.1
   slang_build_runner: ^4.11.0
+  protoc_plugin: ^21.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

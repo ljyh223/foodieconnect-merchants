@@ -4,9 +4,11 @@ import 'dart:convert';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
+import '../models/chat/chat_models.dart';
 import '../models/chat/chat_message_model.dart';
 import '../models/chat/chat_room_model.dart';
 import 'api_service.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/utils/logger.dart';
 
 /// 聊天室服务类
@@ -18,6 +20,7 @@ class ChatService {
   WebSocketChannel? _channel;
   StreamSubscription? _subscription;
   bool _isConnected = false;
+  bool _isConnecting = false;
   int? _currentRoomId;
 
   // 消息流控制器
@@ -48,15 +51,106 @@ class ChatService {
   Future<ChatRoomModel?> getChatRoomInfo() async {
     try {
       final apiService = ApiService();
-      final response = await apiService.get('/api/v1/merchant/chat-rooms');
+      final response = await apiService.get('/merchant/chat-rooms');
 
-      if (response.data['success'] == true) {
-        return ChatRoomModel.fromJson(response.data['data']);
+      // 检查响应数据是否为空
+      if (response.data == null) {
+        AppLogger.error('ChatService: 获取聊天室信息失败 - 响应数据为空');
+        return null;
       }
-      return null;
+
+      // 检查响应格式是否为Map
+      if (response.data is! Map<String, dynamic>) {
+        AppLogger.error('ChatService: 获取聊天室信息失败 - 响应数据格式不正确');
+        return null;
+      }
+      
+      final Map<String, dynamic> dataMap = response.data as Map<String, dynamic>;
+      AppLogger.debug('ChatService: 获取聊天室信息响应数据: $dataMap');
+
+      // 检查请求是否成功
+      if (dataMap['success'] != true) {
+        final errorMessage = dataMap['error'] ?? '未知错误';
+        AppLogger.error('ChatService: 获取聊天室信息失败 - 服务器返回错误: $errorMessage');
+        return null;
+      }
+
+      // 检查data字段是否存在且不为空
+      if (dataMap['data'] == null) {
+        AppLogger.error('ChatService: 获取聊天室信息失败 - 响应中缺少data字段');
+        return null;
+      }
+      
+      return ChatRoomModel.fromJson(dataMap['data']);
     } catch (e) {
       AppLogger.error('ChatService: 获取聊天室信息失败', error: e);
       return null;
+    }
+  }
+
+  // 获取历史消息
+  Future<void> getHistoryMessages() async {
+    try {
+      final apiService = ApiService();
+      final response = await apiService.get('/merchant/chat-rooms/messages');
+
+      // 检查响应数据是否为空
+      if (response.data == null) {
+        AppLogger.error('ChatService: 获取历史消息失败 - 响应数据为空');
+        return;
+      }
+      AppLogger.debug(response.toString());
+
+      // 检查响应格式是否为Map
+      if (response.data is! Map<String, dynamic>) {
+        AppLogger.error('ChatService: 获取历史消息失败 - 响应数据格式不正确');
+        return;
+      }
+
+      final Map<String, dynamic> dataMap = response.data as Map<String, dynamic>;
+      // 记录完整的响应数据，方便调试
+      AppLogger.debug('ChatService: 获取历史消息响应数据: $dataMap');
+
+      // 检查响应是否成功
+      if (!dataMap.containsKey('success') || dataMap['success'] != true) {
+        final errorMessage = dataMap.containsKey('error') ? dataMap['error'] : '未知错误';
+        AppLogger.error('ChatService: 获取历史消息失败 - 服务器返回错误: $errorMessage');
+        return;
+      }
+
+      // 检查data字段
+      if (!dataMap.containsKey('data') || dataMap['data'] is! Map<String, dynamic>) {
+        AppLogger.error('ChatService: 获取历史消息失败 - 响应中缺少data字段或数据格式不正确');
+        return;
+      }
+
+      final Map<String, dynamic> dataContent = dataMap['data'] as Map<String, dynamic>;
+
+      // 检查records字段
+      if (!dataContent.containsKey('records') || dataContent['records'] is! List) {
+        AppLogger.error('ChatService: 获取历史消息失败 - 响应中缺少records字段或数据格式不正确');
+        return;
+      }
+
+      final List<dynamic> messagesData = dataContent['records'] as List<dynamic>;
+
+      // 清空现有消息列表
+      _messages.clear();
+
+      // 转换并添加历史消息
+      for (var messageData in messagesData) {
+        if (messageData is Map<String, dynamic>) {
+          // 直接使用fromJson方法解析消息，确保所有字段都被正确处理
+          final chatMessageModel = ChatMessageModel.fromJson(messageData);
+          _messages.add(chatMessageModel);
+        }
+      }
+
+      // 发送更新后的消息列表
+      _messagesController.add(List.from(_messages));
+      AppLogger.info('ChatService: 获取历史消息成功，共 ${_messages.length} 条');
+    } catch (e) {
+      AppLogger.error('ChatService: 获取历史消息失败', error: e);
     }
   }
 
@@ -69,11 +163,24 @@ class ChatService {
         return;
       }
 
+      // 如果正在连接，直接返回，避免重复连接
+      if (_isConnecting) {
+        AppLogger.info('ChatService: 正在连接到房间，请勿重复调用');
+        return;
+      }
+
       // 断开现有连接
       await disconnect();
 
+      // 设置正在连接状态
+      _isConnecting = true;
+
       // 构建WebSocket URL
-      final wsUrl = 'ws://localhost:8080/api/v1/ws/chat-bin/$roomId';
+      // 将HTTP协议转换为WebSocket协议
+      final baseUrl = AppConstants.baseUrl
+          .replaceFirst('http://', 'ws://')
+          .replaceFirst('https://', 'wss://');
+      final wsUrl = '$baseUrl/ws/chat-bin/$roomId';
       AppLogger.info('ChatService: 连接到WebSocket URL: $wsUrl');
 
       // 创建WebSocket连接
@@ -100,46 +207,63 @@ class ChatService {
       _isConnected = false;
       _connectionStatusController.add(false);
       rethrow;
+    } finally {
+      // 连接完成，重置连接状态
+      _isConnecting = false;
     }
   }
 
   // 断开连接
   Future<void> disconnect() async {
-    if (_isConnected) {
-      try {
-        // 发送离开房间请求
-        if (_currentRoomId != null) {
-          _sendLeaveRoomRequest(_currentRoomId!);
-        }
+    // 如果已经断开连接，直接返回
+    if (!_isConnected && !_isConnecting) {
+      AppLogger.info('ChatService: 已经断开连接');
+      return;
+    }
 
-        // 取消订阅
-        _subscription?.cancel();
-
-        // 关闭通道
-        await _channel?.sink.close(status.goingAway);
-
-        // 更新状态
-        _isConnected = false;
-        _currentRoomId = null;
-        _connectionStatusController.add(false);
-
-        AppLogger.info('ChatService: 断开连接成功');
-      } catch (e) {
-        AppLogger.error('ChatService: 断开连接失败', error: e);
+    try {
+      // 发送离开房间请求
+      if (_currentRoomId != null) {
+        _sendLeaveRoomRequest(_currentRoomId!);
       }
+
+      // 取消订阅
+      _subscription?.cancel();
+
+      // 关闭通道
+      await _channel?.sink.close(status.goingAway);
+
+      // 更新状态
+      _isConnected = false;
+      _isConnecting = false;
+      _currentRoomId = null;
+      _connectionStatusController.add(false);
+
+      AppLogger.info('ChatService: 断开连接成功');
+    } catch (e) {
+      AppLogger.error('ChatService: 断开连接失败', error: e);
+      // 无论如何都更新状态，确保状态一致性
+      _isConnected = false;
+      _isConnecting = false;
+      _currentRoomId = null;
+      _connectionStatusController.add(false);
     }
   }
 
   // 发送加入房间请求
   void _sendJoinRoomRequest(int roomId) {
     try {
-      // 构建加入房间请求（根据后端协议）
-      final joinReq = {
-        'type': 'JOIN_ROOM',
-        'payload': {'roomId': roomId},
-      };
+      // 构建加入房间请求
+      final joinReq = JoinRoomRequest(roomId: roomId);
 
-      _channel?.sink.add(json.encode(joinReq));
+      // 构建WebSocket消息
+      final wsMsg = WebSocketMessage(
+        type: 'JOIN_ROOM',
+        payload: joinReq.toJson(),
+      );
+
+      // 发送JSON消息
+      _channel?.sink.add(json.encode(wsMsg.toJson()));
       AppLogger.debug('ChatService: 发送加入房间请求: $roomId');
     } catch (e) {
       AppLogger.error('ChatService: 发送加入房间请求失败', error: e);
@@ -149,13 +273,17 @@ class ChatService {
   // 发送离开房间请求
   void _sendLeaveRoomRequest(int roomId) {
     try {
-      // 构建离开房间请求（根据后端协议）
-      final leaveReq = {
-        'type': 'LEAVE_ROOM',
-        'payload': {'roomId': roomId},
-      };
+      // 构建离开房间请求
+      final leaveReq = LeaveRoomRequest(roomId: roomId);
 
-      _channel?.sink.add(json.encode(leaveReq));
+      // 构建WebSocket消息
+      final wsMsg = WebSocketMessage(
+        type: 'LEAVE_ROOM',
+        payload: leaveReq.toJson(),
+      );
+
+      // 发送JSON消息
+      _channel?.sink.add(json.encode(wsMsg.toJson()));
       AppLogger.debug('ChatService: 发送离开房间请求: $roomId');
     } catch (e) {
       AppLogger.error('ChatService: 发送离开房间请求失败', error: e);
@@ -165,38 +293,58 @@ class ChatService {
   // 处理接收到的消息
   void _onMessageReceived(dynamic message) {
     try {
-      // 解析消息
-      final Map<String, dynamic> data = json.decode(message);
-      AppLogger.debug('ChatService: 收到消息: $data');
+      // 检查消息类型
+      if (message is String) {
+        // 解析JSON消息
+        final jsonData = json.decode(message);
+        final chatResponse = ChatResponse.fromJson(jsonData);
+        AppLogger.debug('ChatService: 收到消息: $chatResponse');
 
-      // 检查是否是聊天消息
-      if (data.containsKey('type') && data.containsKey('payload')) {
-        final String type = data['type'];
-        final dynamic payload = data['payload'];
+        if (chatResponse.success) {
+          // 处理成功响应
+          if (chatResponse.payload is ChatMessage) {
+            // 处理聊天消息
+            final chatMsg = chatResponse.payload as ChatMessage;
+            final chatMessageModel = ChatMessageModel(
+              id: chatMsg.id,
+              roomId: chatMsg.roomId,
+              senderId: chatMsg.senderId,
+              senderName: chatMsg.senderName,
+              content: chatMsg.content,
+              type: chatMsg.messageType.toString(),
+              createdAt: DateTime.parse(chatMsg.timestamp),
+              updatedAt: DateTime.parse(chatMsg.timestamp), // 实时消息的创建时间和更新时间相同
+              senderAvatar: chatMsg.senderAvatar,
+            );
 
-        if (type == 'CHAT_MESSAGE') {
-          // 解析聊天消息
-          final ChatMessageModel chatMessage = ChatMessageModel.fromJson(
-            payload,
-          );
+            // 添加到消息列表
+            _messages.add(chatMessageModel);
 
-          // 添加到消息列表
-          _messages.add(chatMessage);
+            // 发送更新后的消息列表
+            _messagesController.add(List.from(_messages));
 
-          // 发送更新后的消息列表
-          _messagesController.add(List.from(_messages));
-
-          AppLogger.info('ChatService: 处理聊天消息成功: ${chatMessage.content}');
-        } else if (type == 'JOIN_ROOM_RESPONSE') {
-          // 处理加入房间响应
-          AppLogger.info('ChatService: 加入房间成功: ${payload['roomId']}');
-        } else if (type == 'LEAVE_ROOM_RESPONSE') {
-          // 处理离开房间响应
-          AppLogger.info('ChatService: 离开房间成功: ${payload['roomId']}');
-        } else if (type == 'ERROR') {
-          // 处理错误消息
-          AppLogger.error('ChatService: 收到错误消息: ${payload['errorMessage']}');
+            AppLogger.info(
+              'ChatService: 处理聊天消息成功: ${chatMessageModel.content}',
+            );
+          } else if (chatResponse.payload is JoinRoomResponse) {
+            // 处理加入房间响应
+            final joinResponse = chatResponse.payload as JoinRoomResponse;
+            AppLogger.info(
+              'ChatService: 加入房间成功: ${joinResponse.roomId}, 消息: ${joinResponse.message}',
+            );
+          } else if (chatResponse.payload is LeaveRoomResponse) {
+            // 处理离开房间响应
+            final leaveResponse = chatResponse.payload as LeaveRoomResponse;
+            AppLogger.info(
+              'ChatService: 离开房间成功: ${leaveResponse.roomId}, 消息: ${leaveResponse.message}',
+            );
+          }
+        } else {
+          // 处理错误响应
+          AppLogger.error('ChatService: 收到错误消息: ${chatResponse.errorMessage}');
         }
+      } else {
+        AppLogger.error('ChatService: 收到非字符串消息，无法处理: $message');
       }
     } catch (e) {
       AppLogger.error('ChatService: 解析消息失败', error: e);

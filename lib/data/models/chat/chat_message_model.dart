@@ -7,13 +7,13 @@ part 'chat_message_model.g.dart';
 @JsonSerializable()
 class ChatMessageModel {
   /// 消息ID
-  final String? id;
+  final int? id;
 
   /// 房间ID
   final int? roomId;
 
   /// 发送者ID
-  final String? senderId;
+  final int? senderId;
 
   /// 发送者名称
   final String? senderName;
@@ -22,10 +22,17 @@ class ChatMessageModel {
   final String? content;
 
   /// 消息类型
+  @JsonKey(name: 'messageType')
   final String? type;
 
   /// 创建时间
   final DateTime? createdAt;
+
+  /// 更新时间
+  final DateTime? updatedAt;
+
+  /// 发送者头像
+  final String? senderAvatar;
 
   /// 构造函数
   ChatMessageModel({
@@ -36,6 +43,8 @@ class ChatMessageModel {
     this.content,
     this.type,
     this.createdAt,
+    this.updatedAt,
+    this.senderAvatar,
   });
 
   /// 从JSON转换

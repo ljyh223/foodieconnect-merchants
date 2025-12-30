@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../data/models/chat/chat_message_model.dart';
 import '../../providers/chat_provider.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/utils/image_utils.dart';
 import '../../../l10n/generated/translations.g.dart';
 
 /// 聊天室页面
@@ -123,9 +125,6 @@ class _ChatScreenState extends State<ChatScreen> {
       children: [
         // 消息列表
         Expanded(child: _buildMessageList(context, t, chatProvider)),
-
-        // 提示信息
-        _buildObserverHint(t),
       ],
     );
   }
@@ -187,78 +186,98 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   // 构建消息项
-  Widget _buildMessageItem(BuildContext context, message) {
+  Widget _buildMessageItem(BuildContext context, ChatMessageModel message) {
+    // 获取完整的头像URL
+    final String? senderAvatar = message.senderAvatar;
+    final avatarUrl = (senderAvatar != null && senderAvatar.isNotEmpty)
+        ? ImageUtils.getFullImageUrl(senderAvatar)
+        : '';
+
     return Container(
       margin: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 发送者信息
-          Padding(
-            padding: const EdgeInsets.only(bottom: 4),
-            child: Row(
+          // 头像
+          Container(
+            margin: const EdgeInsets.only(
+              right: AppConstants.defaultPadding / 2,
+            ),
+            child: CircleAvatar(
+              radius: 20,
+              backgroundImage: avatarUrl.isNotEmpty
+                  ? NetworkImage(avatarUrl)
+                  : null,
+              backgroundColor: AppTheme.primaryLight,
+              child: avatarUrl.isEmpty
+                  ? const Icon(
+                      Icons.person,
+                      size: 20,
+                      color: AppTheme.primaryColor,
+                    )
+                  : null,
+            ),
+          ),
+
+          // 消息内容区域
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  message.senderName ?? '未知用户',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+                // 发送者信息
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Row(
+                    children: [
+                      Text(
+                        message.senderName ?? '未知用户',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _formatTime(message.createdAt),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  _formatTime(message.createdAt),
-                  style: TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+
+                // 消息内容
+                Container(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.75,
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color.fromARGB(
+                          13,
+                          0,
+                          0,
+                          0,
+                        ), // 0.05 opacity black
+                        spreadRadius: 1,
+                        blurRadius: 2,
+                        offset: const Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    message.content ?? '',
+                    style: const TextStyle(fontSize: 16),
+                  ),
                 ),
               ],
             ),
-          ),
-
-          // 消息内容
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.75,
-            ),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  spreadRadius: 1,
-                  blurRadius: 2,
-                  offset: const Offset(0, 1),
-                ),
-              ],
-            ),
-            child: Text(
-              message.content ?? '',
-              style: const TextStyle(fontSize: 16),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 构建观察者提示
-  Widget _buildObserverHint(Translations t) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      color: AppTheme.primaryLight,
-      child: Row(
-        children: [
-          const Icon(
-            Icons.info_outline,
-            color: AppTheme.primaryColor,
-            size: 16,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            '您当前以观察者身份查看聊天室，只能接收消息，无法发送消息。',
-            style: TextStyle(fontSize: 14, color: AppTheme.primaryColor),
           ),
         ],
       ),

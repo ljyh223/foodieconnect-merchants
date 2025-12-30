@@ -17,12 +17,6 @@ class RestaurantInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<RestaurantProvider>(
       builder: (context, provider, child) {
-        // 加载聊天室验证码
-        if (provider.chatRoomVerificationCode == null && !provider.isLoading) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            provider.loadChatRoomVerificationCode();
-          });
-        }
         final t = Translations.of(context);
         return Scaffold(
           backgroundColor: AppTheme.surfaceColor,

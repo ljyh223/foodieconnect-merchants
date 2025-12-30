@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:foodieconnect/core/constants/app_constants.dart';
 import 'package:foodieconnect/core/theme/app_theme.dart';
 import 'package:foodieconnect/core/utils/logger.dart';
 import 'package:foodieconnect/l10n/generated/translations.g.dart';
@@ -111,89 +110,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   /// 构建页面内容
   Widget _buildPageContent() {
-    return Consumer5<
-      AuthProvider,
-      RestaurantProvider,
-      MenuProvider,
-      StaffProvider,
-      ChatProvider
-    >(
-      builder:
-          (
-            context,
-            authProvider,
-            restaurantProvider,
-            menuProvider,
-            staffProvider,
-            chatProvider,
-            child,
-          ) {
-            // 检查是否正在加载
-            if (authProvider.isLoading ||
-                restaurantProvider.isLoading ||
-                menuProvider.isLoading ||
-                staffProvider.isLoading ||
-                chatProvider.isLoading) {
-              final t = Translations.of(context);
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const CircularProgressIndicator(),
-                    const SizedBox(height: 16),
-                    Text(t.common.loading),
-                  ],
-                ),
-              );
-            }
-
-            // 检查是否有错误
-            final hasError =
-                authProvider.errorMessage != null ||
-                restaurantProvider.errorMessage != null ||
-                menuProvider.errorMessage != null ||
-                staffProvider.errorMessage != null ||
-                chatProvider.errorMessage != null;
-
-            if (hasError) {
-              return _buildErrorWidget();
-            }
-
-            return IndexedStack(index: _currentIndex, children: _pages);
-          },
-    );
-  }
-
-  /// 构建错误页面
-  Widget _buildErrorWidget() {
-    final t = Translations.of(context);
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, size: 64, color: AppTheme.errorColor),
-          const SizedBox(height: AppConstants.defaultPadding),
-          Text(
-            t.common.loadFailed,
-            style: const TextStyle(
-              fontSize: 18,
-              color: AppTheme.errorColor,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: AppConstants.defaultPadding),
-          ElevatedButton(
-            onPressed: () {
-              // 重新初始化数据
-              if (mounted) {
-                _initializeProviders();
-              }
-            },
-            child: Text(t.common.retry),
-          ),
-        ],
-      ),
-    );
+    // 直接返回IndexedStack，让每个页面自己管理状态
+    // 移除Consumer5，避免任何Provider状态变化导致所有页面重新构建
+    return IndexedStack(index: _currentIndex, children: _pages);
   }
 
   /// 构建底部导航栏
