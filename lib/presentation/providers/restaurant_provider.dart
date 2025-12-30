@@ -3,13 +3,23 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:foodieconnect/core/utils/logger.dart';
+import 'package:foodieconnect/data/api/restaurant_api.dart';
 import 'package:foodieconnect/data/models/restaurant/restaurant_model.dart';
 import 'package:foodieconnect/data/models/restaurant/restaurant_update_request.dart';
+import 'package:foodieconnect/data/repository/restaurant_repository.dart';
 import 'package:foodieconnect/data/services/restaurant_service.dart';
+import 'package:foodieconnect/data/network/dio_client.dart';
 
 /// 餐厅状态管理Provider
 class RestaurantProvider extends ChangeNotifier {
-  final RestaurantService _restaurantService = RestaurantService();
+  late final RestaurantService _restaurantService;
+
+  RestaurantProvider() {
+    final dio = DioClient.dio;
+    final restaurantApi = RestaurantApi(dio);
+    final restaurantRepository = RestaurantRepository(restaurantApi);
+    _restaurantService = RestaurantService(restaurantRepository);
+  }
 
   // 状态变量
   bool _isLoading = false;

@@ -2,11 +2,13 @@ import 'package:dio/dio.dart';
 import 'package:foodieconnect/core/utils/logger.dart';
 import 'package:foodieconnect/data/models/staff/staff_model.dart';
 import 'package:foodieconnect/data/models/common/api_response.dart';
-import 'package:foodieconnect/data/services/api_service.dart';
+import 'package:foodieconnect/data/repository/staff_repository.dart';
 
 /// 员工服务类
 class StaffService {
-  final ApiService _apiService = ApiService();
+  final StaffRepository _staffRepository;
+
+  StaffService(this._staffRepository);
 
   /// 获取员工列表
   Future<ApiResponse<List<StaffModel>>> getStaff({
@@ -17,30 +19,10 @@ class StaffService {
     try {
       AppLogger.info('StaffService: 获取员工列表');
 
-      final Map<String, dynamic> queryParameters = {
-        'page': page,
-        'size': size,
-      };
-
-      if (status != null) {
-        queryParameters['status'] = status;
-      }
-
-      final response = await _apiService.get<Map<String, dynamic>>(
-        '/merchant/staff',
-        queryParameters: queryParameters,
-      );
-
-      final apiResponse = ApiResponse<List<StaffModel>>.fromJson(
-        response.data!,
-        (json) {
-          if (json is List) {
-            return (json)
-                .map((item) => StaffModel.fromJson(item as Map<String, dynamic>))
-                .toList();
-          }
-          return <StaffModel>[];
-        },
+      final apiResponse = await _staffRepository.getStaff(
+        status: status,
+        page: page,
+        size: size,
       );
 
       if (apiResponse.isSuccess) {
@@ -73,14 +55,7 @@ class StaffService {
     try {
       AppLogger.info('StaffService: 获取员工详情 - $staffId');
 
-      final response = await _apiService.get<Map<String, dynamic>>(
-        '/merchant/staff/$staffId',
-      );
-
-      final apiResponse = ApiResponse<StaffModel>.fromJson(
-        response.data!,
-        (json) => StaffModel.fromJson(json as Map<String, dynamic>),
-      );
+      final apiResponse = await _staffRepository.getStaffDetail(staffId);
 
       if (apiResponse.isSuccess) {
         AppLogger.info('StaffService: 获取员工详情成功');
@@ -112,17 +87,7 @@ class StaffService {
     try {
       AppLogger.info('StaffService: 更新员工状态 - $staffId, $status');
 
-      final response = await _apiService.put<Map<String, dynamic>>(
-        '/merchant/staff/$staffId/status',
-        queryParameters: {
-          'status': status,
-        },
-      );
-
-      final apiResponse = ApiResponse<void>.fromJson(
-        response.data!,
-        (json) {},
-      );
+      final apiResponse = await _staffRepository.updateStaffStatus(staffId, status);
 
       if (apiResponse.isSuccess) {
         AppLogger.info('StaffService: 更新员工状态成功');
@@ -154,17 +119,7 @@ class StaffService {
     try {
       AppLogger.info('StaffService: 更新员工评分 - $staffId, $rating');
 
-      final response = await _apiService.put<Map<String, dynamic>>(
-        '/merchant/staff/$staffId/rating',
-        queryParameters: {
-          'rating': rating,
-        },
-      );
-
-      final apiResponse = ApiResponse<void>.fromJson(
-        response.data!,
-        (json) {},
-      );
+      final apiResponse = await _staffRepository.updateStaffRating(staffId, rating);
 
       if (apiResponse.isSuccess) {
         AppLogger.info('StaffService: 更新员工评分成功');

@@ -1,12 +1,22 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:foodieconnect/core/utils/logger.dart';
+import 'package:foodieconnect/data/api/staff_api.dart';
 import 'package:foodieconnect/data/models/staff/staff_model.dart';
+import 'package:foodieconnect/data/repository/staff_repository.dart';
 import 'package:foodieconnect/data/services/staff_service.dart';
+import 'package:foodieconnect/data/network/dio_client.dart';
 
 /// 员工状态管理Provider
 class StaffProvider extends ChangeNotifier {
-  final StaffService _staffService = StaffService();
+  late final StaffService _staffService;
+
+  StaffProvider() {
+    final dio = DioClient.dio;
+    final staffApi = StaffApi(dio);
+    final staffRepository = StaffRepository(staffApi);
+    _staffService = StaffService(staffRepository);
+  }
 
   // 状态变量
   bool _isLoading = false;
@@ -35,10 +45,7 @@ class StaffProvider extends ChangeNotifier {
   int get totalCount => _totalCount;
 
   /// 获取员工列表
-  Future<void> loadStaffList({
-    bool refresh = false,
-    String? status,
-  }) async {
+  Future<void> loadStaffList({bool refresh = false, String? status}) async {
     try {
       _setLoading(true);
       _clearError();
@@ -59,7 +66,7 @@ class StaffProvider extends ChangeNotifier {
 
       if (response.isSuccess && response.data != null) {
         final newStaff = response.data!;
-        
+
         if (refresh) {
           _staffList = newStaff;
         } else {
@@ -68,7 +75,7 @@ class StaffProvider extends ChangeNotifier {
 
         _currentPage++;
         _hasMore = newStaff.length >= _pageSize;
-        
+
         AppLogger.info('StaffProvider: 员工列表加载成功 - ${newStaff.length} 项');
       } else {
         _setError(response.errorMessage);
@@ -125,16 +132,20 @@ class StaffProvider extends ChangeNotifier {
 
       if (response.isSuccess) {
         // 更新本地状态
-        final staffIndex = _staffList.indexWhere((staff) => staff.id == staffId);
+        final staffIndex = _staffList.indexWhere(
+          (staff) => staff.id == staffId,
+        );
         if (staffIndex != -1) {
-          _staffList[staffIndex] = _staffList[staffIndex].copyWith(status: status);
+          _staffList[staffIndex] = _staffList[staffIndex].copyWith(
+            status: status,
+          );
         }
-        
+
         // 更新选中的员工
         if (_selectedStaff?.id == staffId) {
           _selectedStaff = _selectedStaff!.copyWith(status: status);
         }
-        
+
         AppLogger.info('StaffProvider: 员工状态更新成功');
         notifyListeners();
         return true;
@@ -164,16 +175,20 @@ class StaffProvider extends ChangeNotifier {
 
       if (response.isSuccess) {
         // 更新本地状态
-        final staffIndex = _staffList.indexWhere((staff) => staff.id == staffId);
+        final staffIndex = _staffList.indexWhere(
+          (staff) => staff.id == staffId,
+        );
         if (staffIndex != -1) {
-          _staffList[staffIndex] = _staffList[staffIndex].copyWith(rating: rating);
+          _staffList[staffIndex] = _staffList[staffIndex].copyWith(
+            rating: rating,
+          );
         }
-        
+
         // 更新选中的员工
         if (_selectedStaff?.id == staffId) {
           _selectedStaff = _selectedStaff!.copyWith(rating: rating);
         }
-        
+
         AppLogger.info('StaffProvider: 员工评分更新成功');
         notifyListeners();
         return true;
@@ -262,11 +277,11 @@ class StaffProvider extends ChangeNotifier {
   double get averageRating {
     final ratedStaff = _staffList.where((staff) => staff.rating != null);
     if (ratedStaff.isEmpty) return 0.0;
-    
+
     final totalRating = ratedStaff
         .map((staff) => staff.rating!)
         .reduce((a, b) => a + b);
-    
+
     return totalRating / ratedStaff.length;
   }
 
@@ -345,7 +360,7 @@ class StaffProvider extends ChangeNotifier {
     _currentPage = 0;
     _hasMore = true;
     _totalCount = 0;
-    
+
     notifyListeners();
     AppLogger.info('StaffProvider: 状态已重置');
   }
