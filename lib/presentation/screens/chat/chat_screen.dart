@@ -58,9 +58,10 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final t = Translations.of(context);
     final chatProvider = Provider.of<ChatProvider>(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppTheme.surfaceColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: _buildAppBar(context, t, chatProvider),
       body: _buildBody(context, t, chatProvider),
     );
@@ -192,6 +193,8 @@ class _ChatScreenState extends State<ChatScreen> {
     final avatarUrl = (senderAvatar != null && senderAvatar.isNotEmpty)
         ? ImageUtils.getFullImageUrl(senderAvatar)
         : '';
+    final theme = Theme.of(context);
+    final isDarkMode = theme.brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
@@ -208,12 +211,16 @@ class _ChatScreenState extends State<ChatScreen> {
               backgroundImage: avatarUrl.isNotEmpty
                   ? NetworkImage(avatarUrl)
                   : null,
-              backgroundColor: AppTheme.primaryLight,
+              backgroundColor: isDarkMode
+                  ? const Color(0xFF3C3C3C)
+                  : AppTheme.primaryLight,
               child: avatarUrl.isEmpty
-                  ? const Icon(
+                  ? Icon(
                       Icons.person,
                       size: 20,
-                      color: AppTheme.primaryColor,
+                      color: isDarkMode
+                          ? const Color(0xFFBB86FC)
+                          : AppTheme.primaryColor,
                     )
                   : null,
             ),
@@ -231,9 +238,10 @@ class _ChatScreenState extends State<ChatScreen> {
                     children: [
                       Text(
                         message.senderName ?? '未知用户',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
+                          color: theme.textTheme.bodyLarge?.color,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -241,7 +249,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         _formatTime(message.createdAt),
                         style: TextStyle(
                           fontSize: 12,
-                          color: AppTheme.textSecondary,
+                          color: theme.textTheme.bodySmall?.color,
                         ),
                       ),
                     ],
@@ -255,16 +263,13 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: isDarkMode ? const Color(0xFF2C2C2C) : Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color.fromARGB(
-                          13,
-                          0,
-                          0,
-                          0,
-                        ), // 0.05 opacity black
+                        color: isDarkMode
+                            ? const Color.fromARGB(50, 0, 0, 0)
+                            : const Color.fromARGB(13, 0, 0, 0),
                         spreadRadius: 1,
                         blurRadius: 2,
                         offset: const Offset(0, 1),
@@ -273,7 +278,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   child: Text(
                     message.content ?? '',
-                    style: const TextStyle(fontSize: 16),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: theme.textTheme.bodyLarge?.color,
+                    ),
                   ),
                 ),
               ],

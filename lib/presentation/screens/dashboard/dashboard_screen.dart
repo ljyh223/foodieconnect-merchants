@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:foodieconnect/core/theme/app_theme.dart';
 import 'package:foodieconnect/core/utils/logger.dart';
 import 'package:foodieconnect/l10n/generated/translations.g.dart';
 import 'package:foodieconnect/presentation/providers/auth_provider.dart';
@@ -118,6 +117,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   /// 构建底部导航栏
   Widget _buildBottomNavigationBar() {
     final t = Translations.of(context);
+    final theme = Theme.of(context);
 
     final List<BottomNavigationBarItem> items = [
       BottomNavigationBarItem(
@@ -147,17 +147,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
       onTap: _onBottomNavTap,
       type: BottomNavigationBarType.fixed,
       items: items,
-      selectedItemColor: AppTheme.primaryColor,
-      unselectedItemColor: AppTheme.textSecondary,
-      backgroundColor: Colors.white,
+      selectedItemColor: theme.colorScheme.primary,
+      unselectedItemColor: theme.colorScheme.onSurfaceVariant,
+      backgroundColor: theme.colorScheme.surface,
       elevation: 8,
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppTheme.surfaceColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: _buildPageContent(),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
