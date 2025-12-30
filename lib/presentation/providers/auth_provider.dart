@@ -7,15 +7,13 @@ import 'package:foodieconnect/core/utils/logger.dart';
 import 'package:foodieconnect/data/models/auth/merchant_login_request.dart';
 import 'package:foodieconnect/data/models/auth/merchant_login_response.dart';
 import 'package:foodieconnect/data/models/auth/user_dto.dart';
+import 'package:foodieconnect/data/network/dio_client.dart';
 import 'package:foodieconnect/data/services/auth_service.dart';
 import 'package:foodieconnect/data/storage/secure_storage.dart';
-
-import '../../data/services/api_service.dart';
 
 /// 认证状态管理Provider
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
-  final ApiService _apiService = ApiService();
 
   // 认证状态
   bool _isLoggedIn = false;
@@ -36,21 +34,18 @@ class AuthProvider extends ChangeNotifier {
   Future<void> init() async {
     try {
       AppLogger.info('AuthProvider: 初始化认证状态');
-      
-      // 注册API服务的认证错误回调
-      _apiService.onAuthError = handleTokenExpired;
-      
+
       // 检查本地存储的登录状态
       final isLoggedIn = await _authService.isLoggedIn();
       _isLoggedIn = isLoggedIn;
-      
+
       if (isLoggedIn) {
-        // 加载token到ApiService
-        await _loadTokenToApiService();
+        // 加载token到DioClient
+        await _loadTokenToDioClient();
         // 获取用户信息
         await _loadUserInfo();
       }
-      
+
       notifyListeners();
       AppLogger.info('AuthProvider: 初始化完成 - 登录状态: $_isLoggedIn');
     } catch (e) {
@@ -58,7 +53,7 @@ class AuthProvider extends ChangeNotifier {
       _setError('初始化失败');
     }
   }
-  
+
   /// 处理Token过期
   Future<void> handleTokenExpired() async {
     AppLogger.info('AuthProvider: 处理Token过期');
@@ -85,7 +80,7 @@ class AuthProvider extends ChangeNotifier {
 
       if (response.isSuccess && response.data != null) {
         _loginResponse = response.data!;
-        
+
         // 创建用户信息对象
         _currentUser = UserDTO(
           id: response.data!.merchantId,
@@ -99,9 +94,12 @@ class AuthProvider extends ChangeNotifier {
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         );
-        
+
         _isLoggedIn = true;
-        
+
+        // 设置DioClient的访问令牌
+        DioClient.setAccessToken(response.data!.token);
+
         AppLogger.info('AuthProvider: 登录成功');
         notifyListeners();
         return true;
@@ -128,21 +126,25 @@ class AuthProvider extends ChangeNotifier {
       AppLogger.info('AuthProvider: 开始登出');
 
       final response = await _authService.logout();
-      
+
       // 无论API调用是否成功，都清除本地状态
       _clearAuthState();
-      
+      // 清除DioClient的访问令牌
+      DioClient.clearAccessToken();
+
       if (response.isSuccess) {
         AppLogger.info('AuthProvider: 登出成功');
       } else {
         AppLogger.warning('AuthProvider: 登出API失败 - ${response.errorMessage}');
       }
-      
+
       notifyListeners();
     } catch (e) {
       AppLogger.error('AuthProvider: 登出异常', error: e);
       // 即使发生异常，也要清除本地状态
       _clearAuthState();
+      // 清除DioClient的访问令牌
+      DioClient.clearAccessToken();
       notifyListeners();
     } finally {
       _setLoading(false);
@@ -200,7 +202,7 @@ class AuthProvider extends ChangeNotifier {
       } else {
         _setError(response.errorMessage);
         AppLogger.warning('AuthProvider: 刷新Token失败 - ${response.errorMessage}');
-        
+
         // 刷新失败，清除认证状态
         _clearAuthState();
         notifyListeners();
@@ -209,7 +211,7 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('AuthProvider: 刷新Token异常', error: e);
       _setError('Token刷新失败');
-      
+
       // 发生异常，清除认证状态
       _clearAuthState();
       notifyListeners();
@@ -222,7 +224,7 @@ class AuthProvider extends ChangeNotifier {
   /// 更新用户信息
   void updateUserInfo(UserDTO userInfo) {
     _currentUser = userInfo;
-    
+
     // 更新本地存储
     final storedUserInfo = {
       'id': userInfo.id,
@@ -237,12 +239,12 @@ class AuthProvider extends ChangeNotifier {
       'updatedAt': userInfo.updatedAt.toIso8601String(),
       'lastLoginAt': userInfo.lastLoginAt?.toIso8601String(),
     };
-    
+
     SecureStorage.setString(
       AppConstants.userInfoKey,
       jsonEncode(storedUserInfo),
     );
-    
+
     AppLogger.info('AuthProvider: 用户信息已更新');
     notifyListeners();
   }
@@ -251,10 +253,13 @@ class AuthProvider extends ChangeNotifier {
   Future<void> _loadUserInfo() async {
     try {
       // 先尝试从本地存储加载用户信息
-      final userInfoString = await SecureStorage.getString(AppConstants.userInfoKey);
+      final userInfoString = await SecureStorage.getString(
+        AppConstants.userInfoKey,
+      );
       if (userInfoString != null && userInfoString.isNotEmpty) {
         try {
-          final userInfoMap = jsonDecode(userInfoString) as Map<String, dynamic>;
+          final userInfoMap =
+              jsonDecode(userInfoString) as Map<String, dynamic>;
           _currentUser = UserDTO(
             id: userInfoMap['id'] as int? ?? 0,
             restaurantId: userInfoMap['restaurantId'] as int? ?? 0,
@@ -280,10 +285,10 @@ class AuthProvider extends ChangeNotifier {
           AppLogger.warning('AuthProvider: 本地用户信息解析失败', error: e);
         }
       }
-      
+
       // 如果本地没有或解析失败，尝试从API获取
       final response = await _authService.getCurrentMerchant();
-      
+
       if (response.isSuccess && response.data != null) {
         _currentUser = response.data;
         AppLogger.info('AuthProvider: 用户信息从API加载成功');
@@ -298,17 +303,17 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  /// 加载token到ApiService
-  Future<void> _loadTokenToApiService() async {
+  /// 加载token到DioClient
+  Future<void> _loadTokenToDioClient() async {
     try {
       final token = await SecureStorage.getString(AppConstants.tokenKey);
       if (token != null && token.isNotEmpty) {
-        // 设置API服务的访问令牌
-        _apiService.setAccessToken(token);
-        AppLogger.info('AuthProvider: Token已加载到ApiService');
+        // 设置DioClient的访问令牌
+        DioClient.setAccessToken(token);
+        AppLogger.info('AuthProvider: Token已加载到DioClient');
       }
     } catch (e) {
-      AppLogger.error('AuthProvider: 加载Token到ApiService失败', error: e);
+      AppLogger.error('AuthProvider: 加载Token到DioClient失败', error: e);
     }
   }
 
@@ -347,7 +352,7 @@ class AuthProvider extends ChangeNotifier {
   /// 检查是否需要刷新Token
   bool shouldRefreshToken() {
     if (_loginResponse == null) return false;
-    
+
     // 这里可以根据实际需求添加Token过期检查逻辑
     // 暂时返回false
     return false;
@@ -356,8 +361,8 @@ class AuthProvider extends ChangeNotifier {
   /// 获取用户显示名称
   String get userDisplayName {
     if (_currentUser == null) return '未知用户';
-    return _currentUser!.displayName.isNotEmpty 
-        ? _currentUser!.displayName 
+    return _currentUser!.displayName.isNotEmpty
+        ? _currentUser!.displayName
         : _currentUser!.email.split('@').first;
   }
 
