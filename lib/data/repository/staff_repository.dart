@@ -21,17 +21,14 @@ class StaffRepository {
         page: page,
         size: size,
       );
-      return ApiResponse<List<StaffModel>>.fromJson(
-        response.data!,
-        (json) {
-          if (json is List) {
-            return (json)
-                .map((item) => StaffModel.fromJson(item as Map<String, dynamic>))
-                .toList();
-          }
-          return <StaffModel>[];
-        },
-      );
+      return ApiResponse<List<StaffModel>>.fromJson(response.data!, (json) {
+        if (json is List) {
+          return (json)
+              .map((item) => StaffModel.fromJson(item as Map<String, dynamic>))
+              .toList();
+        }
+        return <StaffModel>[];
+      });
     } catch (e) {
       AppLogger.error('StaffRepository: 获取员工列表失败', error: e);
       rethrow;
@@ -52,14 +49,58 @@ class StaffRepository {
     }
   }
 
+  /// 创建员工
+  Future<ApiResponse<StaffModel>> createStaff(
+    Map<String, dynamic> staffData,
+  ) async {
+    try {
+      final response = await _staffApi.createStaff(staffData);
+      return ApiResponse<StaffModel>.fromJson(
+        response.data!,
+        (json) => StaffModel.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      AppLogger.error('StaffRepository: 创建员工失败', error: e);
+      rethrow;
+    }
+  }
+
+  /// 更新员工信息
+  Future<ApiResponse<StaffModel>> updateStaff(
+    int staffId,
+    Map<String, dynamic> staffData,
+  ) async {
+    try {
+      final response = await _staffApi.updateStaff(staffId, staffData);
+      return ApiResponse<StaffModel>.fromJson(
+        response.data!,
+        (json) => StaffModel.fromJson(json as Map<String, dynamic>),
+      );
+    } catch (e) {
+      AppLogger.error('StaffRepository: 更新员工信息失败', error: e);
+      rethrow;
+    }
+  }
+
+  /// 删除员工
+  Future<ApiResponse<void>> deleteStaff(int staffId) async {
+    try {
+      final response = await _staffApi.deleteStaff(staffId);
+      return ApiResponse<void>.fromJson(response.data!, (json) {});
+    } catch (e) {
+      AppLogger.error('StaffRepository: 删除员工失败', error: e);
+      rethrow;
+    }
+  }
+
   /// 更新员工状态
-  Future<ApiResponse<void>> updateStaffStatus(int staffId, String status) async {
+  Future<ApiResponse<void>> updateStaffStatus(
+    int staffId,
+    String status,
+  ) async {
     try {
       final response = await _staffApi.updateStaffStatus(staffId, status);
-      return ApiResponse<void>.fromJson(
-        response.data!,
-        (json) {},
-      );
+      return ApiResponse<void>.fromJson(response.data!, (json) {});
     } catch (e) {
       AppLogger.error('StaffRepository: 更新员工状态失败', error: e);
       rethrow;
@@ -67,13 +108,13 @@ class StaffRepository {
   }
 
   /// 更新员工评分
-  Future<ApiResponse<void>> updateStaffRating(int staffId, double rating) async {
+  Future<ApiResponse<void>> updateStaffRating(
+    int staffId,
+    double rating,
+  ) async {
     try {
       final response = await _staffApi.updateStaffRating(staffId, rating);
-      return ApiResponse<void>.fromJson(
-        response.data!,
-        (json) {},
-      );
+      return ApiResponse<void>.fromJson(response.data!, (json) {});
     } catch (e) {
       AppLogger.error('StaffRepository: 更新员工评分失败', error: e);
       rethrow;

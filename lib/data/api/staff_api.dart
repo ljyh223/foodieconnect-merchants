@@ -12,10 +12,7 @@ class StaffApi {
     int page = 0,
     int size = 20,
   }) async {
-    final Map<String, dynamic> queryParameters = {
-      'page': page,
-      'size': size,
-    };
+    final Map<String, dynamic> queryParameters = {'page': page, 'size': size};
 
     if (status != null) {
       queryParameters['status'] = status;
@@ -32,23 +29,51 @@ class StaffApi {
     return await _dio.get<Map<String, dynamic>>('/merchant/staff/$staffId');
   }
 
+  /// 创建员工
+  Future<Response<Map<String, dynamic>>> createStaff(
+    Map<String, dynamic> staffData,
+  ) async {
+    return await _dio.post<Map<String, dynamic>>(
+      '/merchant/staff',
+      data: staffData,
+    );
+  }
+
+  /// 更新员工信息
+  Future<Response<Map<String, dynamic>>> updateStaff(
+    int staffId,
+    Map<String, dynamic> staffData,
+  ) async {
+    return await _dio.put<Map<String, dynamic>>(
+      '/merchant/staff/$staffId',
+      data: staffData,
+    );
+  }
+
+  /// 删除员工
+  Future<Response<Map<String, dynamic>>> deleteStaff(int staffId) async {
+    return await _dio.delete<Map<String, dynamic>>('/merchant/staff/$staffId');
+  }
+
   /// 更新员工状态
-  Future<Response<Map<String, dynamic>>> updateStaffStatus(int staffId, String status) async {
+  Future<Response<Map<String, dynamic>>> updateStaffStatus(
+    int staffId,
+    String status,
+  ) async {
     return await _dio.put<Map<String, dynamic>>(
       '/merchant/staff/$staffId/status',
-      queryParameters: {
-        'status': status,
-      },
+      queryParameters: {'status': status},
     );
   }
 
   /// 更新员工评分
-  Future<Response<Map<String, dynamic>>> updateStaffRating(int staffId, double rating) async {
+  Future<Response<Map<String, dynamic>>> updateStaffRating(
+    int staffId,
+    double rating,
+  ) async {
     return await _dio.put<Map<String, dynamic>>(
       '/merchant/staff/$staffId/rating',
-      queryParameters: {
-        'rating': rating,
-      },
+      queryParameters: {'rating': rating},
     );
   }
 }

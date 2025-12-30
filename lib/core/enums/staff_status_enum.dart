@@ -2,29 +2,22 @@
 /// 店员状态枚举
 enum StaffStatus {
   /// 在线
-  online('ONLINE', '在线'),
+  online('ONLINE'),
   
   /// 离线
-  offline('OFFLINE', '离线'),
+  offline('OFFLINE'),
   
   /// 忙碌
-  busy('BUSY', '忙碌');
+  busy('BUSY');
 
   final String value;
-  final String displayName;
 
-  const StaffStatus(this.value, this.displayName);
+  const StaffStatus(this.value);
 
   /// 从字符串值获取枚举
   static StaffStatus? fromValue(String? value) {
     if (value == null) return null;
     return values.firstWhereOrNull((status) => status.value == value.toUpperCase());
-  }
-
-  /// 从显示名称获取枚举
-  static StaffStatus? fromDisplayName(String? displayName) {
-    if (displayName == null) return null;
-    return values.firstWhereOrNull((status) => status.displayName == displayName);
   }
 
   /// 检查状态是否在线

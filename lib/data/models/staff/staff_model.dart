@@ -97,45 +97,10 @@ class StaffModel extends Equatable {
   /// 检查员工是否忙碌
   bool get isBusy => statusEnum?.isBusy ?? false;
 
-  /// 获取状态显示文本
-  String get statusDisplay => statusEnum?.displayName ?? '未知';
-
-  /// 获取状态颜色
-  String get statusColor {
-    switch (statusEnum) {
-      case StaffStatus.online:
-        return '#4CAF50'; // 绿色
-      case StaffStatus.offline:
-        return '#9E9E9E'; // 灰色
-      case StaffStatus.busy:
-        return '#FF9800'; // 橙色
-      default:
-        return '#9E9E9E'; // 灰色
-    }
-  }
-
-  /// 获取评分显示文本
-  String get ratingDisplay {
-    if (rating == null) return '暂无评分';
-    return '${rating!.toStringAsFixed(1)} ⭐';
-  }
-
-  /// 获取职位显示文本
-  String get positionDisplay {
-    if (position == null || position!.isEmpty) return '员工';
-    return position!;
-  }
-
-  /// 获取经验显示文本
-  String get experienceDisplay {
-    if (experience == null || experience!.isEmpty) return '经验未知';
-    return experience!;
-  }
-
   /// 获取显示名称
-  String get displayName => name.trim().isEmpty ? '未知员工' : name;
+  String get displayName => name.trim().isEmpty ? '' : name;
 
-  /// 获取头像URL，如果没有则返回默认头像
+  /// 获取头像URL
   String get displayAvatar => avatarUrl ?? '';
 
   @override

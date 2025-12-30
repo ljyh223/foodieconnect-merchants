@@ -300,6 +300,116 @@ class StaffProvider extends ChangeNotifier {
     return await updateStaffStatus(staffId, 'BUSY');
   }
 
+  /// 创建员工
+  Future<bool> createStaff(Map<String, dynamic> staffData) async {
+    try {
+      _setUpdating(true);
+      _clearError();
+
+      AppLogger.info('StaffProvider: 开始创建员工 - ${staffData['name']}');
+
+      final response = await _staffService.createStaff(staffData);
+
+      if (response.isSuccess && response.data != null) {
+        // 添加到本地列表
+        _staffList.add(response.data!);
+        _totalCount++;
+
+        AppLogger.info('StaffProvider: 员工创建成功 - ${response.data!.name}');
+        notifyListeners();
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        AppLogger.warning('StaffProvider: 员工创建失败 - ${response.errorMessage}');
+        return false;
+      }
+    } catch (e) {
+      AppLogger.error('StaffProvider: 创建员工异常', error: e);
+      _setError('创建员工失败，请稍后重试');
+      return false;
+    } finally {
+      _setUpdating(false);
+    }
+  }
+
+  /// 更新员工信息
+  Future<bool> updateStaff(int staffId, Map<String, dynamic> staffData) async {
+    try {
+      _setUpdating(true);
+      _clearError();
+
+      AppLogger.info('StaffProvider: 开始更新员工信息 - $staffId');
+
+      final response = await _staffService.updateStaff(staffId, staffData);
+
+      if (response.isSuccess && response.data != null) {
+        // 更新本地列表
+        final staffIndex = _staffList.indexWhere(
+          (staff) => staff.id == staffId,
+        );
+        if (staffIndex != -1) {
+          _staffList[staffIndex] = response.data!;
+        }
+
+        // 更新选中的员工
+        if (_selectedStaff?.id == staffId) {
+          _selectedStaff = response.data!;
+        }
+
+        AppLogger.info('StaffProvider: 员工信息更新成功 - ${response.data!.name}');
+        notifyListeners();
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        AppLogger.warning('StaffProvider: 员工信息更新失败 - ${response.errorMessage}');
+        return false;
+      }
+    } catch (e) {
+      AppLogger.error('StaffProvider: 更新员工信息异常', error: e);
+      _setError('更新员工信息失败，请稍后重试');
+      return false;
+    } finally {
+      _setUpdating(false);
+    }
+  }
+
+  /// 删除员工
+  Future<bool> deleteStaff(int staffId) async {
+    try {
+      _setUpdating(true);
+      _clearError();
+
+      AppLogger.info('StaffProvider: 开始删除员工 - $staffId');
+
+      final response = await _staffService.deleteStaff(staffId);
+
+      if (response.isSuccess) {
+        // 从本地列表中删除
+        _staffList.removeWhere((staff) => staff.id == staffId);
+        _totalCount--;
+
+        // 如果删除的是选中的员工，清除选中状态
+        if (_selectedStaff?.id == staffId) {
+          _selectedStaff = null;
+        }
+
+        AppLogger.info('StaffProvider: 员工删除成功');
+        notifyListeners();
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        AppLogger.warning('StaffProvider: 员工删除失败 - ${response.errorMessage}');
+        return false;
+      }
+    } catch (e) {
+      AppLogger.error('StaffProvider: 删除员工异常', error: e);
+      _setError('删除员工失败，请稍后重试');
+      return false;
+    } finally {
+      _setUpdating(false);
+    }
+  }
+
   /// 获取员工显示名称
   String getStaffDisplayName(StaffModel staff) {
     return staff.name.isNotEmpty ? staff.name : '未知员工';
@@ -307,17 +417,32 @@ class StaffProvider extends ChangeNotifier {
 
   /// 获取员工职位显示
   String getStaffPositionDisplay(StaffModel staff) {
-    return staff.positionDisplay;
+    if (staff.position == null || staff.position!.isEmpty) {
+      return '员工';
+    }
+    return staff.position!;
   }
 
   /// 获取员工状态显示
   String getStaffStatusDisplay(StaffModel staff) {
-    return staff.statusDisplay;
+    switch (staff.status.toUpperCase()) {
+      case 'ONLINE':
+        return '在线';
+      case 'OFFLINE':
+        return '离线';
+      case 'BUSY':
+        return '忙碌';
+      default:
+        return '未知';
+    }
   }
 
   /// 获取员工评分显示
   String getStaffRatingDisplay(StaffModel staff) {
-    return staff.ratingDisplay;
+    if (staff.rating == null) {
+      return '暂无评分';
+    }
+    return '${staff.rating!.toStringAsFixed(1)} ⭐';
   }
 
   /// 设置加载状态

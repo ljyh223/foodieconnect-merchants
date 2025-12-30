@@ -802,6 +802,18 @@ class TranslationsStaffEn {
 	/// en: 'Rating'
 	String get rating => 'Rating';
 
+	/// en: 'Please enter a rating between 0.0 and 5.0'
+	String get ratingHelper => 'Please enter a rating between 0.0 and 5.0';
+
+	/// en: 'Staff'
+	String get defaultPosition => 'Staff';
+
+	/// en: 'Unknown Experience'
+	String get defaultExperience => 'Unknown Experience';
+
+	/// en: 'Unknown Staff'
+	String get unknownStaff => 'Unknown Staff';
+
 	/// en: 'Schedule'
 	String get schedule => 'Schedule';
 
@@ -844,11 +856,20 @@ class TranslationsStaffEn {
 	/// en: 'Are you sure you want to set ${staffName}'s status to ${newStatus}?'
 	String confirmStatusChange({required Object staffName, required Object newStatus}) => 'Are you sure you want to set ${staffName}\'s status to ${newStatus}?';
 
+	/// en: 'Confirm Delete'
+	String get confirmDelete => 'Confirm Delete';
+
+	/// en: 'Are you sure you want to delete staff ${staffName}? This operation cannot be undone.'
+	String confirmDeleteMessage({required Object staffName}) => 'Are you sure you want to delete staff ${staffName}? This operation cannot be undone.';
+
 	/// en: 'Cancel'
 	String get cancel => 'Cancel';
 
 	/// en: 'Confirm'
 	String get confirm => 'Confirm';
+
+	/// en: 'Save'
+	String get save => 'Save';
 
 	/// en: 'Update Rating'
 	String get updateRatingTitle => 'Update Rating';
@@ -859,6 +880,9 @@ class TranslationsStaffEn {
 	/// en: 'Rating (0.0-5.0)'
 	String get ratingInputHint => 'Rating (0.0-5.0)';
 
+	/// en: 'Please enter staff name'
+	String get nameRequired => 'Please enter staff name';
+
 	/// en: 'Please enter a valid rating (0.0-5.0)'
 	String get validRatingRequired => 'Please enter a valid rating (0.0-5.0)';
 
@@ -867,6 +891,24 @@ class TranslationsStaffEn {
 
 	/// en: 'Retry'
 	String get retry => 'Retry';
+
+	/// en: 'Staff created successfully'
+	String get staffCreated => 'Staff created successfully';
+
+	/// en: 'Staff updated successfully'
+	String get staffUpdated => 'Staff updated successfully';
+
+	/// en: 'Staff deleted successfully'
+	String get staffDeleted => 'Staff deleted successfully';
+
+	/// en: 'Failed to create staff'
+	String get createFailed => 'Failed to create staff';
+
+	/// en: 'Failed to update staff'
+	String get updateFailed => 'Failed to update staff';
+
+	/// en: 'Failed to delete staff'
+	String get deleteFailed => 'Failed to delete staff';
 
 	/// en: 'Unknown Status'
 	String get unknownStatus => 'Unknown Status';
@@ -882,6 +924,12 @@ class TranslationsStaffEn {
 
 	/// en: 'Busy'
 	String get statusBusy => 'Busy';
+
+	/// en: 'Delete'
+	String get delete => 'Delete';
+
+	/// en: 'Create Staff'
+	String get createStaff => 'Create Staff';
 }
 
 // Path: statistics
@@ -1197,6 +1245,10 @@ extension on Translations {
 			'staff.busy' => 'Busy',
 			'staff.experience' => 'Experience',
 			'staff.rating' => 'Rating',
+			'staff.ratingHelper' => 'Please enter a rating between 0.0 and 5.0',
+			'staff.defaultPosition' => 'Staff',
+			'staff.defaultExperience' => 'Unknown Experience',
+			'staff.unknownStaff' => 'Unknown Staff',
 			'staff.schedule' => 'Schedule',
 			'staff.addSchedule' => 'Add Schedule',
 			'staff.editSchedule' => 'Edit Schedule',
@@ -1211,19 +1263,31 @@ extension on Translations {
 			'staff.updateRating' => 'Update Rating',
 			'staff.confirmOperation' => 'Confirm Operation',
 			'staff.confirmStatusChange' => ({required Object staffName, required Object newStatus}) => 'Are you sure you want to set ${staffName}\'s status to ${newStatus}?',
+			'staff.confirmDelete' => 'Confirm Delete',
+			'staff.confirmDeleteMessage' => ({required Object staffName}) => 'Are you sure you want to delete staff ${staffName}? This operation cannot be undone.',
 			'staff.cancel' => 'Cancel',
 			'staff.confirm' => 'Confirm',
+			'staff.save' => 'Save',
 			'staff.updateRatingTitle' => 'Update Rating',
 			'staff.setNewRating' => ({required Object staffName}) => 'Set new rating for ${staffName}:',
 			'staff.ratingInputHint' => 'Rating (0.0-5.0)',
+			'staff.nameRequired' => 'Please enter staff name',
 			'staff.validRatingRequired' => 'Please enter a valid rating (0.0-5.0)',
 			'staff.noStaffInfo' => 'No staff information available',
 			'staff.retry' => 'Retry',
+			'staff.staffCreated' => 'Staff created successfully',
+			'staff.staffUpdated' => 'Staff updated successfully',
+			'staff.staffDeleted' => 'Staff deleted successfully',
+			'staff.createFailed' => 'Failed to create staff',
+			'staff.updateFailed' => 'Failed to update staff',
+			'staff.deleteFailed' => 'Failed to delete staff',
 			'staff.unknownStatus' => 'Unknown Status',
 			'staff.unknown' => 'Unknown',
 			'staff.statusOnline' => 'Online',
 			'staff.statusOffline' => 'Offline',
 			'staff.statusBusy' => 'Busy',
+			'staff.delete' => 'Delete',
+			'staff.createStaff' => 'Create Staff',
 			'statistics.title' => 'Statistics',
 			'statistics.overview' => 'Overview',
 			'statistics.today' => 'Today',

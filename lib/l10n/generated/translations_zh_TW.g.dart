@@ -332,6 +332,10 @@ class _TranslationsStaffZhTw implements TranslationsStaffEn {
 	@override String get busy => '忙碌';
 	@override String get experience => '經驗';
 	@override String get rating => '評分';
+	@override String get ratingHelper => '請輸入0.0-5.0之間的評分';
+	@override String get defaultPosition => '員工';
+	@override String get defaultExperience => '經驗未知';
+	@override String get unknownStaff => '未知員工';
 	@override String get schedule => '排班';
 	@override String get addSchedule => '添加排班';
 	@override String get editSchedule => '編輯排班';
@@ -346,19 +350,31 @@ class _TranslationsStaffZhTw implements TranslationsStaffEn {
 	@override String get updateRating => '更新評分';
 	@override String get confirmOperation => '確認操作';
 	@override String confirmStatusChange({required Object staffName, required Object newStatus}) => '確定要將 ${staffName} 的狀態設置為 ${newStatus} 嗎？';
+	@override String get confirmDelete => '確認刪除';
+	@override String confirmDeleteMessage({required Object staffName}) => '確定要刪除員工 ${staffName} 嗎？此操作不可恢復。';
 	@override String get cancel => '取消';
 	@override String get confirm => '確定';
+	@override String get save => '保存';
 	@override String get updateRatingTitle => '更新評分';
 	@override String setNewRating({required Object staffName}) => '為 ${staffName} 設置新評分：';
 	@override String get ratingInputHint => '評分 (0.0-5.0)';
+	@override String get nameRequired => '請輸入員工姓名';
 	@override String get validRatingRequired => '請輸入有效的評分 (0.0-5.0)';
 	@override String get noStaffInfo => '暫無員工信息';
 	@override String get retry => '重試';
+	@override String get staffCreated => '員工創建成功';
+	@override String get staffUpdated => '員工更新成功';
+	@override String get staffDeleted => '員工刪除成功';
+	@override String get createFailed => '創建員工失敗';
+	@override String get updateFailed => '更新員工失敗';
+	@override String get deleteFailed => '刪除員工失敗';
 	@override String get unknownStatus => '未知狀態';
 	@override String get unknown => '未知';
 	@override String get statusOnline => '在線';
 	@override String get statusOffline => '離線';
 	@override String get statusBusy => '忙碌';
+	@override String get delete => '刪除';
+	@override String get createStaff => '創建員工';
 }
 
 // Path: statistics
@@ -638,6 +654,10 @@ extension on TranslationsZhTw {
 			'staff.busy' => '忙碌',
 			'staff.experience' => '經驗',
 			'staff.rating' => '評分',
+			'staff.ratingHelper' => '請輸入0.0-5.0之間的評分',
+			'staff.defaultPosition' => '員工',
+			'staff.defaultExperience' => '經驗未知',
+			'staff.unknownStaff' => '未知員工',
 			'staff.schedule' => '排班',
 			'staff.addSchedule' => '添加排班',
 			'staff.editSchedule' => '編輯排班',
@@ -652,19 +672,31 @@ extension on TranslationsZhTw {
 			'staff.updateRating' => '更新評分',
 			'staff.confirmOperation' => '確認操作',
 			'staff.confirmStatusChange' => ({required Object staffName, required Object newStatus}) => '確定要將 ${staffName} 的狀態設置為 ${newStatus} 嗎？',
+			'staff.confirmDelete' => '確認刪除',
+			'staff.confirmDeleteMessage' => ({required Object staffName}) => '確定要刪除員工 ${staffName} 嗎？此操作不可恢復。',
 			'staff.cancel' => '取消',
 			'staff.confirm' => '確定',
+			'staff.save' => '保存',
 			'staff.updateRatingTitle' => '更新評分',
 			'staff.setNewRating' => ({required Object staffName}) => '為 ${staffName} 設置新評分：',
 			'staff.ratingInputHint' => '評分 (0.0-5.0)',
+			'staff.nameRequired' => '請輸入員工姓名',
 			'staff.validRatingRequired' => '請輸入有效的評分 (0.0-5.0)',
 			'staff.noStaffInfo' => '暫無員工信息',
 			'staff.retry' => '重試',
+			'staff.staffCreated' => '員工創建成功',
+			'staff.staffUpdated' => '員工更新成功',
+			'staff.staffDeleted' => '員工刪除成功',
+			'staff.createFailed' => '創建員工失敗',
+			'staff.updateFailed' => '更新員工失敗',
+			'staff.deleteFailed' => '刪除員工失敗',
 			'staff.unknownStatus' => '未知狀態',
 			'staff.unknown' => '未知',
 			'staff.statusOnline' => '在線',
 			'staff.statusOffline' => '離線',
 			'staff.statusBusy' => '忙碌',
+			'staff.delete' => '刪除',
+			'staff.createStaff' => '創建員工',
 			'statistics.title' => '統計',
 			'statistics.overview' => '概覽',
 			'statistics.today' => '今日',

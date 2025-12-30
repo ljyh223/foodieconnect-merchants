@@ -332,6 +332,10 @@ class _TranslationsStaffZhCn implements TranslationsStaffEn {
 	@override String get busy => '忙碌';
 	@override String get experience => '工作经验';
 	@override String get rating => '评分';
+	@override String get ratingHelper => '请输入0.0-5.0之间的评分';
+	@override String get defaultPosition => '员工';
+	@override String get defaultExperience => '经验未知';
+	@override String get unknownStaff => '未知员工';
 	@override String get schedule => '排班';
 	@override String get addSchedule => '添加排班';
 	@override String get editSchedule => '编辑排班';
@@ -346,19 +350,31 @@ class _TranslationsStaffZhCn implements TranslationsStaffEn {
 	@override String get updateRating => '更新评分';
 	@override String get confirmOperation => '确认操作';
 	@override String confirmStatusChange({required Object staffName, required Object newStatus}) => '确定要将 ${staffName} 的状态设置为 ${newStatus} 吗？';
+	@override String get confirmDelete => '确认删除';
+	@override String confirmDeleteMessage({required Object staffName}) => '确定要删除员工 ${staffName} 吗？此操作不可恢复。';
 	@override String get cancel => '取消';
 	@override String get confirm => '确定';
+	@override String get save => '保存';
 	@override String get updateRatingTitle => '更新评分';
 	@override String setNewRating({required Object staffName}) => '为 ${staffName} 设置新评分：';
 	@override String get ratingInputHint => '评分 (0.0-5.0)';
+	@override String get nameRequired => '请输入员工姓名';
 	@override String get validRatingRequired => '请输入有效的评分 (0.0-5.0)';
 	@override String get noStaffInfo => '暂无员工信息';
 	@override String get retry => '重试';
+	@override String get staffCreated => '员工创建成功';
+	@override String get staffUpdated => '员工更新成功';
+	@override String get staffDeleted => '员工删除成功';
+	@override String get createFailed => '创建员工失败';
+	@override String get updateFailed => '更新员工失败';
+	@override String get deleteFailed => '删除员工失败';
 	@override String get unknownStatus => '未知状态';
 	@override String get unknown => '未知';
 	@override String get statusOnline => '在线';
 	@override String get statusOffline => '离线';
 	@override String get statusBusy => '忙碌';
+	@override String get delete => '删除';
+	@override String get createStaff => '创建员工';
 }
 
 // Path: statistics
@@ -638,6 +654,10 @@ extension on TranslationsZhCn {
 			'staff.busy' => '忙碌',
 			'staff.experience' => '工作经验',
 			'staff.rating' => '评分',
+			'staff.ratingHelper' => '请输入0.0-5.0之间的评分',
+			'staff.defaultPosition' => '员工',
+			'staff.defaultExperience' => '经验未知',
+			'staff.unknownStaff' => '未知员工',
 			'staff.schedule' => '排班',
 			'staff.addSchedule' => '添加排班',
 			'staff.editSchedule' => '编辑排班',
@@ -652,19 +672,31 @@ extension on TranslationsZhCn {
 			'staff.updateRating' => '更新评分',
 			'staff.confirmOperation' => '确认操作',
 			'staff.confirmStatusChange' => ({required Object staffName, required Object newStatus}) => '确定要将 ${staffName} 的状态设置为 ${newStatus} 吗？',
+			'staff.confirmDelete' => '确认删除',
+			'staff.confirmDeleteMessage' => ({required Object staffName}) => '确定要删除员工 ${staffName} 吗？此操作不可恢复。',
 			'staff.cancel' => '取消',
 			'staff.confirm' => '确定',
+			'staff.save' => '保存',
 			'staff.updateRatingTitle' => '更新评分',
 			'staff.setNewRating' => ({required Object staffName}) => '为 ${staffName} 设置新评分：',
 			'staff.ratingInputHint' => '评分 (0.0-5.0)',
+			'staff.nameRequired' => '请输入员工姓名',
 			'staff.validRatingRequired' => '请输入有效的评分 (0.0-5.0)',
 			'staff.noStaffInfo' => '暂无员工信息',
 			'staff.retry' => '重试',
+			'staff.staffCreated' => '员工创建成功',
+			'staff.staffUpdated' => '员工更新成功',
+			'staff.staffDeleted' => '员工删除成功',
+			'staff.createFailed' => '创建员工失败',
+			'staff.updateFailed' => '更新员工失败',
+			'staff.deleteFailed' => '删除员工失败',
 			'staff.unknownStatus' => '未知状态',
 			'staff.unknown' => '未知',
 			'staff.statusOnline' => '在线',
 			'staff.statusOffline' => '离线',
 			'staff.statusBusy' => '忙碌',
+			'staff.delete' => '删除',
+			'staff.createStaff' => '创建员工',
 			'statistics.title' => '统计',
 			'statistics.overview' => '概览',
 			'statistics.today' => '今日',
