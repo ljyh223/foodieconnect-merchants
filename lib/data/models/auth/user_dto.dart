@@ -1,93 +1,29 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'user_dto.freezed.dart';
 part 'user_dto.g.dart';
 
 /// 用户数据传输对象（基于Merchant模型）
-@JsonSerializable()
-class UserDTO extends Equatable {
-  @JsonKey(name: 'id')
-  final int id;
-  
-  @JsonKey(name: 'restaurantId')
-  final int restaurantId;
-  
-  @JsonKey(name: 'username')
-  final String username;
-  
-  @JsonKey(name: 'email')
-  final String email;
-  
-  @JsonKey(name: 'name')
-  final String name;
-  
-  @JsonKey(name: 'phone')
-  final String? phone;
-  
-  @JsonKey(name: 'role')
-  final String role;
-  
-  @JsonKey(name: 'status')
-  final String status;
-  
-  @JsonKey(name: 'createdAt')
-  final DateTime createdAt;
-  
-  @JsonKey(name: 'updatedAt')
-  final DateTime updatedAt;
-  
-  @JsonKey(name: 'lastLoginAt')
-  final DateTime? lastLoginAt;
+@freezed
+class UserDTO with _$UserDTO {
+  const UserDTO._();
 
-  const UserDTO({
-    required this.id,
-    required this.restaurantId,
-    required this.username,
-    required this.email,
-    required this.name,
-    this.phone,
-    required this.role,
-    required this.status,
-    required this.createdAt,
-    required this.updatedAt,
-    this.lastLoginAt,
-  });
+  const factory UserDTO({
+    @JsonKey(name: 'id') required int id,
+    @JsonKey(name: 'restaurantId') required int restaurantId,
+    @JsonKey(name: 'username') required String username,
+    @JsonKey(name: 'email') required String email,
+    @JsonKey(name: 'name') required String name,
+    @JsonKey(name: 'phone') String? phone,
+    @JsonKey(name: 'role') required String role,
+    @JsonKey(name: 'status') required String status,
+    @JsonKey(name: 'createdAt') required DateTime createdAt,
+    @JsonKey(name: 'updatedAt') required DateTime updatedAt,
+    @JsonKey(name: 'lastLoginAt') DateTime? lastLoginAt,
+  }) = _UserDTO;
 
-  /// 从JSON创建实例
   factory UserDTO.fromJson(Map<String, dynamic> json) =>
       _$UserDTOFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$UserDTOToJson(this);
-
-  /// 创建副本
-  UserDTO copyWith({
-    int? id,
-    int? restaurantId,
-    String? username,
-    String? email,
-    String? name,
-    String? phone,
-    String? role,
-    String? status,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    DateTime? lastLoginAt,
-  }) {
-    return UserDTO(
-      id: id ?? this.id,
-      restaurantId: restaurantId ?? this.restaurantId,
-      username: username ?? this.username,
-      email: email ?? this.email,
-      name: name ?? this.name,
-      phone: phone ?? this.phone,
-      role: role ?? this.role,
-      status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      lastLoginAt: lastLoginAt ?? this.lastLoginAt,
-    );
-  }
 
   /// 检查用户是否活跃
   bool get isActive => status.toUpperCase() == 'ACTIVE';
@@ -120,21 +56,6 @@ class UserDTO extends Equatable {
     if (name.isNotEmpty) return name;
     return email.split('@').first;
   }
-
-  @override
-  List<Object?> get props => [
-        id,
-        restaurantId,
-        username,
-        email,
-        name,
-        phone,
-        role,
-        status,
-        createdAt,
-        updatedAt,
-        lastLoginAt,
-      ];
 
   @override
   String toString() {

@@ -1,75 +1,27 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../core/extensions/string_extension.dart';
 
+part 'restaurant_update_request.freezed.dart';
 part 'restaurant_update_request.g.dart';
 
 /// 餐厅更新请求模型
-@JsonSerializable()
-class RestaurantUpdateRequest {
-  @JsonKey(name: 'name')
-  final String name;
-  
-  @JsonKey(name: 'type')
-  final String type;
-  
-  @JsonKey(name: 'description')
-  final String? description;
-  
-  @JsonKey(name: 'address')
-  final String address;
-  
-  @JsonKey(name: 'phone')
-  final String phone;
-  
-  @JsonKey(name: 'hours')
-  final String? hours;
-  
-  @JsonKey(name: 'imageUrl')
-  final String? imageUrl;
-  
-  @JsonKey(name: 'isOpen')
-  final bool? isOpen;
+@freezed
+class RestaurantUpdateRequest with _$RestaurantUpdateRequest {
+  const RestaurantUpdateRequest._();
 
-  const RestaurantUpdateRequest({
-    required this.name,
-    required this.type,
-    this.description,
-    required this.address,
-    required this.phone,
-    this.hours,
-    this.imageUrl,
-    this.isOpen,
-  });
+  const factory RestaurantUpdateRequest({
+    @JsonKey(name: 'name') required String name,
+    @JsonKey(name: 'type') required String type,
+    @JsonKey(name: 'description') String? description,
+    @JsonKey(name: 'address') required String address,
+    @JsonKey(name: 'phone') required String phone,
+    @JsonKey(name: 'hours') String? hours,
+    @JsonKey(name: 'imageUrl') String? imageUrl,
+    @JsonKey(name: 'isOpen') bool? isOpen,
+  }) = _RestaurantUpdateRequest;
 
-  /// 从JSON创建实例
   factory RestaurantUpdateRequest.fromJson(Map<String, dynamic> json) =>
       _$RestaurantUpdateRequestFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$RestaurantUpdateRequestToJson(this);
-
-  /// 创建副本
-  RestaurantUpdateRequest copyWith({
-    String? name,
-    String? type,
-    String? description,
-    String? address,
-    String? phone,
-    String? hours,
-    String? imageUrl,
-    bool? isOpen,
-  }) {
-    return RestaurantUpdateRequest(
-      name: name ?? this.name,
-      type: type ?? this.type,
-      description: description ?? this.description,
-      address: address ?? this.address,
-      phone: phone ?? this.phone,
-      hours: hours ?? this.hours,
-      imageUrl: imageUrl ?? this.imageUrl,
-      isOpen: isOpen ?? this.isOpen,
-    );
-  }
 
   /// 验证请求数据
   bool get isValid {
@@ -93,32 +45,6 @@ class RestaurantUpdateRequest {
     if (!phone.isValidPhoneNumber) return '请输入有效的手机号码';
     
     return null;
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is RestaurantUpdateRequest &&
-        other.name == name &&
-        other.type == type &&
-        other.description == description &&
-        other.address == address &&
-        other.phone == phone &&
-        other.hours == hours &&
-        other.imageUrl == imageUrl &&
-        other.isOpen == isOpen;
-  }
-
-  @override
-  int get hashCode {
-    return name.hashCode ^
-        type.hashCode ^
-        description.hashCode ^
-        address.hashCode ^
-        phone.hashCode ^
-        hours.hashCode ^
-        imageUrl.hashCode ^
-        isOpen.hashCode;
   }
 
   @override

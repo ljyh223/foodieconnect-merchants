@@ -33,7 +33,6 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
   bool _hasChanges = false;
   bool _isLoading = false;
   bool _isUploadingImage = false;
-  double _uploadProgress = 0.0;
 
   @override
   void initState() {
@@ -82,7 +81,6 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
         _isImageChanged = false;
         _hasChanges = false;
         _isUploadingImage = false;
-        _uploadProgress = 0.0;
       });
     }
   }
@@ -230,7 +228,6 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
         setState(() {
           _isLoading = false;
           _isUploadingImage = false;
-          _uploadProgress = 0.0;
         });
       }
     }

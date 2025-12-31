@@ -1,135 +1,36 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'menu_item_model.freezed.dart';
 part 'menu_item_model.g.dart';
 
 /// 菜品模型
-@JsonSerializable()
-class MenuItemModel extends Equatable {
-  @JsonKey(name: 'id')
-  final int id;
-  
-  @JsonKey(name: 'restaurantId')
-  final int restaurantId;
-  
-  @JsonKey(name: 'categoryId')
-  final int categoryId;
-  
-  @JsonKey(name: 'name')
-  final String name;
-  
-  @JsonKey(name: 'description')
-  final String? description;
-  
-  @JsonKey(name: 'price')
-  final double price;
-  
-  @JsonKey(name: 'originalPrice')
-  final double? originalPrice;
-  
-  @JsonKey(name: 'imageUrl')
-  final String? imageUrl;
-  
-  @JsonKey(name: 'isAvailable')
-  final bool isAvailable;
-  
-  @JsonKey(name: 'isRecommended')
-  final bool isRecommended;
-  
-  @JsonKey(name: 'sortOrder')
-  final int sortOrder;
-  
-  @JsonKey(name: 'nutritionInfo')
-  final String? nutritionInfo;
-  
-  @JsonKey(name: 'allergenInfo')
-  final String? allergenInfo;
-  
-  @JsonKey(name: 'spiceLevel')
-  final String? spiceLevel;
-  
-  @JsonKey(name: 'preparationTime')
-  final int? preparationTime;
-  
-  @JsonKey(name: 'calories')
-  final int? calories;
-  
-  @JsonKey(name: 'createdAt')
-  final DateTime? createdAt;
-  
-  @JsonKey(name: 'updatedAt')
-  final DateTime? updatedAt;
+@freezed
+class MenuItemModel with _$MenuItemModel {
+  const MenuItemModel._();
 
-  const MenuItemModel({
-    required this.id,
-    required this.restaurantId,
-    required this.categoryId,
-    required this.name,
-    this.description,
-    required this.price,
-    this.originalPrice,
-    this.imageUrl,
-    required this.isAvailable,
-    required this.isRecommended,
-    required this.sortOrder,
-    this.nutritionInfo,
-    this.allergenInfo,
-    this.spiceLevel,
-    this.preparationTime,
-    this.calories,
-    this.createdAt,
-    this.updatedAt,
-  });
+  const factory MenuItemModel({
+    @JsonKey(name: 'id') required int id,
+    @JsonKey(name: 'restaurantId') required int restaurantId,
+    @JsonKey(name: 'categoryId') required int categoryId,
+    @JsonKey(name: 'name') required String name,
+    @JsonKey(name: 'description') String? description,
+    @JsonKey(name: 'price') required double price,
+    @JsonKey(name: 'originalPrice') double? originalPrice,
+    @JsonKey(name: 'imageUrl') String? imageUrl,
+    @JsonKey(name: 'isAvailable') required bool isAvailable,
+    @JsonKey(name: 'isRecommended') required bool isRecommended,
+    @JsonKey(name: 'sortOrder') required int sortOrder,
+    @JsonKey(name: 'nutritionInfo') String? nutritionInfo,
+    @JsonKey(name: 'allergenInfo') String? allergenInfo,
+    @JsonKey(name: 'spiceLevel') String? spiceLevel,
+    @JsonKey(name: 'preparationTime') int? preparationTime,
+    @JsonKey(name: 'calories') int? calories,
+    @JsonKey(name: 'createdAt') DateTime? createdAt,
+    @JsonKey(name: 'updatedAt') DateTime? updatedAt,
+  }) = _MenuItemModel;
 
-  /// 从JSON创建实例
   factory MenuItemModel.fromJson(Map<String, dynamic> json) =>
       _$MenuItemModelFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$MenuItemModelToJson(this);
-
-  /// 创建副本
-  MenuItemModel copyWith({
-    int? id,
-    int? restaurantId,
-    int? categoryId,
-    String? name,
-    String? description,
-    double? price,
-    double? originalPrice,
-    String? imageUrl,
-    bool? isAvailable,
-    bool? isRecommended,
-    int? sortOrder,
-    String? nutritionInfo,
-    String? allergenInfo,
-    String? spiceLevel,
-    int? preparationTime,
-    int? calories,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return MenuItemModel(
-      id: id ?? this.id,
-      restaurantId: restaurantId ?? this.restaurantId,
-      categoryId: categoryId ?? this.categoryId,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      price: price ?? this.price,
-      originalPrice: originalPrice ?? this.originalPrice,
-      imageUrl: imageUrl ?? this.imageUrl,
-      isAvailable: isAvailable ?? this.isAvailable,
-      isRecommended: isRecommended ?? this.isRecommended,
-      sortOrder: sortOrder ?? this.sortOrder,
-      nutritionInfo: nutritionInfo ?? this.nutritionInfo,
-      allergenInfo: allergenInfo ?? this.allergenInfo,
-      spiceLevel: spiceLevel ?? this.spiceLevel,
-      preparationTime: preparationTime ?? this.preparationTime,
-      calories: calories ?? this.calories,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
 
   /// 获取价格显示文本
   String get priceDisplay => '¥${price.toStringAsFixed(2)}';
@@ -172,7 +73,6 @@ class MenuItemModel extends Equatable {
     }
   }
 
-
   /// 获取制作时间显示文本
   String get preparationTimeDisplay {
     if (preparationTime == null) return '';
@@ -190,28 +90,6 @@ class MenuItemModel extends Equatable {
 
   /// 获取推荐状态显示文本
   String get recommendationDisplay => isRecommended ? '推荐' : '';
-
-  @override
-  List<Object?> get props => [
-        id,
-        restaurantId,
-        categoryId,
-        name,
-        description,
-        price,
-        originalPrice,
-        imageUrl,
-        isAvailable,
-        isRecommended,
-        sortOrder,
-        nutritionInfo,
-        allergenInfo,
-        spiceLevel,
-        preparationTime,
-        calories,
-        createdAt,
-        updatedAt,
-      ];
 
   @override
   String toString() {

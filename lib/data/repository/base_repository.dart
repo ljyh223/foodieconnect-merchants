@@ -126,8 +126,8 @@ abstract class BaseRepository {
 
         // 解析列表项
         final parsedItems = items
-            .where((item) => item is Map<String, dynamic>)
-            .map((item) => itemParser(item as Map<String, dynamic>))
+            .whereType<Map<String, dynamic>>()
+            .map(itemParser)
             .toList();
 
         // 如果有缓存键，保存到缓存

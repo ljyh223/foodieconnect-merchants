@@ -38,8 +38,7 @@ mixin _$ChatMessageModel {
 
   /// 消息类型
   @JsonKey(name: 'messageType')
-  String? get type => throw _privateConstructorUsedError;
-
+  String? get type => throw _privateConstructorUsedError; // 这里正确
   /// 创建时间
   DateTime? get createdAt => throw _privateConstructorUsedError;
 
@@ -279,7 +278,7 @@ class _$ChatMessageModelImpl implements _ChatMessageModel {
   @override
   @JsonKey(name: 'messageType')
   final String? type;
-
+  // 这里正确
   /// 创建时间
   @override
   final DateTime? createdAt;
@@ -389,8 +388,7 @@ abstract class _ChatMessageModel implements ChatMessageModel {
   /// 消息类型
   @override
   @JsonKey(name: 'messageType')
-  String? get type;
-
+  String? get type; // 这里正确
   /// 创建时间
   @override
   DateTime? get createdAt;

@@ -6,9 +6,9 @@ part of 'merchant_login_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MerchantLoginResponse _$MerchantLoginResponseFromJson(
+_$MerchantLoginResponseImpl _$$MerchantLoginResponseImplFromJson(
   Map<String, dynamic> json,
-) => MerchantLoginResponse(
+) => _$MerchantLoginResponseImpl(
   token: json['token'] as String,
   tokenType: json['tokenType'] as String,
   merchantId: (json['merchantId'] as num).toInt(),
@@ -21,8 +21,8 @@ MerchantLoginResponse _$MerchantLoginResponseFromJson(
   phone: json['phone'] as String,
 );
 
-Map<String, dynamic> _$MerchantLoginResponseToJson(
-  MerchantLoginResponse instance,
+Map<String, dynamic> _$$MerchantLoginResponseImplToJson(
+  _$MerchantLoginResponseImpl instance,
 ) => <String, dynamic>{
   'token': instance.token,
   'tokenType': instance.tokenType,

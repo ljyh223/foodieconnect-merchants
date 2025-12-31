@@ -6,9 +6,9 @@ part of 'restaurant_update_request.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-RestaurantUpdateRequest _$RestaurantUpdateRequestFromJson(
+_$RestaurantUpdateRequestImpl _$$RestaurantUpdateRequestImplFromJson(
   Map<String, dynamic> json,
-) => RestaurantUpdateRequest(
+) => _$RestaurantUpdateRequestImpl(
   name: json['name'] as String,
   type: json['type'] as String,
   description: json['description'] as String?,
@@ -19,8 +19,8 @@ RestaurantUpdateRequest _$RestaurantUpdateRequestFromJson(
   isOpen: json['isOpen'] as bool?,
 );
 
-Map<String, dynamic> _$RestaurantUpdateRequestToJson(
-  RestaurantUpdateRequest instance,
+Map<String, dynamic> _$$RestaurantUpdateRequestImplToJson(
+  _$RestaurantUpdateRequestImpl instance,
 ) => <String, dynamic>{
   'name': instance.name,
   'type': instance.type,

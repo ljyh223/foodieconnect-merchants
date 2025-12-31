@@ -203,7 +203,7 @@ class MenuProvider extends ChangeNotifier {
       } else {
         _setError(response.errorMessage);
         AppLogger.warning('MenuProvider: 菜品创建失败 - ${response.errorMessage}');
-        AppLogger.warning('MenuProvider: 响应数据 - ${response.toJson((data) => data)}');
+        AppLogger.warning('MenuProvider: 响应数据 - ${response.toJson((dynamic x) => x)}');
         return false;
       }
     } catch (e) {

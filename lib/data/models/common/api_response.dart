@@ -1,40 +1,37 @@
-import 'package:json_annotation/json_annotation.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'api_response.freezed.dart';
 part 'api_response.g.dart';
 
+/// 错误信息模型
+@freezed
+class ErrorInfo with _$ErrorInfo {
+  const factory ErrorInfo({
+    @JsonKey(name: 'code') required int code,
+    @JsonKey(name: 'message') required String message,
+    @JsonKey(name: 'details') Map<String, dynamic>? details,
+  }) = _ErrorInfo;
+
+  factory ErrorInfo.fromJson(Map<String, dynamic> json) =>
+      _$ErrorInfoFromJson(json);
+}
+
 /// 通用API响应模型
-@JsonSerializable(genericArgumentFactories: true)
-class ApiResponse<T> extends Equatable {
-  @JsonKey(name: 'success')
-  final bool success;
-  
-  @JsonKey(name: 'data')
-  final T? data;
-  
-  @JsonKey(name: 'error')
-  final ErrorInfo? error;
-  
-  @JsonKey(name: 'timestamp')
-  final DateTime? timestamp;
+@Freezed(genericArgumentFactories: true)
+class ApiResponse<T> with _$ApiResponse<T> {
+  const ApiResponse._();
 
-  const ApiResponse({
-    required this.success,
-    this.data,
-    this.error,
-    this.timestamp,
-  });
+  const factory ApiResponse({
+    @JsonKey(name: 'success') required bool success,
+    @JsonKey(name: 'data') T? data,
+    @JsonKey(name: 'error') ErrorInfo? error,
+    @JsonKey(name: 'timestamp') DateTime? timestamp,
+  }) = _ApiResponse<T>;
 
-  /// 从JSON创建实例
   factory ApiResponse.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
-  ) =>
-      _$ApiResponseFromJson(json, fromJsonT);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
-      _$ApiResponseToJson(this, toJsonT);
+  ) => _$ApiResponseFromJson(json, fromJsonT);
 
   /// 创建成功响应
   factory ApiResponse.success(T data, {DateTime? timestamp}) {
@@ -46,17 +43,10 @@ class ApiResponse<T> extends Equatable {
   }
 
   /// 创建失败响应
-  factory ApiResponse.error(
-    String message, {
-    int? code,
-    DateTime? timestamp,
-  }) {
+  factory ApiResponse.error(String message, {int? code, DateTime? timestamp}) {
     return ApiResponse<T>(
       success: false,
-      error: ErrorInfo(
-        code: code ?? -1,
-        message: message,
-      ),
+      error: ErrorInfo(code: code ?? -1, message: message),
       timestamp: timestamp ?? DateTime.now(),
     );
   }
@@ -74,92 +64,21 @@ class ApiResponse<T> extends Equatable {
     }
     return '未知错误';
   }
-
-  @override
-  List<Object?> get props => [success, data, error, timestamp];
-
-  @override
-  String toString() {
-    return 'ApiResponse(success: $success, data: $data, error: $error, timestamp: $timestamp)';
-  }
-}
-
-/// 错误信息模型
-@JsonSerializable()
-class ErrorInfo extends Equatable {
-  @JsonKey(name: 'code')
-  final int code;
-  
-  @JsonKey(name: 'message')
-  final String message;
-  
-  @JsonKey(name: 'details')
-  final Map<String, dynamic>? details;
-
-  const ErrorInfo({
-    required this.code,
-    required this.message,
-    this.details,
-  });
-
-  /// 从JSON创建实例
-  factory ErrorInfo.fromJson(Map<String, dynamic> json) =>
-      _$ErrorInfoFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$ErrorInfoToJson(this);
-
-  @override
-  List<Object?> get props => [code, message, details];
-
-  @override
-  String toString() {
-    return 'ErrorInfo(code: $code, message: $message, details: $details)';
-  }
 }
 
 /// 分页API响应模型
-@JsonSerializable(genericArgumentFactories: true)
-class PaginatedResponse<T> extends Equatable {
-  @JsonKey(name: 'records')
-  final List<T> records;
-  
-  @JsonKey(name: 'total')
-  final int total;
-  
-  @JsonKey(name: 'size')
-  final int size;
-  
-  @JsonKey(name: 'current')
-  final int current;
-  
-  @JsonKey(name: 'pages')
-  final int pages;
+@Freezed(genericArgumentFactories: true)
+class PaginatedResponse<T> with _$PaginatedResponse<T> {
+  const factory PaginatedResponse({
+    @JsonKey(name: 'records') required List<T> records,
+    @JsonKey(name: 'total') required int total,
+    @JsonKey(name: 'size') required int size,
+    @JsonKey(name: 'current') required int current,
+    @JsonKey(name: 'pages') required int pages,
+  }) = _PaginatedResponse<T>;
 
-  const PaginatedResponse({
-    required this.records,
-    required this.total,
-    required this.size,
-    required this.current,
-    required this.pages,
-  });
-
-  /// 从JSON创建实例
   factory PaginatedResponse.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
-  ) =>
-      _$PaginatedResponseFromJson(json, fromJsonT);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson(Object Function(T value) toJsonT) =>
-      _$PaginatedResponseToJson(this, toJsonT);
-
-  @override
-  List<Object?> get props => [records, total, size, current, pages];
-
-  @override
-  String toString() {
-    return 'PaginatedResponse(records: $records, total: $total, size: $size, current: $current, pages: $pages)';
-  }
+  ) => _$PaginatedResponseFromJson(json, fromJsonT);
 }

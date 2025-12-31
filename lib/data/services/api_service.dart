@@ -199,7 +199,7 @@ class ApiService {
     final customError = DioException(
       requestOptions: error.requestOptions,
       response: Response(
-        data: errorResponse.toJson((data) => data),
+        data: errorResponse.toJson((dynamic x) => x),
         statusCode: error.response?.statusCode ?? 500,
         requestOptions: error.requestOptions,
       ),

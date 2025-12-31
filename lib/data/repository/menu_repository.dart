@@ -54,7 +54,7 @@ class MenuRepository extends BaseRepository {
 
   /// 删除菜品
   Future<ApiResult<void>> deleteMenuItem(int itemId) async {
-    return safeApiCall(() => MenuApi.deleteMenuItem(itemId), (_) => null);
+    return safeApiCall(() => MenuApi.deleteMenuItem(itemId), (_) {});
   }
 
   /// 切换菜品状态
@@ -64,7 +64,7 @@ class MenuRepository extends BaseRepository {
   ) async {
     return safeApiCall(
       () => MenuApi.toggleMenuItemStatus(itemId, isAvailable),
-      (_) => null,
+      (_) {},
     );
   }
 
@@ -75,7 +75,7 @@ class MenuRepository extends BaseRepository {
   ) async {
     return safeApiCall(
       () => MenuApi.setRecommendedMenuItem(itemId, isRecommended),
-      (_) => null,
+      (_) {},
     );
   }
 
@@ -118,7 +118,7 @@ class MenuRepository extends BaseRepository {
 
   /// 删除分类
   Future<ApiResult<void>> deleteCategory(int categoryId) async {
-    return safeApiCall(() => MenuApi.deleteCategory(categoryId), (_) => null);
+    return safeApiCall(() => MenuApi.deleteCategory(categoryId), (_) {});
   }
 
   /// 切换分类状态
@@ -128,7 +128,7 @@ class MenuRepository extends BaseRepository {
   ) async {
     return safeApiCall(
       () => MenuApi.toggleCategoryStatus(categoryId, isActive),
-      (_) => null,
+      (_) {},
     );
   }
 

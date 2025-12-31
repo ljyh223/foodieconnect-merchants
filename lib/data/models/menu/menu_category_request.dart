@@ -1,50 +1,22 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'menu_category_request.freezed.dart';
 part 'menu_category_request.g.dart';
 
 /// 菜单分类请求模型
-@JsonSerializable()
-class MenuCategoryRequest {
-  @JsonKey(name: 'name')
-  final String name;
-  
-  @JsonKey(name: 'description')
-  final String? description;
-  
-  @JsonKey(name: 'sortOrder')
-  final int sortOrder;
-  
-  @JsonKey(name: 'isActive')
-  final bool isActive;
+@freezed
+class MenuCategoryRequest with _$MenuCategoryRequest {
+  const MenuCategoryRequest._();
 
-  const MenuCategoryRequest({
-    required this.name,
-    this.description,
-    this.sortOrder = 0,
-    this.isActive = true,
-  });
+  const factory MenuCategoryRequest({
+    @JsonKey(name: 'name') required String name,
+    @JsonKey(name: 'description') String? description,
+    @JsonKey(name: 'sortOrder') @Default(0) int sortOrder,
+    @JsonKey(name: 'isActive') @Default(true) bool isActive,
+  }) = _MenuCategoryRequest;
 
-  /// 从JSON创建实例
   factory MenuCategoryRequest.fromJson(Map<String, dynamic> json) =>
       _$MenuCategoryRequestFromJson(json);
-
-  /// 转换为JSON
-  Map<String, dynamic> toJson() => _$MenuCategoryRequestToJson(this);
-
-  /// 创建副本
-  MenuCategoryRequest copyWith({
-    String? name,
-    String? description,
-    int? sortOrder,
-    bool? isActive,
-  }) {
-    return MenuCategoryRequest(
-      name: name ?? this.name,
-      description: description ?? this.description,
-      sortOrder: sortOrder ?? this.sortOrder,
-      isActive: isActive ?? this.isActive,
-    );
-  }
 
   /// 验证请求数据
   bool get isValid {
@@ -58,24 +30,6 @@ class MenuCategoryRequest {
     if (name.trim().isEmpty) return '分类名称不能为空';
     if (sortOrder < 0) return '排序顺序不能为负数';
     return null;
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is MenuCategoryRequest &&
-        other.name == name &&
-        other.description == description &&
-        other.sortOrder == sortOrder &&
-        other.isActive == isActive;
-  }
-
-  @override
-  int get hashCode {
-    return name.hashCode ^
-        description.hashCode ^
-        sortOrder.hashCode ^
-        isActive.hashCode;
   }
 
   @override
