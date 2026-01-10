@@ -154,15 +154,3 @@ flutter build apk --release
 # 构建App Bundle
 flutter build appbundle --release
 ```
-
-## 许可证
-
-MIT License
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 联系我们
-
-如有问题或建议，请联系我们。

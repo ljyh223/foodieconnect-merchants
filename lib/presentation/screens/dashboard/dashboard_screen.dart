@@ -31,9 +31,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final List<Widget> _pages = [
     const RestaurantInfoScreen(),
     const MenuListScreen(),
+    const ChatScreen(),
     const StaffListScreen(),
     const StatisticsOverviewScreen(),
-    const ChatScreen(),
+
   ];
 
   // 底部导航项 - 动态创建，使用多语言资源
@@ -129,6 +130,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         label: t.navigation.menu,
       ),
       BottomNavigationBarItem(
+        icon: const Icon(Icons.chat),
+        label: t.navigation.chat,
+      ),
+      BottomNavigationBarItem(
         icon: const Icon(Icons.people),
         label: t.navigation.staff,
       ),
@@ -136,10 +141,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         icon: const Icon(Icons.analytics),
         label: t.navigation.statistics,
       ),
-      BottomNavigationBarItem(
-        icon: const Icon(Icons.chat),
-        label: t.navigation.chat,
-      ),
+
     ];
 
     return BottomNavigationBar(

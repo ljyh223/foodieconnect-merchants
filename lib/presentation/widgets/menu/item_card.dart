@@ -30,6 +30,10 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: Padding(
@@ -52,10 +56,10 @@ class ItemCard extends StatelessWidget {
                       return Container(
                         width: 60,
                         height: 60,
-                        color: AppTheme.surfaceColor,
-                        child: const Icon(
+                        color: colorScheme.surfaceContainerHighest,
+                        child: Icon(
                           Icons.restaurant,
-                          color: AppTheme.textSecondary,
+                          color: colorScheme.onSurfaceVariant,
                         ),
                       );
                     },
@@ -71,10 +75,7 @@ class ItemCard extends StatelessWidget {
                     children: [
                       Text(
                         item.name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: textTheme.titleSmall,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -87,9 +88,9 @@ class ItemCard extends StatelessWidget {
                           if (item.hasDiscount) ...[
                             Text(
                               item.originalPriceDisplay!,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
-                                color: AppTheme.textSecondary,
+                                color: colorScheme.onSurfaceVariant,
                                 decoration: TextDecoration.lineThrough,
                               ),
                             ),
@@ -97,10 +98,10 @@ class ItemCard extends StatelessWidget {
                           ],
                           Text(
                             item.priceDisplay,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.primaryColor,
+                              color: colorScheme.primary,
                             ),
                           ),
 
@@ -112,7 +113,7 @@ class ItemCard extends StatelessWidget {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppTheme.errorColor,
+                                color: colorScheme.error,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
@@ -154,7 +155,7 @@ class ItemCard extends StatelessWidget {
                             item.isAvailable ? Icons.block : Icons.check_circle,
                             size: 20,
                             color: item.isAvailable
-                                ? AppTheme.errorColor
+                                ? colorScheme.error
                                 : AppTheme.successColor,
                           ),
                           const SizedBox(width: 8),
@@ -200,7 +201,7 @@ class ItemCard extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             Translations.of(context).menu.delete,
-                            style: const TextStyle(color: AppTheme.errorColor),
+                            style: TextStyle(color: colorScheme.error),
                           ),
                         ],
                       ),
@@ -215,9 +216,9 @@ class ItemCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 item.description!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: AppTheme.textSecondary,
+                  color: colorScheme.onSurfaceVariant,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -259,7 +260,7 @@ class ItemCard extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: AppTheme.errorColor,
+                          color: colorScheme.error,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -279,7 +280,7 @@ class ItemCard extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.blue,
+                          color: colorScheme.secondary,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -320,9 +321,9 @@ class ItemCard extends StatelessWidget {
                 if (item.createdAt != null)
                   Text(
                     '${Translations.of(context).menu.created}${_formatDate(item.createdAt!, context)}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
-                      color: AppTheme.textSecondary,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
               ],

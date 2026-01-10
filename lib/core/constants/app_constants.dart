@@ -5,7 +5,7 @@ class AppConstants {
   static const String appVersion = '1.0.0';
   
   // API配置
-  static const String baseUrl = 'http://192.168.3.4:8080/api/v1';
+  static const String baseUrl = 'http://192.168.124.36:8080/api/v1';
   static const String merchantApiPrefix = '/merchant';
   static const Duration apiTimeout = Duration(seconds: 30);
   

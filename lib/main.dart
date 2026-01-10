@@ -67,9 +67,9 @@ class FoodieConnectApp extends StatelessWidget {
         // 状态管理提供者 - 使用预初始化的AuthProvider
         ChangeNotifierProvider.value(value: authProvider),
         ChangeNotifierProvider(create: (_) => RestaurantProvider()),
-        ChangeNotifierProvider(create: (_) => MenuProvider()),
-        ChangeNotifierProvider(create: (_) => StaffProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(create: (_) => MenuProvider()),
+        ChangeNotifierProvider(create: (_) => StaffProvider())
       ],
       child: TranslationProvider(
         child: MaterialApp(

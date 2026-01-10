@@ -63,7 +63,7 @@ class RestaurantApi {
   /// 获取聊天室验证码
   Future<Response<Map<String, dynamic>>> getChatRoomVerificationCode() async {
     return await _apiService.get<Map<String, dynamic>>(
-      '/merchant/restaurants/chat-room/verification-code',
+      '/merchant/chat-rooms/verification-code',
     );
   }
 

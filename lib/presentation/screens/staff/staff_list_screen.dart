@@ -181,14 +181,17 @@ class _StaffListScreenState extends State<StaffListScreen> {
   }
 
   Widget _buildStaffCard(StaffModel staff) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       margin: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -230,14 +233,14 @@ class _StaffListScreenState extends State<StaffListScreen> {
                                     fit: BoxFit.cover,
                                   )
                                 : null,
-                            color: AppTheme.primaryColor.withValues(alpha: 0.1),
+                            color: colorScheme.primary.withValues(alpha: 0.1),
                           ),
                           child: !ImageUtils.isValidImagePath(staff.avatarUrl)
-                              ? const Center(
+                              ? Center(
                                   child: Icon(
                                     Icons.person,
                                     size: 32,
-                                    color: AppTheme.primaryColor,
+                                    color: colorScheme.primary,
                                   ),
                                 )
                               : null,
@@ -252,7 +255,10 @@ class _StaffListScreenState extends State<StaffListScreen> {
                             decoration: BoxDecoration(
                               color: _getStatusColor(staff.status),
                               shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 3),
+                              border: Border.all(
+                                color: colorScheme.surface,
+                                width: 3,
+                              ),
                             ),
                           ),
                         ),
