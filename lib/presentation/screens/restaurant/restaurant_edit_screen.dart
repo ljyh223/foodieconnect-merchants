@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/data/models/restaurant/restaurant_model.dart';
-import 'package:foodieconnect/data/models/restaurant/restaurant_update_request.dart';
-import 'package:foodieconnect/presentation/providers/restaurant_provider.dart';
-import 'package:foodieconnect/presentation/widgets/restaurant/restaurant_edit_form.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/data/models/restaurant/restaurant_model.dart';
+import 'package:foodieconnectmerchant/data/models/restaurant/restaurant_update_request.dart';
+import 'package:foodieconnectmerchant/presentation/providers/restaurant_provider.dart';
+import 'package:foodieconnectmerchant/presentation/widgets/restaurant/restaurant_edit_form.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
 
 /// 餐厅编辑页面
 class RestaurantEditScreen extends StatefulWidget {

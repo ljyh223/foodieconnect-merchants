@@ -1,7 +1,7 @@
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/data/api/staff_api.dart';
-import 'package:foodieconnect/data/models/common/api_response.dart';
-import 'package:foodieconnect/data/models/staff/staff_model.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/data/api/staff_api.dart';
+import 'package:foodieconnectmerchant/data/models/common/api_response.dart';
+import 'package:foodieconnectmerchant/data/models/staff/staff_model.dart';
 
 /// 员工Repository层
 class StaffRepository {

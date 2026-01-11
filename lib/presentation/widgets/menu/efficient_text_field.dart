@@ -1,6 +1,5 @@
-
 import 'package:flutter/material.dart';
-import 'package:foodieconnect/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
 import 'package:flutter/services.dart';
 
 /// 高效输入框组件
@@ -12,6 +11,7 @@ class EfficientTextField extends StatelessWidget {
   final IconData? icon;
   final bool isNumber;
   final int maxLines;
+  final ThemeData theme;
 
   const EfficientTextField({
     super.key,
@@ -22,6 +22,7 @@ class EfficientTextField extends StatelessWidget {
     this.icon,
     this.isNumber = false,
     this.maxLines = 1,
+    required this.theme,
   });
 
   @override
@@ -35,20 +36,20 @@ class EfficientTextField extends StatelessWidget {
       inputFormatters: isNumber
           ? [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}'))]
           : null,
+      style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         helperText: helperText,
-        helperStyle: TextStyle(
-          color: Colors.grey.shade500,
-          fontSize: 11,
+        helperStyle: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
         ),
         helperMaxLines: 1,
         prefixIcon: icon != null
-            ? Icon(icon, size: 20, color: Colors.grey.shade500)
+            ? Icon(icon, size: 20, color: theme.colorScheme.onSurfaceVariant)
             : null,
         filled: true,
-        fillColor: Colors.grey.shade50,
+        fillColor: theme.colorScheme.surface,
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,
@@ -56,16 +57,18 @@ class EfficientTextField extends StatelessWidget {
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: theme.colorScheme.outline),
         ),
-        focusedBorder: const OutlineInputBorder(
+        focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(8)),
-          borderSide: BorderSide(color: AppTheme.primaryColor, width: 1.5),
+          borderSide: BorderSide(color: theme.colorScheme.primary, width: 1.5),
         ),
+        labelStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+        hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
       ),
     );
   }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/presentation/providers/menu_provider.dart';
-import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
-import 'package:foodieconnect/presentation/widgets/menu/item_card.dart';
-import 'package:foodieconnect/presentation/widgets/menu/search_filter_bar.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/presentation/providers/menu_provider.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_item_model.dart';
+import 'package:foodieconnectmerchant/presentation/widgets/menu/item_card.dart';
+import 'package:foodieconnectmerchant/presentation/widgets/menu/search_filter_bar.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
 
 import 'menu_item_screen.dart';
 
@@ -15,8 +15,7 @@ class MenuListScreen extends StatefulWidget {
   const MenuListScreen({super.key});
 
   @override
-  State<MenuListScreen> createState() =>
-      _MenuListScreenState();
+  State<MenuListScreen> createState() => _MenuListScreenState();
 }
 
 class _MenuListScreenState extends State<MenuListScreen> {
@@ -46,15 +45,16 @@ class _MenuListScreenState extends State<MenuListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Consumer<MenuProvider>(
       builder: (context, provider, child) {
         return Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: AppTheme.surfaceColor,
+          backgroundColor: theme.colorScheme.surface,
           appBar: AppBar(
             title: Text(Translations.of(context).menu.title),
-            backgroundColor: AppTheme.primaryColor,
-            foregroundColor: Colors.white,
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
             elevation: 0,
             actions: [
               IconButton(
@@ -66,39 +66,43 @@ class _MenuListScreenState extends State<MenuListScreen> {
               ),
             ],
           ),
-          body: _buildBody(provider),
+          body: _buildBody(provider, theme),
         );
       },
     );
   }
 
-  Widget _buildBody(MenuProvider provider) {
+  Widget _buildBody(MenuProvider provider, ThemeData theme) {
     if (provider.isLoading && provider.menuItems.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
+            CircularProgressIndicator(color: theme.colorScheme.primary),
             SizedBox(height: 16),
-            Text(Translations.of(context).menu.loadingMenu),
+            Text(
+              Translations.of(context).menu.loadingMenu,
+              style: theme.textTheme.bodyLarge,
+            ),
           ],
         ),
       );
     }
 
     if (provider.errorMessage != null) {
-      return _buildErrorWidget(provider.errorMessage!);
+      return _buildErrorWidget(provider.errorMessage!, theme);
     }
 
     if (provider.menuItems.isEmpty) {
-      return _buildEmptyWidget();
+      return _buildEmptyWidget(theme);
     }
 
-    return _buildMenuList(provider);
+    return _buildMenuList(provider, theme);
   }
 
-  Widget _buildMenuList(MenuProvider provider) {
+  Widget _buildMenuList(MenuProvider provider, ThemeData theme) {
     return RefreshIndicator(
+      color: theme.colorScheme.primary,
       onRefresh: () async {
         await provider.refreshMenuItems();
       },
@@ -121,7 +125,7 @@ class _MenuListScreenState extends State<MenuListScreen> {
     );
   }
 
-  Widget _buildErrorWidget(String error) {
+  Widget _buildErrorWidget(String error, ThemeData theme) {
     return Builder(
       builder: (context) {
         return Center(
@@ -136,8 +140,7 @@ class _MenuListScreenState extends State<MenuListScreen> {
               const SizedBox(height: 16),
               Text(
                 error,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: theme.textTheme.bodyLarge?.copyWith(
                   color: AppTheme.errorColor,
                 ),
                 textAlign: TextAlign.center,
@@ -153,6 +156,10 @@ class _MenuListScreenState extends State<MenuListScreen> {
                     ).refreshMenuItems();
                   }
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                ),
                 child: Text(Translations.of(context).menu.retry),
               ),
             ],
@@ -162,16 +169,22 @@ class _MenuListScreenState extends State<MenuListScreen> {
     );
   }
 
-  Widget _buildEmptyWidget() {
+  Widget _buildEmptyWidget(ThemeData theme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.restaurant_menu, size: 64, color: AppTheme.textSecondary),
+          Icon(
+            Icons.restaurant_menu,
+            size: 64,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
           SizedBox(height: 16),
           Text(
             Translations.of(context).menu.noItems,
-            style: TextStyle(fontSize: 16, color: AppTheme.textSecondary),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -334,19 +347,26 @@ class _MenuListScreenState extends State<MenuListScreen> {
     MenuItemModel menuItem,
     MenuProvider provider,
   ) {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: theme.colorScheme.surface,
+          surfaceTintColor: theme.colorScheme.surface,
           title: Text(Translations.of(context).menu.confirmDelete),
           content: Text(
             Translations.of(
               context,
             ).menu.deleteConfirmMessage.replaceAll('{name}', menuItem.name),
+            style: TextStyle(color: theme.colorScheme.onSurface),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                foregroundColor: theme.colorScheme.onSurface,
+              ),
               child: Text(Translations.of(context).menu.cancel),
             ),
             TextButton(

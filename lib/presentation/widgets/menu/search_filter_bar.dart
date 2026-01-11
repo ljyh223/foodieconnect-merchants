@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:foodieconnect/core/constants/app_constants.dart';
-import 'package:foodieconnect/presentation/providers/menu_provider.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/core/constants/app_constants.dart';
+import 'package:foodieconnectmerchant/presentation/providers/menu_provider.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
 
 /// 搜索筛选栏组件
 class SearchFilterBar extends StatelessWidget {
   final MenuProvider provider;
 
-  const SearchFilterBar({
-    super.key,
-    required this.provider,
-  });
+  const SearchFilterBar({super.key, required this.provider});
 
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context).menu;
-    
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: AppConstants.defaultPadding / 2),
       child: Column(
@@ -28,19 +26,30 @@ class SearchFilterBar extends StatelessWidget {
             },
             decoration: InputDecoration(
               hintText: t.searchItems,
-              prefixIcon: const Icon(Icons.search),
+              prefixIcon: Icon(
+                Icons.search,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                borderSide: const BorderSide(color: Colors.grey, width: 0.5),
+                borderSide: BorderSide(
+                  color: theme.colorScheme.outline,
+                  width: 0.5,
+                ),
               ),
               filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              fillColor: theme.colorScheme.surface,
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 12,
+                horizontal: 16,
+              ),
+              hintStyle: TextStyle(color: theme.colorScheme.onSurfaceVariant),
             ),
+            style: TextStyle(color: theme.colorScheme.onSurface),
           ),
-         
+
           const SizedBox(height: AppConstants.defaultPadding / 2),
-         
+
           // 筛选按钮 - 使用流式布局，适应不同语言下的文本长度
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -51,18 +60,21 @@ class SearchFilterBar extends StatelessWidget {
                   context: context,
                   label: t.availableItems,
                   onPressed: () => provider.filterByAvailability(true),
+                  theme: theme,
                 ),
                 const SizedBox(width: AppConstants.defaultPadding / 2),
                 _buildFilterChip(
                   context: context,
                   label: t.unavailableItems,
                   onPressed: () => provider.filterByAvailability(false),
+                  theme: theme,
                 ),
                 const SizedBox(width: AppConstants.defaultPadding / 2),
                 _buildFilterChip(
                   context: context,
                   label: t.recommendedItems,
                   onPressed: () => provider.filterByRecommended(true),
+                  theme: theme,
                 ),
                 const SizedBox(width: AppConstants.defaultPadding / 2),
                 _buildFilterChip(
@@ -70,6 +82,7 @@ class SearchFilterBar extends StatelessWidget {
                   label: t.allItems,
                   onPressed: () => provider.clearFilters(),
                   isPrimary: true,
+                  theme: theme,
                 ),
               ],
             ),
@@ -78,24 +91,29 @@ class SearchFilterBar extends StatelessWidget {
       ),
     );
   }
-  
+
   /// 构建筛选Chip
   Widget _buildFilterChip({
     required BuildContext context,
     required String label,
     required VoidCallback onPressed,
     bool isPrimary = false,
+    required ThemeData theme,
   }) {
     return ActionChip(
       label: Text(
         label,
         style: TextStyle(
-          color: isPrimary ? Colors.white : Colors.black87,
+          color: isPrimary
+              ? theme.colorScheme.onPrimary
+              : theme.colorScheme.onSurface,
           fontSize: 14,
         ),
       ),
-      backgroundColor: isPrimary ? Theme.of(context).primaryColor : Colors.grey[100],
-      side: isPrimary ? null : BorderSide(color: Colors.grey[300]!),
+      backgroundColor: isPrimary
+          ? theme.colorScheme.primary
+          : theme.colorScheme.surfaceContainerHighest,
+      side: isPrimary ? null : BorderSide(color: theme.colorScheme.outline),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
       ),

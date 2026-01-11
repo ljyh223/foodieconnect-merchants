@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/data/models/restaurant/restaurant_model.dart';
-import 'package:foodieconnect/data/models/restaurant/restaurant_update_request.dart';
-import 'package:foodieconnect/data/models/common/api_response.dart';
-import 'package:foodieconnect/data/repository/restaurant_repository.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/data/models/restaurant/restaurant_model.dart';
+import 'package:foodieconnectmerchant/data/models/restaurant/restaurant_update_request.dart';
+import 'package:foodieconnectmerchant/data/models/common/api_response.dart';
+import 'package:foodieconnectmerchant/data/repository/restaurant_repository.dart';
 
 /// 餐厅服务类
 class RestaurantService {

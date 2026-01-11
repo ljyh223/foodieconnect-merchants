@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/presentation/providers/menu_provider.dart';
-import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
-import 'package:foodieconnect/data/models/menu/menu_item_request.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
-import 'package:foodieconnect/presentation/widgets/menu/efficient_text_field.dart';
-import 'package:foodieconnect/presentation/widgets/menu/category_selector.dart';
-import 'package:foodieconnect/presentation/widgets/menu/image_uploader.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/presentation/providers/menu_provider.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_item_model.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_item_request.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/presentation/widgets/menu/efficient_text_field.dart';
+import 'package:foodieconnectmerchant/presentation/widgets/menu/category_selector.dart';
+import 'package:foodieconnectmerchant/presentation/widgets/menu/image_uploader.dart';
 
 /// 菜品表单页面 (全屏模式)
 class MenuItemFormScreen extends StatefulWidget {
@@ -142,6 +142,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final provider = Provider.of<MenuProvider>(context, listen: false);
 
     // 确保分类数据已加载
@@ -153,26 +154,26 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50, // 浅灰背景，突显白色输入框
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(
           _isEdit
               ? Translations.of(context).menu.editMenuItem
               : Translations.of(context).menu.addNewMenuItem,
+          style: TextStyle(color: theme.colorScheme.onPrimary),
         ),
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black, // 黑色标题和按钮
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         actions: [
           TextButton(
             onPressed: _handleSubmit,
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.onPrimary,
+            ),
             child: Text(
               Translations.of(context).menu.save,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.primaryColor,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
           const SizedBox(width: 8),
@@ -183,7 +184,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            _buildSectionLabel(Translations.of(context).menu.basicInfo),
+            _buildSectionLabel(Translations.of(context).menu.basicInfo, theme),
             _buildCard(
               children: [
                 EfficientTextField(
@@ -192,6 +193,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                   hint: Translations.of(context).menu.exampleItemName,
                   helperText: Translations.of(context).menu.shortClearName,
                   icon: Icons.restaurant_menu,
+                  theme: theme,
                 ),
                 const SizedBox(height: 16),
                 Consumer<MenuProvider>(
@@ -202,6 +204,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                       onCategorySelected: (id) {
                         setState(() => _selectedCategoryId = id);
                       },
+                      theme: theme,
                     );
                   },
                 ),
@@ -213,11 +216,13 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                   helperText: Translations.of(context).menu.displayInDetails,
                   icon: Icons.description_outlined,
                   maxLines: 3,
+                  theme: theme,
                 ),
               ],
+              theme: theme,
             ),
 
-            _buildSectionLabel(Translations.of(context).menu.priceSpecs),
+            _buildSectionLabel(Translations.of(context).menu.priceSpecs, theme),
             _buildCard(
               children: [
                 Row(
@@ -231,6 +236,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                         helperText: Translations.of(context).menu.actualPrice,
                         icon: Icons.attach_money,
                         isNumber: true,
+                        theme: theme,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -243,6 +249,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                           context,
                         ).menu.showOriginalPrice,
                         isNumber: true,
+                        theme: theme,
                       ),
                     ),
                   ],
@@ -259,6 +266,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                         helperText: Translations.of(context).menu.estimatedTime,
                         icon: Icons.timer_outlined,
                         isNumber: true,
+                        theme: theme,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -270,14 +278,19 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                         helperText: Translations.of(context).menu.calories,
                         icon: Icons.local_fire_department_outlined,
                         isNumber: true,
+                        theme: theme,
                       ),
                     ),
                   ],
                 ),
               ],
+              theme: theme,
             ),
 
-            _buildSectionLabel(Translations.of(context).menu.imageSettings),
+            _buildSectionLabel(
+              Translations.of(context).menu.imageSettings,
+              theme,
+            ),
             _buildCard(
               children: [
                 Consumer<MenuProvider>(
@@ -288,6 +301,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                         setState(() => _imageUrl = url);
                       },
                       provider: provider,
+                      theme: theme,
                     );
                   },
                 ),
@@ -300,12 +314,14 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                   Translations.of(context).menu.hideFromCustomers,
                   _isAvailable,
                   (v) => setState(() => _isAvailable = v),
+                  theme,
                 ),
                 _buildSwitchTile(
                   Translations.of(context).menu.managerRecommended,
                   Translations.of(context).menu.displayInRecommendations,
                   _isRecommended,
                   (v) => setState(() => _isRecommended = v),
+                  theme,
                 ),
                 // 排序放到最后，因为改动频率较低
                 const SizedBox(height: 8),
@@ -318,8 +334,10 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
                   ).menu.numberGreaterMoreTop,
                   icon: Icons.sort,
                   isNumber: true,
+                  theme: theme,
                 ),
               ],
+              theme: theme,
             ),
             // 底部留白，防止键盘遮挡最后一个元素
             const SizedBox(height: 40),
@@ -331,27 +349,29 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
 
   // --- 辅助构建方法 ---
 
-  Widget _buildSectionLabel(String title) {
+  Widget _buildSectionLabel(String title, ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 8, 0, 8),
       child: Text(
         title,
-        style: TextStyle(
-          fontSize: 14,
+        style: theme.textTheme.titleSmall?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Colors.grey.shade600,
+          color: theme.colorScheme.onSurfaceVariant,
         ),
       ),
     );
   }
 
-  // 白色卡片容器，让界面更有层次感
-  Widget _buildCard({required List<Widget> children}) {
+  // 主题卡片容器，让界面更有层次感
+  Widget _buildCard({
+    required List<Widget> children,
+    required ThemeData theme,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -360,6 +380,7 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
             offset: const Offset(0, 2),
           ),
         ],
+        border: Border.all(color: theme.colorScheme.outline, width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -373,17 +394,25 @@ class _MenuItemFormScreenState extends State<MenuItemFormScreen> {
     String subtitle,
     bool value,
     Function(bool) onChanged,
+    ThemeData theme,
   ) {
     return SwitchListTile.adaptive(
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+      title: Text(
+        title,
+        style: theme.textTheme.bodyMedium?.copyWith(
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+        style: theme.textTheme.bodySmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
       ),
       value: value,
       onChanged: onChanged,
-      activeTrackColor: AppTheme.primaryColor,
-      activeThumbColor: AppTheme.primaryColor,
+      activeTrackColor: theme.colorScheme.primary,
+      activeThumbColor: theme.colorScheme.primary,
       contentPadding: EdgeInsets.zero,
       dense: true,
     );

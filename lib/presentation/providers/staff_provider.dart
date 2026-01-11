@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/data/api/staff_api.dart';
-import 'package:foodieconnect/data/models/staff/staff_model.dart';
-import 'package:foodieconnect/data/repository/staff_repository.dart';
-import 'package:foodieconnect/data/services/staff_service.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/data/api/staff_api.dart';
+import 'package:foodieconnectmerchant/data/models/staff/staff_model.dart';
+import 'package:foodieconnectmerchant/data/repository/staff_repository.dart';
+import 'package:foodieconnectmerchant/data/services/staff_service.dart';
 import 'staff_state.dart';
 
 /// 员工状态管理Provider

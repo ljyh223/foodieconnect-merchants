@@ -2,15 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'package:foodieconnect/core/constants/app_constants.dart';
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/data/models/auth/merchant_login_request.dart';
-import 'package:foodieconnect/data/models/auth/merchant_login_response.dart';
-import 'package:foodieconnect/data/models/auth/user_dto.dart';
+import 'package:foodieconnectmerchant/core/constants/app_constants.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/data/models/auth/merchant_login_request.dart';
+import 'package:foodieconnectmerchant/data/models/auth/merchant_login_response.dart';
+import 'package:foodieconnectmerchant/data/models/auth/user_dto.dart';
 
-import 'package:foodieconnect/data/services/auth_service.dart';
-import 'package:foodieconnect/data/services/api_service.dart';
-import 'package:foodieconnect/data/storage/secure_storage.dart';
+import 'package:foodieconnectmerchant/data/services/auth_service.dart';
+import 'package:foodieconnectmerchant/data/services/api_service.dart';
+import 'package:foodieconnectmerchant/data/storage/secure_storage.dart';
 
 /// 认证状态管理Provider
 class AuthProvider extends ChangeNotifier {

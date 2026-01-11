@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:foodieconnect/core/utils/image_utils.dart';
-import 'package:foodieconnect/presentation/providers/menu_provider.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/core/utils/image_utils.dart';
+import 'package:foodieconnectmerchant/presentation/providers/menu_provider.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
 import 'dart:io';
 
 /// 图片上传组件
@@ -10,12 +10,14 @@ class ImageUploader extends StatelessWidget {
   final String? imageUrl;
   final ValueChanged<String> onImageUploaded;
   final MenuProvider provider;
+  final ThemeData theme;
 
   const ImageUploader({
     super.key,
     this.imageUrl,
     required this.onImageUploaded,
     required this.provider,
+    required this.theme,
   });
 
   @override
@@ -27,24 +29,29 @@ class ImageUploader extends StatelessWidget {
       children: [
         Text(
           t.itemImage,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+            color: theme.colorScheme.onSurface,
+          ),
         ),
         const SizedBox(height: 8),
         Text(
           t.uploadClearPhoto,
-          style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: 12),
         InkWell(
-          onTap: () => _handleImageUpload(context),
+          onTap: () => _handleImageUpload(context, theme),
           child: Container(
             height: 120,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: Colors.grey.shade300,
+                color: theme.colorScheme.outline,
                 width: 1,
                 style: BorderStyle.solid,
               ),
@@ -56,19 +63,23 @@ class ImageUploader extends StatelessWidget {
                   Icon(
                     Icons.cloud_upload_outlined,
                     size: 36,
-                    color: Colors.grey.shade400,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                   const SizedBox(height: 8),
                   Text(
                     imageUrl != null
                         ? t.clickToChangeImage
                         : t.clickToUploadImage,
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     t.supportAlbumCamera,
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -88,11 +99,11 @@ class ImageUploader extends StatelessWidget {
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => Container(
                   height: 100,
-                  color: Colors.grey.shade200,
+                  color: theme.colorScheme.surfaceVariant,
                   alignment: Alignment.center,
                   child: Text(
                     t.imageLoadFailed,
-                    style: const TextStyle(color: Colors.grey),
+                    style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                   ),
                 ),
               ),
@@ -102,29 +113,47 @@ class ImageUploader extends StatelessWidget {
     );
   }
 
-  Future<void> _handleImageUpload(BuildContext context) async {
+  Future<void> _handleImageUpload(BuildContext context, ThemeData theme) async {
     final option = await showModalBottomSheet<int>(
       context: context,
       builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: Text(Translations.of(context).menu.selectFromAlbum),
-              onTap: () => Navigator.pop(context, 0),
-            ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: Text(Translations.of(context).menu.takePhoto),
-              onTap: () => Navigator.pop(context, 1),
-            ),
-            ListTile(
-              leading: const Icon(Icons.cancel),
-              title: Text(Translations.of(context).menu.cancel),
-              onTap: () => Navigator.pop(context, -1),
-            ),
-          ],
+        child: Container(
+          color: theme.colorScheme.surface,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(
+                  Icons.photo_library,
+                  color: theme.colorScheme.onSurface,
+                ),
+                title: Text(
+                  Translations.of(context).menu.selectFromAlbum,
+                  style: TextStyle(color: theme.colorScheme.onSurface),
+                ),
+                onTap: () => Navigator.pop(context, 0),
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.camera_alt,
+                  color: theme.colorScheme.onSurface,
+                ),
+                title: Text(
+                  Translations.of(context).menu.takePhoto,
+                  style: TextStyle(color: theme.colorScheme.onSurface),
+                ),
+                onTap: () => Navigator.pop(context, 1),
+              ),
+              ListTile(
+                leading: Icon(Icons.cancel, color: theme.colorScheme.onSurface),
+                title: Text(
+                  Translations.of(context).menu.cancel,
+                  style: TextStyle(color: theme.colorScheme.onSurface),
+                ),
+                onTap: () => Navigator.pop(context, -1),
+              ),
+            ],
+          ),
         ),
       ),
     );

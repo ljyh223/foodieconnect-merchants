@@ -1,5 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:foodieconnect/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
 
 /// SharedPreferences存储工具类
 /// 用于存储非敏感的配置信息

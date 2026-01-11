@@ -8,15 +8,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:foodieconnect/main.dart';
-import 'package:foodieconnect/presentation/providers/auth_provider.dart';
+import 'package:foodieconnectmerchant/main.dart';
+import 'package:foodieconnectmerchant/presentation/providers/auth_provider.dart';
 
 void main() {
   testWidgets('Foodie Connect app smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(FoodieConnectApp(
-      authProvider: AuthProvider(),
-    ));
+    await tester.pumpWidget(FoodieConnectApp(authProvider: AuthProvider()));
 
     // Verify that our app loads without crashing
     expect(find.byType(MaterialApp), findsOneWidget);

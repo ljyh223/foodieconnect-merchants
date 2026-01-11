@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/presentation/providers/menu_provider.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/presentation/providers/menu_provider.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
 
 /// 分类选择器组件
 class CategorySelector extends StatelessWidget {
   final MenuProvider provider;
   final int? selectedCategoryId;
   final ValueChanged<int> onCategorySelected;
+  final ThemeData theme;
 
   const CategorySelector({
     super.key,
     required this.provider,
     this.selectedCategoryId,
     required this.onCategorySelected,
+    required this.theme,
   });
 
   @override
@@ -21,7 +23,7 @@ class CategorySelector extends StatelessWidget {
     final t = Translations.of(context).menu;
 
     if (provider.categories.isEmpty) {
-      return _buildLoadingState(context, t);
+      return _buildLoadingState(context, t, theme);
     }
 
     final selectedCategory = provider.categories.firstWhere(
@@ -30,16 +32,16 @@ class CategorySelector extends StatelessWidget {
     );
 
     return GestureDetector(
-      onTap: () => _showCategoryBottomSheet(context, provider, t),
+      onTap: () => _showCategoryBottomSheet(context, provider, t, theme),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.grey.shade50,
+          color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: selectedCategoryId != null
                 ? AppTheme.primaryColor.withValues(alpha: 0.5)
-                : Colors.grey.shade300,
+                : theme.colorScheme.outline,
           ),
         ),
         child: Row(
@@ -48,7 +50,7 @@ class CategorySelector extends StatelessWidget {
               Icons.category_outlined,
               color: selectedCategoryId != null
                   ? AppTheme.primaryColor
-                  : Colors.grey.shade500,
+                  : theme.colorScheme.onSurfaceVariant,
               size: 20,
             ),
             const SizedBox(width: 12),
@@ -58,22 +60,20 @@ class CategorySelector extends StatelessWidget {
                 children: [
                   Text(
                     t.category,
-                    style: TextStyle(
-                      fontSize: 12,
+                    style: theme.textTheme.bodySmall?.copyWith(
                       color: selectedCategoryId != null
                           ? AppTheme.primaryColor
-                          : Colors.grey.shade600,
+                          : theme.colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     selectedCategory.name,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       color: selectedCategoryId != null
-                          ? Colors.black87
-                          : Colors.grey.shade600,
+                          ? theme.colorScheme.onSurface
+                          : theme.colorScheme.onSurfaceVariant,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -84,7 +84,7 @@ class CategorySelector extends StatelessWidget {
               Icons.keyboard_arrow_down,
               color: selectedCategoryId != null
                   ? AppTheme.primaryColor
-                  : Colors.grey.shade500,
+                  : theme.colorScheme.onSurfaceVariant,
             ),
           ],
         ),
@@ -92,17 +92,21 @@ class CategorySelector extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState(BuildContext context, dynamic t) {
+  Widget _buildLoadingState(BuildContext context, dynamic t, ThemeData theme) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: theme.colorScheme.outline),
       ),
       child: Row(
         children: [
-          Icon(Icons.category_outlined, color: Colors.grey.shade500, size: 20),
+          Icon(
+            Icons.category_outlined,
+            color: theme.colorScheme.onSurfaceVariant,
+            size: 20,
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -110,8 +114,7 @@ class CategorySelector extends StatelessWidget {
               children: [
                 Text(
                   t.category,
-                  style: TextStyle(
-                    fontSize: 12,
+                  style: theme.textTheme.bodySmall?.copyWith(
                     color: AppTheme.primaryColor,
                     fontWeight: FontWeight.w500,
                   ),
@@ -119,7 +122,9 @@ class CategorySelector extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   t.loadingCategories,
-                  style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
@@ -141,14 +146,15 @@ class CategorySelector extends StatelessWidget {
     BuildContext context,
     MenuProvider provider,
     dynamic t,
+    ThemeData theme,
   ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -158,14 +164,17 @@ class CategorySelector extends StatelessWidget {
               height: 4,
               margin: const EdgeInsets.only(top: 12),
               decoration: BoxDecoration(
-                color: Colors.grey.shade300,
+                color: theme.colorScheme.outline,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 20),
             Text(
               t.selectCategory,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
             ),
             const SizedBox(height: 20),
             Flexible(
@@ -183,25 +192,25 @@ class CategorySelector extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppTheme.primaryColor.withValues(alpha: 0.1)
-                            : Colors.grey.shade100,
+                            : theme.colorScheme.surfaceVariant,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
                         Icons.category_outlined,
                         color: isSelected
                             ? AppTheme.primaryColor
-                            : Colors.grey.shade600,
+                            : theme.colorScheme.onSurfaceVariant,
                       ),
                     ),
                     title: Text(
                       category.name,
-                      style: TextStyle(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontWeight: isSelected
                             ? FontWeight.bold
                             : FontWeight.normal,
                         color: isSelected
                             ? AppTheme.primaryColor
-                            : Colors.black87,
+                            : theme.colorScheme.onSurface,
                       ),
                     ),
                     trailing: isSelected

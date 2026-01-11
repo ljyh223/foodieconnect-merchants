@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
-import 'package:foodieconnect/core/constants/app_constants.dart';
-import 'package:foodieconnect/data/storage/shared_preferences.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/core/constants/app_constants.dart';
+import 'package:foodieconnectmerchant/data/storage/shared_preferences.dart';
 
 /// 设置页面
 class SettingsScreen extends StatelessWidget {
@@ -12,20 +12,21 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: AppTheme.surfaceColor,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(t.auth.settings),
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
         elevation: 0,
       ),
-      body: ListView(children: [_buildLanguageSetting(context)]),
+      body: ListView(children: [_buildLanguageSetting(context, theme)]),
     );
   }
 
   /// 构建语言设置选项
-  Widget _buildLanguageSetting(BuildContext context) {
+  Widget _buildLanguageSetting(BuildContext context, ThemeData theme) {
     final t = Translations.of(context);
     final currentLocale = LocaleSettings.currentLocale;
 
@@ -36,19 +37,20 @@ class SettingsScreen extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Text(
             t.auth.language,
-            style: const TextStyle(
-              fontSize: 16,
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: theme.colorScheme.onSurface,
             ),
           ),
         ),
         Card(
           margin: const EdgeInsets.symmetric(horizontal: 16.0),
           elevation: 0,
+          color: theme.colorScheme.surface,
+          surfaceTintColor: theme.colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8.0),
-            side: BorderSide(color: Colors.grey[200]!),
+            side: BorderSide(color: theme.colorScheme.outline),
           ),
           child: Column(
             children: [
@@ -57,6 +59,7 @@ class SettingsScreen extends StatelessWidget {
                 '简体中文',
                 AppLocale.zhCn,
                 currentLocale == AppLocale.zhCn,
+                theme,
               ),
               const Divider(height: 1),
               _buildLanguageOption(
@@ -64,6 +67,7 @@ class SettingsScreen extends StatelessWidget {
                 '繁體中文',
                 AppLocale.zhTw,
                 currentLocale == AppLocale.zhTw,
+                theme,
               ),
               const Divider(height: 1),
               _buildLanguageOption(
@@ -71,6 +75,7 @@ class SettingsScreen extends StatelessWidget {
                 'English',
                 AppLocale.en,
                 currentLocale == AppLocale.en,
+                theme,
               ),
             ],
           ),
@@ -85,17 +90,24 @@ class SettingsScreen extends StatelessWidget {
     String languageName,
     AppLocale locale,
     bool isSelected,
+    ThemeData theme,
   ) {
     return ListTile(
-      title: Text(languageName),
+      title: Text(
+        languageName,
+        style: TextStyle(color: theme.colorScheme.onSurface),
+      ),
       trailing: isSelected
-          ? const Icon(Icons.check, color: AppTheme.primaryColor)
+          ? Icon(Icons.check, color: theme.colorScheme.primary)
           : null,
       onTap: () async {
         // 设置语言
         LocaleSettings.setLocale(locale);
         // 保存到本地存储
-        await PrefsStorage.setString(AppConstants.languageKey, locale.toString());
+        await PrefsStorage.setString(
+          AppConstants.languageKey,
+          locale.toString(),
+        );
       },
     );
   }

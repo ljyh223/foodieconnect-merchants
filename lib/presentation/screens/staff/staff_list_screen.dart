@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:foodieconnect/core/constants/app_constants.dart';
-import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/core/utils/image_utils.dart';
-import 'package:foodieconnect/presentation/providers/staff_provider.dart';
-import 'package:foodieconnect/data/models/staff/staff_model.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/core/constants/app_constants.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/core/utils/image_utils.dart';
+import 'package:foodieconnectmerchant/presentation/providers/staff_provider.dart';
+import 'package:foodieconnectmerchant/data/models/staff/staff_model.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
 
 /// 员工列表页面
 class StaffListScreen extends StatefulWidget {
@@ -42,14 +42,15 @@ class _StaffListScreenState extends State<StaffListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Consumer<StaffProvider>(
       builder: (context, provider, child) {
         return Scaffold(
-          backgroundColor: AppTheme.surfaceColor,
+          backgroundColor: theme.colorScheme.surface,
           appBar: AppBar(
             title: Text(Translations.of(context).staff.title),
-            backgroundColor: AppTheme.primaryColor,
-            foregroundColor: Colors.white,
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
             elevation: 0,
             actions: [
               IconButton(
@@ -68,40 +69,45 @@ class _StaffListScreenState extends State<StaffListScreen> {
               ),
             ],
           ),
-          body: _buildBody(provider),
+          body: _buildBody(provider, theme),
         );
       },
     );
   }
 
-  Widget _buildBody(StaffProvider provider) {
+  Widget _buildBody(StaffProvider provider, ThemeData theme) {
     if (provider.isLoading && provider.staffList.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
+            CircularProgressIndicator(color: theme.colorScheme.primary),
             const SizedBox(height: 16),
-            Text(Translations.of(context).staff.loadingStaffList),
+            Text(
+              Translations.of(context).staff.loadingStaffList,
+              style: theme.textTheme.bodyLarge,
+            ),
           ],
         ),
       );
     }
 
     if (provider.errorMessage != null) {
-      return _buildErrorWidget(provider.errorMessage!);
+      return _buildErrorWidget(provider.errorMessage!, theme);
     }
 
     if (provider.staffList.isEmpty) {
-      return _buildEmptyWidget();
+      return _buildEmptyWidget(theme);
     }
 
-    return _buildStaffList(provider);
+    return _buildStaffList(provider, theme);
   }
 
-  Widget _buildStatsSection(StaffProvider provider) {
+  Widget _buildStatsSection(StaffProvider provider, ThemeData theme) {
     return Card(
       margin: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
+      color: theme.colorScheme.surface,
+      surfaceTintColor: theme.colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Row(
@@ -111,24 +117,29 @@ class _StaffListScreenState extends State<StaffListScreen> {
               Translations.of(context).staff.totalStaff,
               '${provider.totalCount}',
               Icons.people,
+              null,
+              theme,
             ),
             _buildStatCard(
               Translations.of(context).staff.onlineStaff,
               '${provider.onlineStaffCount}',
               Icons.online_prediction,
               Colors.green,
+              theme,
             ),
             _buildStatCard(
               Translations.of(context).staff.offlineStaff,
               '${provider.offlineStaffCount}',
               Icons.offline_bolt,
               Colors.grey,
+              theme,
             ),
             _buildStatCard(
               Translations.of(context).staff.busyStaff,
               '${provider.busyStaffCount}',
               Icons.work,
               Colors.orange,
+              theme,
             ),
           ],
         ),
@@ -141,6 +152,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
     String value,
     IconData icon, [
     Color? color,
+    ThemeData? theme,
   ]) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -151,7 +163,11 @@ class _StaffListScreenState extends State<StaffListScreen> {
           const SizedBox(height: 2),
           Text(
             title,
-            style: TextStyle(fontSize: 10, color: AppTheme.textSecondary),
+            style: theme != null
+                ? theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  )
+                : TextStyle(fontSize: 10, color: AppTheme.textSecondary),
           ),
           const SizedBox(height: 2),
           Text(
@@ -167,12 +183,12 @@ class _StaffListScreenState extends State<StaffListScreen> {
     );
   }
 
-  Widget _buildStaffList(StaffProvider provider) {
+  Widget _buildStaffList(StaffProvider provider, ThemeData theme) {
     return ListView(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
       children: [
         // 统计信息卡片 - 作为列表的第一项
-        _buildStatsSection(provider),
+        _buildStatsSection(provider, theme),
 
         // 员工列表
         ...provider.staffList.map((staff) => _buildStaffCard(staff)),
@@ -532,22 +548,32 @@ class _StaffListScreenState extends State<StaffListScreen> {
 
   /// 切换员工状态
   void _toggleStaffStatus(StaffModel staff) {
+    final theme = Theme.of(context);
     final provider = Provider.of<StaffProvider>(context, listen: false);
     final newStatus = _getNextStatus(staff.status);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(Translations.of(context).staff.confirmOperation),
+        backgroundColor: theme.colorScheme.surface,
+        surfaceTintColor: theme.colorScheme.surface,
+        title: Text(
+          Translations.of(context).staff.confirmOperation,
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
         content: Text(
           Translations.of(context).staff.confirmStatusChange(
             staffName: staff.displayName,
             newStatus: _getStatusDisplayText(newStatus),
           ),
+          style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.onSurface,
+            ),
             child: Text(Translations.of(context).staff.cancel),
           ),
           TextButton(
@@ -555,6 +581,9 @@ class _StaffListScreenState extends State<StaffListScreen> {
               Navigator.of(context).pop();
               await provider.updateStaffStatus(staff.id, newStatus);
             },
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.primary,
+            ),
             child: Text(Translations.of(context).staff.confirm),
           ),
         ],
@@ -593,6 +622,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
 
   /// 更新员工评分
   void _updateStaffRating(StaffModel staff) {
+    final theme = Theme.of(context);
     final provider = Provider.of<StaffProvider>(context, listen: false);
     final ratingController = TextEditingController(
       text: staff.rating?.toStringAsFixed(1) ?? '5.0',
@@ -601,7 +631,12 @@ class _StaffListScreenState extends State<StaffListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(Translations.of(context).staff.updateRatingTitle),
+        backgroundColor: theme.colorScheme.surface,
+        surfaceTintColor: theme.colorScheme.surface,
+        title: Text(
+          Translations.of(context).staff.updateRatingTitle,
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -609,14 +644,21 @@ class _StaffListScreenState extends State<StaffListScreen> {
               Translations.of(
                 context,
               ).staff.setNewRating(staffName: staff.displayName),
+              style: TextStyle(color: theme.colorScheme.onSurface),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: ratingController,
               keyboardType: TextInputType.number,
+              style: TextStyle(color: theme.colorScheme.onSurface),
               decoration: InputDecoration(
                 labelText: Translations.of(context).staff.ratingInputHint,
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.colorScheme.outline),
+                ),
+                labelStyle: TextStyle(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ],
@@ -624,6 +666,9 @@ class _StaffListScreenState extends State<StaffListScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.onSurface,
+            ),
             child: Text(Translations.of(context).staff.cancel),
           ),
           TextButton(
@@ -638,10 +683,14 @@ class _StaffListScreenState extends State<StaffListScreen> {
                     content: Text(
                       Translations.of(context).staff.validRatingRequired,
                     ),
+                    backgroundColor: theme.colorScheme.error,
                   ),
                 );
               }
             },
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.primary,
+            ),
             child: Text(Translations.of(context).staff.confirm),
           ),
         ],
@@ -649,7 +698,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
     );
   }
 
-  Widget _buildErrorWidget(String error) {
+  Widget _buildErrorWidget(String error, ThemeData theme) {
     return Builder(
       builder: (context) {
         return Center(
@@ -664,8 +713,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
               const SizedBox(height: AppConstants.defaultPadding),
               Text(
                 error,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: theme.textTheme.bodyLarge?.copyWith(
                   color: AppTheme.errorColor,
                 ),
                 textAlign: TextAlign.center,
@@ -678,6 +726,10 @@ class _StaffListScreenState extends State<StaffListScreen> {
                     listen: false,
                   ).refreshStaffList();
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                ),
                 child: Text(Translations.of(context).staff.retry),
               ),
             ],
@@ -687,26 +739,32 @@ class _StaffListScreenState extends State<StaffListScreen> {
     );
   }
 
-  Widget _buildEmptyWidget() {
+  Widget _buildEmptyWidget(ThemeData theme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.people_outline,
             size: 64,
-            color: AppTheme.textSecondary,
+            color: theme.colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: AppConstants.defaultPadding),
           Text(
             Translations.of(context).staff.noStaffInfo,
-            style: TextStyle(fontSize: 16, color: AppTheme.textSecondary),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: AppConstants.defaultPadding),
           ElevatedButton(
             onPressed: () {
               _showStaffFormDialog();
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+            ),
             child: Text(Translations.of(context).staff.addStaff),
           ),
         ],
@@ -716,6 +774,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
 
   /// 显示员工表单对话框（用于创建或编辑）
   void _showStaffFormDialog([StaffModel? staff]) {
+    final theme = Theme.of(context);
     final provider = Provider.of<StaffProvider>(context, listen: false);
     final nameController = TextEditingController(text: staff?.name ?? '');
     final positionController = TextEditingController(
@@ -734,10 +793,13 @@ class _StaffListScreenState extends State<StaffListScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.colorScheme.surface,
+        surfaceTintColor: theme.colorScheme.surface,
         title: Text(
           staff != null
               ? Translations.of(context).staff.editStaff
               : Translations.of(context).staff.createStaff,
+          style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         content: SingleChildScrollView(
           child: Column(
@@ -746,9 +808,15 @@ class _StaffListScreenState extends State<StaffListScreen> {
               // 员工姓名
               TextField(
                 controller: nameController,
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: InputDecoration(
                   labelText: Translations.of(context).staff.name,
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.outline),
+                  ),
+                  labelStyle: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -756,9 +824,15 @@ class _StaffListScreenState extends State<StaffListScreen> {
               // 员工职位
               TextField(
                 controller: positionController,
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: InputDecoration(
                   labelText: Translations.of(context).staff.position,
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.outline),
+                  ),
+                  labelStyle: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -766,9 +840,15 @@ class _StaffListScreenState extends State<StaffListScreen> {
               // 工作经验
               TextField(
                 controller: experienceController,
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: InputDecoration(
                   labelText: Translations.of(context).staff.experience,
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.outline),
+                  ),
+                  labelStyle: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
               const SizedBox(height: 16),
@@ -778,20 +858,34 @@ class _StaffListScreenState extends State<StaffListScreen> {
                 initialValue: staff?.status ?? 'OFFLINE',
                 decoration: InputDecoration(
                   labelText: Translations.of(context).staff.status,
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.outline),
+                  ),
+                  labelStyle: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 items: [
                   DropdownMenuItem(
                     value: 'ONLINE',
-                    child: Text(Translations.of(context).staff.online),
+                    child: Text(
+                      Translations.of(context).staff.online,
+                      style: TextStyle(color: theme.colorScheme.onSurface),
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 'OFFLINE',
-                    child: Text(Translations.of(context).staff.offline),
+                    child: Text(
+                      Translations.of(context).staff.offline,
+                      style: TextStyle(color: theme.colorScheme.onSurface),
+                    ),
                   ),
                   DropdownMenuItem(
                     value: 'BUSY',
-                    child: Text(Translations.of(context).staff.busy),
+                    child: Text(
+                      Translations.of(context).staff.busy,
+                      style: TextStyle(color: theme.colorScheme.onSurface),
+                    ),
                   ),
                 ],
                 onChanged: (value) {
@@ -799,6 +893,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
                     statusController.text = value;
                   }
                 },
+                style: TextStyle(color: theme.colorScheme.onSurface),
               ),
               const SizedBox(height: 16),
 
@@ -806,10 +901,19 @@ class _StaffListScreenState extends State<StaffListScreen> {
               TextField(
                 controller: ratingController,
                 keyboardType: TextInputType.number,
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: InputDecoration(
                   labelText: Translations.of(context).staff.rating,
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.outline),
+                  ),
                   helperText: Translations.of(context).staff.ratingHelper,
+                  labelStyle: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  helperStyle: TextStyle(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
             ],
@@ -818,6 +922,9 @@ class _StaffListScreenState extends State<StaffListScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.onSurface,
+            ),
             child: Text(Translations.of(context).staff.cancel),
           ),
           TextButton(
@@ -830,6 +937,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
                     content: Text(
                       Translations.of(currentContext).staff.nameRequired,
                     ),
+                    backgroundColor: theme.colorScheme.error,
                   ),
                 );
                 return;
@@ -855,6 +963,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
                           currentContext,
                         ).staff.validRatingRequired,
                       ),
+                      backgroundColor: theme.colorScheme.error,
                     ),
                   );
                   return;
@@ -881,6 +990,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
                           ? Translations.of(currentContext).staff.staffUpdated
                           : Translations.of(currentContext).staff.staffCreated,
                     ),
+                    backgroundColor: theme.colorScheme.primary,
                   ),
                 );
               } else {
@@ -896,6 +1006,9 @@ class _StaffListScreenState extends State<StaffListScreen> {
                 );
               }
             },
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.primary,
+            ),
             child: Text(Translations.of(context).staff.save),
           ),
         ],
@@ -905,20 +1018,30 @@ class _StaffListScreenState extends State<StaffListScreen> {
 
   /// 显示删除确认对话框
   void _showDeleteConfirmDialog(StaffModel staff) {
+    final theme = Theme.of(context);
     final provider = Provider.of<StaffProvider>(context, listen: false);
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(Translations.of(context).staff.confirmDelete),
+        backgroundColor: theme.colorScheme.surface,
+        surfaceTintColor: theme.colorScheme.surface,
+        title: Text(
+          Translations.of(context).staff.confirmDelete,
+          style: TextStyle(color: theme.colorScheme.onSurface),
+        ),
         content: Text(
           Translations.of(
             context,
           ).staff.confirmDeleteMessage(staffName: staff.displayName),
+          style: TextStyle(color: theme.colorScheme.onSurface),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.onSurface,
+            ),
             child: Text(Translations.of(context).staff.cancel),
           ),
           TextButton(
@@ -934,6 +1057,7 @@ class _StaffListScreenState extends State<StaffListScreen> {
                     content: Text(
                       Translations.of(currentContext).staff.staffDeleted,
                     ),
+                    backgroundColor: theme.colorScheme.primary,
                   ),
                 );
               } else {

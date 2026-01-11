@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:foodieconnect/core/constants/app_constants.dart';
-import 'package:foodieconnect/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/core/constants/app_constants.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
 
 /// 全局Dio客户端配置
 class DioClient {

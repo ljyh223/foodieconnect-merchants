@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/data/api/restaurant_api.dart';
-import 'package:foodieconnect/data/models/restaurant/restaurant_model.dart';
-import 'package:foodieconnect/data/models/restaurant/restaurant_update_request.dart';
-import 'package:foodieconnect/data/repository/restaurant_repository.dart';
-import 'package:foodieconnect/data/services/restaurant_service.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/data/api/restaurant_api.dart';
+import 'package:foodieconnectmerchant/data/models/restaurant/restaurant_model.dart';
+import 'package:foodieconnectmerchant/data/models/restaurant/restaurant_update_request.dart';
+import 'package:foodieconnectmerchant/data/repository/restaurant_repository.dart';
+import 'package:foodieconnectmerchant/data/services/restaurant_service.dart';
 
 /// 餐厅状态管理Provider
 class RestaurantProvider extends ChangeNotifier {

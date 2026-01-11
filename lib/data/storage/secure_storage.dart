@@ -1,13 +1,11 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:foodieconnect/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
 
 /// 安全存储工具类
 /// 用于存储敏感信息如token、密码等
 class SecureStorage {
   static const FlutterSecureStorage _storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
     ),

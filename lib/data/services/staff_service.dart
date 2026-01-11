@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/data/models/staff/staff_model.dart';
-import 'package:foodieconnect/data/models/common/api_response.dart';
-import 'package:foodieconnect/data/repository/staff_repository.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/data/models/staff/staff_model.dart';
+import 'package:foodieconnectmerchant/data/models/common/api_response.dart';
+import 'package:foodieconnectmerchant/data/repository/staff_repository.dart';
 
 /// 员工服务类
 class StaffService {

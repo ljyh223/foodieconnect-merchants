@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:foodieconnect/data/models/restaurant/restaurant_update_request.dart';
+import 'package:foodieconnectmerchant/data/models/restaurant/restaurant_update_request.dart';
 import '../services/api_service.dart';
 
 /// 餐厅API接口

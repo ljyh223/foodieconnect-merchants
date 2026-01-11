@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'dart:io';
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
-import 'package:foodieconnect/data/models/menu/menu_item_request.dart';
-import 'package:foodieconnect/data/models/menu/menu_category_model.dart';
-import 'package:foodieconnect/data/models/menu/menu_category_request.dart';
-import 'package:foodieconnect/data/models/common/api_response.dart';
-import 'package:foodieconnect/data/repository/menu_repository.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_item_model.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_item_request.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_category_model.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_category_request.dart';
+import 'package:foodieconnectmerchant/data/models/common/api_response.dart';
+import 'package:foodieconnectmerchant/data/repository/menu_repository.dart';
 
 /// 菜单服务类
 class MenuService {

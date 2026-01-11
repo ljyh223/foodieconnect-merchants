@@ -1,4 +1,4 @@
-package com.ljyh.foodieconnect
+package com.ljyh.foodieconnectmerchant
 
 import io.flutter.embedding.android.FlutterActivity
 

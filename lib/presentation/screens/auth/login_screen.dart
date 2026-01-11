@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:foodieconnect/core/constants/app_constants.dart';
-import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
-import 'package:foodieconnect/presentation/providers/auth_provider.dart';
-import 'package:foodieconnect/presentation/screens/dashboard/dashboard_screen.dart';
-import 'package:foodieconnect/presentation/widgets/common/loading_indicator.dart';
+import 'package:foodieconnectmerchant/core/constants/app_constants.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/presentation/providers/auth_provider.dart';
+import 'package:foodieconnectmerchant/presentation/screens/dashboard/dashboard_screen.dart';
+import 'package:foodieconnectmerchant/presentation/widgets/common/loading_indicator.dart';
 
 /// 登录页面
 class LoginScreen extends StatefulWidget {

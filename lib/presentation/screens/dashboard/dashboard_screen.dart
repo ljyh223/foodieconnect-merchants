@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
-import 'package:foodieconnect/presentation/providers/auth_provider.dart';
-import 'package:foodieconnect/presentation/providers/restaurant_provider.dart';
-import 'package:foodieconnect/presentation/providers/menu_provider.dart';
-import 'package:foodieconnect/presentation/providers/staff_provider.dart';
-import 'package:foodieconnect/presentation/providers/chat_provider.dart';
-import 'package:foodieconnect/presentation/screens/restaurant/restaurant_info_screen.dart';
-import 'package:foodieconnect/presentation/screens/staff/staff_list_screen.dart';
-import 'package:foodieconnect/presentation/screens/statistics/statistics_overview_screen.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/presentation/providers/auth_provider.dart';
+import 'package:foodieconnectmerchant/presentation/providers/restaurant_provider.dart';
+import 'package:foodieconnectmerchant/presentation/providers/menu_provider.dart';
+import 'package:foodieconnectmerchant/presentation/providers/staff_provider.dart';
+import 'package:foodieconnectmerchant/presentation/providers/chat_provider.dart';
+import 'package:foodieconnectmerchant/presentation/screens/restaurant/restaurant_info_screen.dart';
+import 'package:foodieconnectmerchant/presentation/screens/staff/staff_list_screen.dart';
+import 'package:foodieconnectmerchant/presentation/screens/statistics/statistics_overview_screen.dart';
 
 import '../menu/menu_list_screen.dart';
 import '../chat/chat_screen.dart';
@@ -34,7 +34,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     const ChatScreen(),
     const StaffListScreen(),
     const StatisticsOverviewScreen(),
-
   ];
 
   // 底部导航项 - 动态创建，使用多语言资源
@@ -141,7 +140,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         icon: const Icon(Icons.analytics),
         label: t.navigation.statistics,
       ),
-
     ];
 
     return BottomNavigationBar(

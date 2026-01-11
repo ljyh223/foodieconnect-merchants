@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'dart:io';
 
-import 'package:foodieconnect/core/utils/logger.dart';
-import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
-import 'package:foodieconnect/data/models/menu/menu_item_request.dart';
-import 'package:foodieconnect/data/models/menu/menu_category_model.dart';
-import 'package:foodieconnect/data/models/menu/menu_category_request.dart';
-import 'package:foodieconnect/data/services/menu_service.dart';
+import 'package:foodieconnectmerchant/core/utils/logger.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_item_model.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_item_request.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_category_model.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_category_request.dart';
+import 'package:foodieconnectmerchant/data/services/menu_service.dart';
 
 /// 菜单状态管理Provider
 class MenuProvider extends ChangeNotifier {
@@ -95,7 +95,7 @@ class MenuProvider extends ChangeNotifier {
 
       if (response.isSuccess && response.data != null) {
         final newItems = response.data!;
-        
+
         if (refresh) {
           _menuItems = newItems;
         } else {
@@ -104,7 +104,7 @@ class MenuProvider extends ChangeNotifier {
 
         _currentPage++;
         _hasMore = newItems.length >= _pageSize;
-        
+
         AppLogger.info('MenuProvider: 菜品列表加载成功 - ${newItems.length} 项');
       } else {
         _setError(response.errorMessage);
@@ -135,7 +135,7 @@ class MenuProvider extends ChangeNotifier {
         _allMenuItems = response.data!;
         _menuItems = _allMenuItems;
         _totalCount = _allMenuItems.length;
-        
+
         AppLogger.info('MenuProvider: 所有菜品加载成功 - ${_allMenuItems.length} 项');
       } else {
         _setError(response.errorMessage);
@@ -159,9 +159,7 @@ class MenuProvider extends ChangeNotifier {
       _clearError();
       notifyListeners();
 
-      final file = imageFile is String
-          ? File(imageFile)
-          : (imageFile as File);
+      final file = imageFile is String ? File(imageFile) : (imageFile as File);
 
       final response = await _menuService.uploadMenuItemImage(file);
 
@@ -196,14 +194,16 @@ class MenuProvider extends ChangeNotifier {
         _menuItems.insert(0, newItem);
         _allMenuItems.add(newItem);
         _totalCount++;
-        
+
         AppLogger.info('MenuProvider: 菜品创建成功 - ${newItem.toJson()}');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
         AppLogger.warning('MenuProvider: 菜品创建失败 - ${response.errorMessage}');
-        AppLogger.warning('MenuProvider: 响应数据 - ${response.toJson((dynamic x) => x)}');
+        AppLogger.warning(
+          'MenuProvider: 响应数据 - ${response.toJson((dynamic x) => x)}',
+        );
         return false;
       }
     } catch (e) {
@@ -227,23 +227,23 @@ class MenuProvider extends ChangeNotifier {
 
       if (response.isSuccess && response.data != null) {
         final updatedItem = response.data!;
-        
+
         // 更新列表中的菜品
         final menuIndex = _menuItems.indexWhere((item) => item.id == itemId);
         if (menuIndex != -1) {
           _menuItems[menuIndex] = updatedItem;
         }
-        
+
         final allIndex = _allMenuItems.indexWhere((item) => item.id == itemId);
         if (allIndex != -1) {
           _allMenuItems[allIndex] = updatedItem;
         }
-        
+
         // 更新选中的菜品
         if (_selectedMenuItem?.id == itemId) {
           _selectedMenuItem = updatedItem;
         }
-        
+
         AppLogger.info('MenuProvider: 菜品更新成功');
         notifyListeners();
         return true;
@@ -275,12 +275,12 @@ class MenuProvider extends ChangeNotifier {
         _menuItems.removeWhere((item) => item.id == itemId);
         _allMenuItems.removeWhere((item) => item.id == itemId);
         _totalCount--;
-        
+
         // 清除选中状态
         if (_selectedMenuItem?.id == itemId) {
           _selectedMenuItem = null;
         }
-        
+
         AppLogger.info('MenuProvider: 菜品删除成功');
         notifyListeners();
         return true;
@@ -305,25 +305,34 @@ class MenuProvider extends ChangeNotifier {
 
       AppLogger.info('MenuProvider: 开始切换菜品状态 - $itemId, $isAvailable');
 
-      final response = await _menuService.toggleMenuItemStatus(itemId, isAvailable);
+      final response = await _menuService.toggleMenuItemStatus(
+        itemId,
+        isAvailable,
+      );
 
       if (response.isSuccess) {
         // 更新本地状态
         final menuIndex = _menuItems.indexWhere((item) => item.id == itemId);
         if (menuIndex != -1) {
-          _menuItems[menuIndex] = _menuItems[menuIndex].copyWith(isAvailable: isAvailable);
+          _menuItems[menuIndex] = _menuItems[menuIndex].copyWith(
+            isAvailable: isAvailable,
+          );
         }
-        
+
         final allIndex = _allMenuItems.indexWhere((item) => item.id == itemId);
         if (allIndex != -1) {
-          _allMenuItems[allIndex] = _allMenuItems[allIndex].copyWith(isAvailable: isAvailable);
+          _allMenuItems[allIndex] = _allMenuItems[allIndex].copyWith(
+            isAvailable: isAvailable,
+          );
         }
-        
+
         // 更新选中的菜品
         if (_selectedMenuItem?.id == itemId) {
-          _selectedMenuItem = _selectedMenuItem!.copyWith(isAvailable: isAvailable);
+          _selectedMenuItem = _selectedMenuItem!.copyWith(
+            isAvailable: isAvailable,
+          );
         }
-        
+
         AppLogger.info('MenuProvider: 菜品状态切换成功');
         notifyListeners();
         return true;
@@ -346,25 +355,34 @@ class MenuProvider extends ChangeNotifier {
 
       AppLogger.info('MenuProvider: 开始设置推荐菜品 - $itemId, $isRecommended');
 
-      final response = await _menuService.setRecommendedMenuItem(itemId, isRecommended);
+      final response = await _menuService.setRecommendedMenuItem(
+        itemId,
+        isRecommended,
+      );
 
       if (response.isSuccess) {
         // 更新本地状态
         final menuIndex = _menuItems.indexWhere((item) => item.id == itemId);
         if (menuIndex != -1) {
-          _menuItems[menuIndex] = _menuItems[menuIndex].copyWith(isRecommended: isRecommended);
+          _menuItems[menuIndex] = _menuItems[menuIndex].copyWith(
+            isRecommended: isRecommended,
+          );
         }
-        
+
         final allIndex = _allMenuItems.indexWhere((item) => item.id == itemId);
         if (allIndex != -1) {
-          _allMenuItems[allIndex] = _allMenuItems[allIndex].copyWith(isRecommended: isRecommended);
+          _allMenuItems[allIndex] = _allMenuItems[allIndex].copyWith(
+            isRecommended: isRecommended,
+          );
         }
-        
+
         // 更新选中的菜品
         if (_selectedMenuItem?.id == itemId) {
-          _selectedMenuItem = _selectedMenuItem!.copyWith(isRecommended: isRecommended);
+          _selectedMenuItem = _selectedMenuItem!.copyWith(
+            isRecommended: isRecommended,
+          );
         }
-        
+
         AppLogger.info('MenuProvider: 推荐菜品设置成功');
         notifyListeners();
         return true;
@@ -454,7 +472,10 @@ class MenuProvider extends ChangeNotifier {
   }
 
   /// 更新分类
-  Future<bool> updateCategory(int categoryId, MenuCategoryRequest request) async {
+  Future<bool> updateCategory(
+    int categoryId,
+    MenuCategoryRequest request,
+  ) async {
     try {
       _setCategoryUpdating(true);
       _clearError();
@@ -515,7 +536,10 @@ class MenuProvider extends ChangeNotifier {
     try {
       _clearError();
 
-      final response = await _menuService.toggleCategoryStatus(categoryId, isActive);
+      final response = await _menuService.toggleCategoryStatus(
+        categoryId,
+        isActive,
+      );
 
       if (response.isSuccess) {
         final index = _categories.indexWhere((c) => c.id == categoryId);
@@ -670,7 +694,7 @@ class MenuProvider extends ChangeNotifier {
     _totalCount = 0;
     _categories.clear();
     _selectedCategory = null;
-    
+
     notifyListeners();
     AppLogger.info('MenuProvider: 状态已重置');
   }

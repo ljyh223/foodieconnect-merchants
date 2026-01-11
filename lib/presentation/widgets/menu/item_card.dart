@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/core/utils/image_utils.dart';
-import 'package:foodieconnect/data/models/menu/menu_item_model.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/core/utils/image_utils.dart';
+import 'package:foodieconnectmerchant/data/models/menu/menu_item_model.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
 
 /// 菜品卡片组件
 class ItemCard extends StatelessWidget {

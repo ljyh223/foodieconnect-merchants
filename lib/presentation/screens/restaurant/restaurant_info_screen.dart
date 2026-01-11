@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:foodieconnect/core/constants/app_constants.dart';
-import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
-import 'package:foodieconnect/presentation/providers/restaurant_provider.dart';
-import 'package:foodieconnect/presentation/screens/restaurant/restaurant_edit_screen.dart';
+import 'package:foodieconnectmerchant/core/constants/app_constants.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/presentation/providers/restaurant_provider.dart';
+import 'package:foodieconnectmerchant/presentation/screens/restaurant/restaurant_edit_screen.dart';
 
 import '../../../core/utils/image_utils.dart';
 
@@ -18,45 +18,56 @@ class RestaurantInfoScreen extends StatelessWidget {
     return Consumer<RestaurantProvider>(
       builder: (context, provider, child) {
         final t = Translations.of(context);
+        final theme = Theme.of(context);
         return Scaffold(
-          backgroundColor: AppTheme.surfaceColor,
+          backgroundColor: theme.colorScheme.surface,
           appBar: AppBar(
             title: Text(t.restaurant.infoTitle),
-            backgroundColor: AppTheme.primaryColor,
-            foregroundColor: Colors.white,
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
             elevation: 0,
           ),
-          body: _buildBody(provider, t),
+          body: _buildBody(provider, t, theme),
         );
       },
     );
   }
 
-  Widget _buildBody(RestaurantProvider provider, Translations t) {
+  Widget _buildBody(
+    RestaurantProvider provider,
+    Translations t,
+    ThemeData theme,
+  ) {
     if (provider.isLoading) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(),
+            CircularProgressIndicator(color: theme.colorScheme.primary),
             const SizedBox(height: 16),
-            Text(t.restaurant.loading),
+            Text(t.restaurant.loading, style: theme.textTheme.bodyLarge),
           ],
         ),
       );
     }
 
     if (provider.errorMessage != null) {
-      return _buildErrorWidget(provider.errorMessage!, t);
+      return _buildErrorWidget(provider.errorMessage!, t, theme);
     }
 
     if (provider.restaurant == null) {
-      return _buildEmptyWidget(t);
+      return _buildEmptyWidget(t, theme);
     }
 
     return Builder(
       builder: (context) {
-        return _buildRestaurantInfo(context, provider, provider.restaurant!, t);
+        return _buildRestaurantInfo(
+          context,
+          provider,
+          provider.restaurant!,
+          t,
+          theme,
+        );
       },
     );
   }
@@ -66,6 +77,7 @@ class RestaurantInfoScreen extends StatelessWidget {
     RestaurantProvider provider,
     dynamic restaurant,
     Translations t,
+    ThemeData theme,
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -75,25 +87,33 @@ class RestaurantInfoScreen extends StatelessWidget {
           // 餐厅名称 - 大标题
           Text(
             restaurant.name,
-            style: const TextStyle(
-              fontSize: 24,
+            style: theme.textTheme.headlineMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: theme.colorScheme.onSurface,
             ),
           ),
 
           const SizedBox(height: AppConstants.defaultPadding),
 
           // 餐厅基本信息 - 扁平化布局
-          _buildSectionTitle(t.restaurant.basicInfo),
-          _buildInfoRow(t.restaurant.restaurantType, restaurant.type),
-          _buildInfoRow(t.restaurant.restaurantAddress, restaurant.address),
-          _buildInfoRow(t.restaurant.restaurantPhone, restaurant.phone),
+          _buildSectionTitle(t.restaurant.basicInfo, theme),
+          _buildInfoRow(t.restaurant.restaurantType, restaurant.type, theme),
+          _buildInfoRow(
+            t.restaurant.restaurantAddress,
+            restaurant.address,
+            theme,
+          ),
+          _buildInfoRow(t.restaurant.restaurantPhone, restaurant.phone, theme),
           _buildInfoRow(
             t.restaurant.businessHours,
             restaurant.hours ?? t.restaurant.closed,
+            theme,
           ),
-          _buildInfoRow(t.restaurant.operatingStatus, restaurant.statusDisplay),
+          _buildInfoRow(
+            t.restaurant.operatingStatus,
+            restaurant.statusDisplay,
+            theme,
+          ),
 
           const SizedBox(height: AppConstants.defaultPadding * 2),
 
@@ -102,7 +122,7 @@ class RestaurantInfoScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSectionTitle(t.restaurant.restaurantImage),
+                _buildSectionTitle(t.restaurant.restaurantImage, theme),
                 const SizedBox(height: AppConstants.defaultPadding / 2),
                 GestureDetector(
                   onTap: () {
@@ -121,14 +141,14 @@ class RestaurantInfoScreen extends StatelessWidget {
                       return Container(
                         height: 200,
                         width: double.infinity,
-                        color: Colors.grey[100],
+                        color: theme.colorScheme.surfaceContainerHighest,
                         child: Center(
                           child: CircularProgressIndicator(
                             value: loadingProgress.expectedTotalBytes != null
                                 ? loadingProgress.cumulativeBytesLoaded /
                                       loadingProgress.expectedTotalBytes!
                                 : null,
-                            color: Colors.black,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                       );
@@ -144,14 +164,13 @@ class RestaurantInfoScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: AppConstants.defaultPadding * 2),
-                _buildSectionTitle(t.restaurant.restaurantDescription),
+                _buildSectionTitle(t.restaurant.restaurantDescription, theme),
                 const SizedBox(height: AppConstants.defaultPadding / 2),
                 Text(
                   restaurant.description!,
-                  style: const TextStyle(
-                    fontSize: 14,
+                  style: theme.textTheme.bodyMedium?.copyWith(
                     height: 1.5,
-                    color: Colors.black,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -160,7 +179,7 @@ class RestaurantInfoScreen extends StatelessWidget {
           const SizedBox(height: AppConstants.defaultPadding * 2),
 
           // 评价信息
-          _buildSectionTitle(t.restaurant.reviewInfo),
+          _buildSectionTitle(t.restaurant.reviewInfo, theme),
           const SizedBox(height: AppConstants.defaultPadding / 2),
           Row(
             children: [
@@ -168,12 +187,14 @@ class RestaurantInfoScreen extends StatelessWidget {
                 child: _buildInfoRow(
                   t.restaurant.rating,
                   restaurant.ratingDisplay,
+                  theme,
                 ),
               ),
               Expanded(
                 child: _buildInfoRow(
                   t.restaurant.reviewCount,
                   restaurant.reviewCountDisplay,
+                  theme,
                 ),
               ),
             ],
@@ -182,7 +203,7 @@ class RestaurantInfoScreen extends StatelessWidget {
           const SizedBox(height: AppConstants.defaultPadding * 2),
 
           // 聊天室验证码
-          _buildSectionTitle(t.restaurant.chatRoomVerificationCode),
+          _buildSectionTitle(t.restaurant.chatRoomVerificationCode, theme),
           const SizedBox(height: AppConstants.defaultPadding / 2),
           Row(
             children: [
@@ -190,17 +211,23 @@ class RestaurantInfoScreen extends StatelessWidget {
                 child: _buildInfoRow(
                   t.restaurant.currentCode,
                   provider.chatRoomVerificationCode ?? t.restaurant.loadingCode,
+                  theme,
                 ),
               ),
               const SizedBox(width: AppConstants.defaultPadding),
               ElevatedButton(
                 onPressed: () {
                   // 修改验证码
-                  _showUpdateVerificationCodeDialog(context, provider, t);
+                  _showUpdateVerificationCodeDialog(
+                    context,
+                    provider,
+                    t,
+                    theme,
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
@@ -224,8 +251,8 @@ class RestaurantInfoScreen extends StatelessWidget {
                     _showEditRestaurantDialog(context, restaurant);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
@@ -242,10 +269,8 @@ class RestaurantInfoScreen extends StatelessWidget {
                     _toggleRestaurantStatus(context, provider, t);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: restaurant.isCurrentlyOpen
-                        ? Colors.black
-                        : Colors.black,
-                    foregroundColor: Colors.white,
+                    backgroundColor: theme.colorScheme.primary,
+                    foregroundColor: theme.colorScheme.onPrimary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(4),
@@ -270,8 +295,8 @@ class RestaurantInfoScreen extends StatelessWidget {
               Navigator.of(context).pushNamed('/settings');
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.grey[800],
-              foregroundColor: Colors.white,
+              backgroundColor: theme.colorScheme.secondary,
+              foregroundColor: theme.colorScheme.onSecondary,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(4),
@@ -285,18 +310,14 @@ class RestaurantInfoScreen extends StatelessWidget {
   }
 
   /// 构建章节标题
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(String title, ThemeData theme) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: Colors.black,
-      ),
+      style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 
-  Widget _buildInfoRow(String label, String value) {
+  Widget _buildInfoRow(String label, String value, ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -306,17 +327,18 @@ class RestaurantInfoScreen extends StatelessWidget {
             width: 80,
             child: Text(
               '$label:',
-              style: TextStyle(
-                fontSize: 14,
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: Colors.grey[700],
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontSize: 14, color: Colors.black),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
             ),
           ),
         ],
@@ -324,23 +346,18 @@ class RestaurantInfoScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorWidget(String error, Translations t) {
+  Widget _buildErrorWidget(String error, Translations t, ThemeData theme) {
     return Builder(
       builder: (context) {
         return Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.error_outline,
-                size: 64,
-                color: AppTheme.errorColor,
-              ),
+              Icon(Icons.error_outline, size: 64, color: AppTheme.errorColor),
               const SizedBox(height: AppConstants.defaultPadding),
               Text(
                 error,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: theme.textTheme.bodyLarge?.copyWith(
                   color: AppTheme.errorColor,
                 ),
                 textAlign: TextAlign.center,
@@ -356,6 +373,10 @@ class RestaurantInfoScreen extends StatelessWidget {
                     ).loadRestaurant();
                   }
                 },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                ),
                 child: Text(t.restaurant.retry),
               ),
             ],
@@ -365,16 +386,22 @@ class RestaurantInfoScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyWidget(Translations t) {
+  Widget _buildEmptyWidget(Translations t, ThemeData theme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.restaurant, size: 64, color: AppTheme.textSecondary),
+          Icon(
+            Icons.restaurant,
+            size: 64,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
           SizedBox(height: AppConstants.defaultPadding),
           Text(
             t.restaurant.noData,
-            style: TextStyle(fontSize: 16, color: AppTheme.textSecondary),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -487,6 +514,7 @@ class RestaurantInfoScreen extends StatelessWidget {
     BuildContext context,
     RestaurantProvider provider,
     Translations t,
+    ThemeData theme,
   ) {
     final TextEditingController _controller = TextEditingController(
       text: provider.chatRoomVerificationCode,
@@ -496,7 +524,8 @@ class RestaurantInfoScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.colorScheme.surface,
+        surfaceTintColor: theme.colorScheme.surface,
         title: Text(t.restaurant.editVerificationCode),
         content: Form(
           key: _formKey,
@@ -508,8 +537,11 @@ class RestaurantInfoScreen extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: t.restaurant.newCode,
                   hintText: t.restaurant.enterNewCode,
-                  border: const OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.outline),
+                  ),
                 ),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return t.restaurant.enterCode;
@@ -526,7 +558,9 @@ class RestaurantInfoScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            style: TextButton.styleFrom(foregroundColor: Colors.grey[600]),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.onSurface,
+            ),
             child: Text(t.restaurant.cancel),
           ),
           ElevatedButton(
@@ -559,8 +593,8 @@ class RestaurantInfoScreen extends StatelessWidget {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
             ),
             child: Text(t.restaurant.save),
           ),

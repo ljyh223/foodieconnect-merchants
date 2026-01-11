@@ -2,10 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:foodieconnect/core/theme/app_theme.dart';
-import 'package:foodieconnect/core/extensions/string_extension.dart';
-import 'package:foodieconnect/data/models/restaurant/restaurant_model.dart';
-import 'package:foodieconnect/l10n/generated/translations.g.dart';
+import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
+import 'package:foodieconnectmerchant/core/extensions/string_extension.dart';
+import 'package:foodieconnectmerchant/data/models/restaurant/restaurant_model.dart';
+import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
 
 /// 餐厅编辑表单组件
 class RestaurantEditForm extends StatefulWidget {
