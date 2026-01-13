@@ -62,10 +62,20 @@ class _ChatScreenState extends State<ChatScreen> {
     final chatProvider = Provider.of<ChatProvider>(context);
     final currentMessageCount = chatProvider.messages.length;
 
-    if (currentMessageCount > _previousMessageCount && !_isAtBottom) {
-      setState(() {
-        _unreadMessageCount += currentMessageCount - _previousMessageCount;
-      });
+    if (currentMessageCount > _previousMessageCount) {
+      // 当有新消息到来时
+      if (!_isAtBottom) {
+        // 如果不在底部，增加未读消息计数
+        setState(() {
+          _unreadMessageCount += currentMessageCount - _previousMessageCount;
+        });
+      } else {
+        // 如果在底部，自动滚动到底部
+        _scrollToBottom();
+      }
+    } else if (currentMessageCount > 0 && _previousMessageCount == 0) {
+      // 当聊天记录第一次加载完成后，自动滚动到底部
+      _scrollToBottom();
     }
 
     _previousMessageCount = currentMessageCount;
