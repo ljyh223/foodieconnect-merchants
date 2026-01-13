@@ -364,39 +364,6 @@ class RestaurantProvider extends ChangeNotifier {
     }
   }
 
-  /// 更新聊天室验证码
-  Future<bool> updateChatRoomVerificationCode(String verificationCode) async {
-    try {
-      _setUpdating(true);
-      _clearError();
-
-      AppLogger.info('RestaurantProvider: 开始更新聊天室验证码');
-
-      final response = await _restaurantService.updateChatRoomVerificationCode(
-        verificationCode,
-      );
-
-      if (response.isSuccess) {
-        _chatRoomVerificationCode = verificationCode;
-        AppLogger.info('RestaurantProvider: 聊天室验证码更新成功');
-        notifyListeners();
-        return true;
-      } else {
-        _setError(response.errorMessage);
-        AppLogger.warning(
-          'RestaurantProvider: 聊天室验证码更新失败 - ${response.errorMessage}',
-        );
-        return false;
-      }
-    } catch (e) {
-      AppLogger.error('RestaurantProvider: 更新聊天室验证码异常', error: e);
-      _setError('更新聊天室验证码失败，请稍后重试');
-      return false;
-    } finally {
-      _setUpdating(false);
-    }
-  }
-
   /// 重置状态
   void reset() {
     _isLoading = false;

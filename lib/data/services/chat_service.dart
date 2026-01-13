@@ -1,12 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
+import '../models/chat/chat.pb.dart' as pb;
 import '../models/chat/chat_message_model.dart';
 import '../models/chat/chat_room_model.dart';
-import '../models/chat/chat_ws_models.dart';
+import '../models/chat/chat_ws_models.dart' as ws;
 import '../repository/chat_repository.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/utils/logger.dart';
@@ -27,16 +29,16 @@ class ChatService {
   final ChatRepository _chatRepository = ChatRepository();
 
   // 消息流控制器
-  final StreamController<List<ChatMessageModel>> _messagesController =
+  final StreamController<List<ChatMessageModel>> _messagesController = 
       StreamController<List<ChatMessageModel>>.broadcast();
   final List<ChatMessageModel> _messages = [];
 
   // 连接状态流控制器
-  final StreamController<bool> _connectionStatusController =
+  final StreamController<bool> _connectionStatusController = 
       StreamController<bool>.broadcast();
 
   // 获取消息流
-  Stream<List<ChatMessageModel>> get messagesStream =>
+  Stream<List<ChatMessageModel>> get messagesStream => 
       _messagesController.stream;
 
   // 获取连接状态流
@@ -72,6 +74,9 @@ class ChatService {
 
       // 添加历史消息
       _messages.addAll(messages);
+
+      // 按创建时间排序，确保最旧的消息在前，最新的消息在后
+      _messages.sort((a, b) => (a.createdAt ?? DateTime.now()).compareTo(b.createdAt ?? DateTime.now()));
 
       // 发送更新后的消息列表
       _messagesController.add(List.from(_messages));
@@ -180,11 +185,11 @@ class ChatService {
   // 发送加入房间请求
   void _sendJoinRoomRequest(int roomId) {
     try {
-      // 构建加入房间请求
-      final joinReq = JoinRoomRequest(roomId: roomId);
+      // 构建加入房间请求（使用ws别名）
+      final joinReq = ws.JoinRoomRequest(roomId: roomId);
 
-      // 构建WebSocket消息
-      final wsMsg = WebSocketMessage(
+      // 构建WebSocket消息（使用ws别名）
+      final wsMsg = ws.WebSocketMessage(
         type: 'JOIN_ROOM',
         payload: joinReq.toJson(),
       );
@@ -200,11 +205,11 @@ class ChatService {
   // 发送离开房间请求
   void _sendLeaveRoomRequest(int roomId) {
     try {
-      // 构建离开房间请求
-      final leaveReq = LeaveRoomRequest(roomId: roomId);
+      // 构建离开房间请求（使用ws别名）
+      final leaveReq = ws.LeaveRoomRequest(roomId: roomId);
 
-      // 构建WebSocket消息
-      final wsMsg = WebSocketMessage(
+      // 构建WebSocket消息（使用ws别名）
+      final wsMsg = ws.WebSocketMessage(
         type: 'LEAVE_ROOM',
         payload: leaveReq.toJson(),
       );
@@ -224,57 +229,128 @@ class ChatService {
       if (message is String) {
         // 解析JSON消息
         final jsonData = json.decode(message);
-        final chatResponse = ChatResponse.fromJson(jsonData);
-        AppLogger.debug('ChatService: 收到消息: $chatResponse');
+        final chatResponse = ws.ChatResponse.fromJson(jsonData);
+        AppLogger.debug('ChatService: 收到JSON消息: $chatResponse');
 
         if (chatResponse.success) {
-          // 处理成功响应
-          if (chatResponse.payload is ChatMessage) {
-            // 处理聊天消息
-            final chatMsg = chatResponse.payload as ChatMessage;
-            final chatMessageModel = ChatMessageModel(
-              id: chatMsg.id,
-              roomId: chatMsg.roomId,
-              senderId: chatMsg.senderId,
-              senderName: chatMsg.senderName,
-              content: chatMsg.content,
-              type: chatMsg.messageType.toString(),
-              createdAt: DateTime.parse(chatMsg.timestamp),
-              updatedAt: DateTime.parse(chatMsg.timestamp), // 实时消息的创建时间和更新时间相同
-              senderAvatar: chatMsg.senderAvatar,
-            );
-
-            // 添加到消息列表
-            _messages.add(chatMessageModel);
-
-            // 发送更新后的消息列表
-            _messagesController.add(List.from(_messages));
-
-            AppLogger.info(
-              'ChatService: 处理聊天消息成功: ${chatMessageModel.content}',
-            );
-          } else if (chatResponse.payload is JoinRoomResponse) {
-            // 处理加入房间响应
-            final joinResponse = chatResponse.payload as JoinRoomResponse;
-            AppLogger.info(
-              'ChatService: 加入房间成功: ${joinResponse.roomId}, 消息: ${joinResponse.message}',
-            );
-          } else if (chatResponse.payload is LeaveRoomResponse) {
-            // 处理离开房间响应
-            final leaveResponse = chatResponse.payload as LeaveRoomResponse;
-            AppLogger.info(
-              'ChatService: 离开房间成功: ${leaveResponse.roomId}, 消息: ${leaveResponse.message}',
-            );
-          }
+          _handleChatWSChatResponse(chatResponse);
         } else {
           // 处理错误响应
           AppLogger.error('ChatService: 收到错误消息: ${chatResponse.errorMessage}');
         }
+      } else if (message is Uint8List) {
+        // 处理protobuf二进制消息
+        AppLogger.debug('ChatService: 收到protobuf二进制消息');
+        try {
+          // 使用生成的protobuf类解析消息
+          final chatResponse = pb.ChatResponse.fromBuffer(message);
+          AppLogger.debug('ChatService: 解析protobuf消息成功: $chatResponse');
+          
+          if (chatResponse.success) {
+            _handleProtobufChatResponse(chatResponse);
+          } else {
+            // 处理错误响应
+            AppLogger.error('ChatService: 收到错误消息: ${chatResponse.errorMessage}');
+          }
+        } catch (e) {
+          AppLogger.error('ChatService: 解析protobuf消息失败', error: e);
+        }
       } else {
-        AppLogger.error('ChatService: 收到非字符串消息，无法处理: $message');
+        AppLogger.error('ChatService: 收到未知类型消息，无法处理: ${message.runtimeType} $message');
       }
     } catch (e) {
       AppLogger.error('ChatService: 解析消息失败', error: e);
+    }
+  }
+  
+  // 处理WebSocket JSON聊天响应
+  void _handleChatWSChatResponse(ws.ChatResponse chatResponse) {
+    if (chatResponse.payload is ws.ChatMessage) {
+      // 处理聊天消息
+      final chatMsg = chatResponse.payload as ws.ChatMessage;
+      final chatMessageModel = ChatMessageModel(
+        id: chatMsg.id,
+        roomId: chatMsg.roomId,
+        senderId: chatMsg.senderId,
+        senderName: chatMsg.senderName,
+        content: chatMsg.content,
+        type: chatMsg.messageType.toString(),
+        createdAt: DateTime.parse(chatMsg.timestamp),
+        updatedAt: DateTime.parse(chatMsg.timestamp), // 实时消息的创建时间和更新时间相同
+        senderAvatar: chatMsg.senderAvatar,
+      );
+
+      // 添加到消息列表
+      _messages.add(chatMessageModel);
+      // 发送更新后的消息列表
+      _messagesController.add(List.from(_messages));
+
+      AppLogger.info(
+        'ChatService: 处理JSON聊天消息成功: ${chatMessageModel.content}',
+      );
+    } else if (chatResponse.payload is ws.JoinRoomResponse) {
+      // 处理加入房间响应
+      final joinResponse = chatResponse.payload as ws.JoinRoomResponse;
+      AppLogger.info(
+        'ChatService: 加入房间成功: ${joinResponse.roomId}, 消息: ${joinResponse.message}',
+      );
+    } else if (chatResponse.payload is ws.LeaveRoomResponse) {
+      // 处理离开房间响应
+      final leaveResponse = chatResponse.payload as ws.LeaveRoomResponse;
+      AppLogger.info(
+        'ChatService: 离开房间成功: ${leaveResponse.roomId}, 消息: ${leaveResponse.message}',
+      );
+    }
+  }
+  
+
+
+  // 处理protobuf聊天响应
+  void _handleProtobufChatResponse(pb.ChatResponse chatResponse) {
+    // 检查payload类型
+    switch (chatResponse.whichPayload()) {
+      case pb.ChatResponse_Payload.message:
+        // 处理聊天消息
+        final chatMsg = chatResponse.message;
+        final chatMessageModel = ChatMessageModel(
+          id: chatMsg.id.toInt(),
+          roomId: chatMsg.roomId.toInt(),
+          senderId: chatMsg.senderId.toInt(),
+          senderName: chatMsg.senderName,
+          content: chatMsg.content,
+          type: chatMsg.messageType.name,
+          createdAt: DateTime.parse(chatMsg.timestamp),
+          updatedAt: DateTime.parse(chatMsg.timestamp), // 实时消息的创建时间和更新时间相同
+          senderAvatar: chatMsg.senderAvatar,
+        );
+
+        // 添加到消息列表
+        _messages.add(chatMessageModel);
+        // 发送更新后的消息列表
+        _messagesController.add(List.from(_messages));
+
+        AppLogger.info(
+          'ChatService: 处理protobuf聊天消息成功: ${chatMessageModel.content}',
+        );
+        break;
+      case pb.ChatResponse_Payload.joinResponse:
+        // 处理加入房间响应
+        final joinResponse = chatResponse.joinResponse;
+        AppLogger.info(
+          'ChatService: 加入房间成功: ${joinResponse.roomId}, 消息: ${joinResponse.message}',
+        );
+        break;
+      case pb.ChatResponse_Payload.leaveResponse:
+        // 处理离开房间响应
+        final leaveResponse = chatResponse.leaveResponse;
+        AppLogger.info(
+          'ChatService: 离开房间成功: ${leaveResponse.roomId}, 消息: ${leaveResponse.message}',
+        );
+        break;
+      case pb.ChatResponse_Payload.notSet:
+        // 没有payload
+        AppLogger.warning('ChatService: 收到没有payload的protobuf消息');
+        break;
     }
   }
 

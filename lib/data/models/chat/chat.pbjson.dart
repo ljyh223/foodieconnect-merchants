@@ -1,15 +1,13 @@
-// This is a generated file - do not edit.
 //
-// Generated from chat.proto.
+//  Generated code. Do not modify.
+//  source: chat.proto
+//
+// @dart = 2.12
 
-// @dart = 3.3
-
-// ignore_for_file: annotate_overrides, camel_case_types, comment_references
-// ignore_for_file: constant_identifier_names
-// ignore_for_file: curly_braces_in_flow_control_structures
-// ignore_for_file: deprecated_member_use_from_same_package, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_relative_imports
-// ignore_for_file: unused_import
+// ignore_for_file: annotate_overrides, camel_case_types
+// ignore_for_file: constant_identifier_names, library_prefixes
+// ignore_for_file: non_constant_identifier_names, prefer_final_fields
+// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
 
 import 'dart:convert' as $convert;
 import 'dart:core' as $core;
@@ -37,14 +35,7 @@ const ChatMessage$json = {
     {'1': 'room_id', '3': 2, '4': 1, '5': 3, '10': 'roomId'},
     {'1': 'sender_id', '3': 3, '4': 1, '5': 3, '10': 'senderId'},
     {'1': 'content', '3': 4, '4': 1, '5': 9, '10': 'content'},
-    {
-      '1': 'message_type',
-      '3': 5,
-      '4': 1,
-      '5': 14,
-      '6': '.com.ljyh.tabletalk.protobuf.MessageType',
-      '10': 'messageType'
-    },
+    {'1': 'message_type', '3': 5, '4': 1, '5': 14, '6': '.com.ljyh.tabletalk.protobuf.MessageType', '10': 'messageType'},
     {'1': 'sender_name', '3': 6, '4': 1, '5': 9, '10': 'senderName'},
     {'1': 'sender_avatar', '3': 7, '4': 1, '5': 9, '10': 'senderAvatar'},
     {'1': 'timestamp', '3': 8, '4': 1, '5': 9, '10': 'timestamp'},
@@ -83,8 +74,8 @@ const JoinRoomRequest$json = {
 };
 
 /// Descriptor for `JoinRoomRequest`. Decode as a `google.protobuf.DescriptorProto`.
-final $typed_data.Uint8List joinRoomRequestDescriptor = $convert
-    .base64Decode('Cg9Kb2luUm9vbVJlcXVlc3QSFwoHcm9vbV9pZBgBIAEoA1IGcm9vbUlk');
+final $typed_data.Uint8List joinRoomRequestDescriptor = $convert.base64Decode(
+    'Cg9Kb2luUm9vbVJlcXVlc3QSFwoHcm9vbV9pZBgBIAEoA1IGcm9vbUlk');
 
 @$core.Deprecated('Use leaveRoomRequestDescriptor instead')
 const LeaveRoomRequest$json = {
@@ -104,33 +95,9 @@ const ChatResponse$json = {
   '2': [
     {'1': 'success', '3': 1, '4': 1, '5': 8, '10': 'success'},
     {'1': 'error_message', '3': 2, '4': 1, '5': 9, '10': 'errorMessage'},
-    {
-      '1': 'message',
-      '3': 3,
-      '4': 1,
-      '5': 11,
-      '6': '.com.ljyh.tabletalk.protobuf.ChatMessage',
-      '9': 0,
-      '10': 'message'
-    },
-    {
-      '1': 'join_response',
-      '3': 4,
-      '4': 1,
-      '5': 11,
-      '6': '.com.ljyh.tabletalk.protobuf.JoinRoomResponse',
-      '9': 0,
-      '10': 'joinResponse'
-    },
-    {
-      '1': 'leave_response',
-      '3': 5,
-      '4': 1,
-      '5': 11,
-      '6': '.com.ljyh.tabletalk.protobuf.LeaveRoomResponse',
-      '9': 0,
-      '10': 'leaveResponse'
-    },
+    {'1': 'message', '3': 3, '4': 1, '5': 11, '6': '.com.ljyh.tabletalk.protobuf.ChatMessage', '9': 0, '10': 'message'},
+    {'1': 'join_response', '3': 4, '4': 1, '5': 11, '6': '.com.ljyh.tabletalk.protobuf.JoinRoomResponse', '9': 0, '10': 'joinResponse'},
+    {'1': 'leave_response', '3': 5, '4': 1, '5': 11, '6': '.com.ljyh.tabletalk.protobuf.LeaveRoomResponse', '9': 0, '10': 'leaveResponse'},
   ],
   '8': [
     {'1': 'payload'},
@@ -187,3 +154,4 @@ const WebSocketMessage$json = {
 final $typed_data.Uint8List webSocketMessageDescriptor = $convert.base64Decode(
     'ChBXZWJTb2NrZXRNZXNzYWdlEhIKBHR5cGUYASABKAlSBHR5cGUSGAoHcGF5bG9hZBgCIAEoDF'
     'IHcGF5bG9hZA==');
+

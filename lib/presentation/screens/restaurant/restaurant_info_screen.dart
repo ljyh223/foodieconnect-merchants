@@ -15,6 +15,12 @@ class RestaurantInfoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 页面加载时获取聊天室验证码
+    Provider.of<RestaurantProvider>(
+      context,
+      listen: false,
+    ).loadChatRoomVerificationCode();
+
     return Consumer<RestaurantProvider>(
       builder: (context, provider, child) {
         final t = Translations.of(context);
@@ -214,27 +220,20 @@ class RestaurantInfoScreen extends StatelessWidget {
                   theme,
                 ),
               ),
-              const SizedBox(width: AppConstants.defaultPadding),
-              ElevatedButton(
+              const SizedBox(width: AppConstants.defaultPadding / 2),
+              IconButton(
                 onPressed: () {
-                  // 修改验证码
-                  _showUpdateVerificationCodeDialog(
-                    context,
-                    provider,
-                    t,
-                    theme,
-                  );
+                  // 刷新验证码
+                  provider.loadChatRoomVerificationCode();
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
-                  elevation: 0,
+                icon: Icon(Icons.refresh, color: theme.colorScheme.primary),
+                tooltip: '刷新验证码',
+                style: IconButton.styleFrom(
+                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  minimumSize: const Size(80, 40),
                 ),
-                child: Text(t.restaurant.modify),
               ),
             ],
           ),
@@ -505,100 +504,6 @@ class RestaurantInfoScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  /// 显示修改聊天室验证码对话框
-  void _showUpdateVerificationCodeDialog(
-    BuildContext context,
-    RestaurantProvider provider,
-    Translations t,
-    ThemeData theme,
-  ) {
-    final TextEditingController _controller = TextEditingController(
-      text: provider.chatRoomVerificationCode,
-    );
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: theme.colorScheme.surface,
-        surfaceTintColor: theme.colorScheme.surface,
-        title: Text(t.restaurant.editVerificationCode),
-        content: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  labelText: t.restaurant.newCode,
-                  hintText: t.restaurant.enterNewCode,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                  ),
-                ),
-                style: TextStyle(color: theme.colorScheme.onSurface),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return t.restaurant.enterCode;
-                  }
-                  if (value.length < 4) {
-                    return t.restaurant.codeMinLength.replaceAll('{min}', '4');
-                  }
-                  return null;
-                },
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: TextButton.styleFrom(
-              foregroundColor: theme.colorScheme.onSurface,
-            ),
-            child: Text(t.restaurant.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState?.validate() == true) {
-                final newCode = _controller.text.trim();
-                provider.updateChatRoomVerificationCode(newCode).then((
-                  success,
-                ) {
-                  if (success) {
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(t.restaurant.codeUpdateSuccess),
-                        backgroundColor: AppTheme.successColor,
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          provider.errorMessage ??
-                              t.restaurant.codeUpdateFailed,
-                        ),
-                        backgroundColor: AppTheme.errorColor,
-                      ),
-                    );
-                  }
-                });
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.primary,
-              foregroundColor: theme.colorScheme.onPrimary,
-            ),
-            child: Text(t.restaurant.save),
-          ),
-        ],
       ),
     );
   }

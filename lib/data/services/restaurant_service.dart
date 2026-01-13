@@ -257,43 +257,6 @@ class RestaurantService {
     }
   }
 
-  /// 更新聊天室验证码
-  Future<ApiResponse<String>> updateChatRoomVerificationCode(
-    String verificationCode,
-  ) async {
-    try {
-      AppLogger.info('RestaurantService: 更新聊天室验证码 - $verificationCode');
-
-      final apiResponse = await _restaurantRepository
-          .updateChatRoomVerificationCode(verificationCode);
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('RestaurantService: 更新聊天室验证码成功');
-      } else {
-        AppLogger.warning(
-          'RestaurantService: 更新聊天室验证码失败 - ${apiResponse.errorMessage}',
-        );
-      }
-
-      return apiResponse;
-    } on DioException catch (e) {
-      AppLogger.error('RestaurantService: 更新聊天室验证码网络错误', error: e);
-
-      if (e.response?.data is Map<String, dynamic>) {
-        final errorData = e.response!.data as Map<String, dynamic>;
-        return ApiResponse.error(
-          _extractErrorMessage(errorData),
-          code: e.response?.statusCode,
-        );
-      }
-
-      return ApiResponse.error('更新聊天室验证码失败，请检查网络连接');
-    } catch (e) {
-      AppLogger.error('RestaurantService: 更新聊天室验证码未知错误', error: e);
-      return ApiResponse.error('更新聊天室验证码失败，请稍后重试');
-    }
-  }
-
   /// 从错误响应中提取错误信息
   String _extractErrorMessage(Map<String, dynamic> errorData) {
     if (errorData.containsKey('error') && errorData['error'] is Map) {

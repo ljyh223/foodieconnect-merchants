@@ -19,6 +19,15 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
 
+  // 新消息计数
+  int _unreadMessageCount = 0;
+
+  // 是否在底部
+  bool _isAtBottom = true;
+
+  // 上一次的消息数量
+  int _previousMessageCount = 0;
+
   @override
   void initState() {
     super.initState();
@@ -32,8 +41,11 @@ class _ChatScreenState extends State<ChatScreen> {
       chatProvider.loadChatRoom();
     });
 
-    // 监听消息变化，自动滚动到底部
-    _setupMessageScroll();
+    // 设置滚动监听
+    _setupScrollListener();
+
+    // 初始化时设置为底部
+    _isAtBottom = true;
   }
 
   @override
@@ -42,14 +54,55 @@ class _ChatScreenState extends State<ChatScreen> {
     super.dispose();
   }
 
-  // 设置消息自动滚动
-  void _setupMessageScroll() {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // 监听消息变化，当不在底部时增加未读消息计数
+    final chatProvider = Provider.of<ChatProvider>(context);
+    final currentMessageCount = chatProvider.messages.length;
+
+    if (currentMessageCount > _previousMessageCount && !_isAtBottom) {
+      setState(() {
+        _unreadMessageCount += currentMessageCount - _previousMessageCount;
+      });
+    }
+
+    _previousMessageCount = currentMessageCount;
+  }
+
+  // 设置滚动监听
+  void _setupScrollListener() {
     _scrollController.addListener(() {
-      // 自动滚动到底部
-      if (_scrollController.position.atEdge) {
-        if (_scrollController.position.pixels != 0) {
-          // 到达底部，保持滚动位置
+      // 检查是否在底部
+      final isAtBottom =
+          _scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 200; // 允许200px的误差
+
+      if (_isAtBottom != isAtBottom) {
+        setState(() {
+          _isAtBottom = isAtBottom;
+        });
+
+        // 如果滚动到底部，重置未读消息计数
+        if (isAtBottom) {
+          setState(() {
+            _unreadMessageCount = 0;
+          });
         }
+      }
+    });
+  }
+
+  // 滚动到底部
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       }
     });
   }
@@ -60,10 +113,18 @@ class _ChatScreenState extends State<ChatScreen> {
     final chatProvider = Provider.of<ChatProvider>(context);
     final theme = Theme.of(context);
 
+    // 监听消息变化，当不在底部时增加未读消息计数
+    // 使用DidChangeDependencies来避免在build中直接监听
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: _buildAppBar(context, t, chatProvider),
-      body: _buildBody(context, t, chatProvider),
+      body: Stack(
+        children: [
+          _buildBody(context, t, chatProvider),
+          // 新消息提示按钮
+          _buildNewMessageButton(),
+        ],
+      ),
     );
   }
 
@@ -288,6 +349,69 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // 构建新消息提示按钮
+  Widget _buildNewMessageButton() {
+    return Positioned(
+      bottom: AppConstants.defaultPadding * 2,
+      right: AppConstants.defaultPadding * 2,
+      child: AnimatedOpacity(
+        opacity: _unreadMessageCount > 0 ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 300),
+        child: ScaleTransition(
+          scale: Tween<double>(begin: 0.8, end: 1.0).animate(
+            CurvedAnimation(
+              parent: AlwaysStoppedAnimation(1.0),
+              curve: Curves.easeOut,
+            ),
+          ),
+          child: GestureDetector(
+            onTap: () {
+              // 点击按钮，滚动到底部
+              _scrollToBottom();
+              // 重置未读消息计数
+              setState(() {
+                _unreadMessageCount = 0;
+              });
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppTheme.primaryColor,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.notifications_active,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '$_unreadMessageCount条新消息',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
