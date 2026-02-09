@@ -129,6 +129,105 @@ class TranslationsAuthEn {
 
 	/// en: 'Please contact admin to reset password'
 	String get resetPasswordContactAdmin => 'Please contact admin to reset password';
+
+	/// en: 'Register'
+	String get register => 'Register';
+
+	/// en: 'Registration successful, please login'
+	String get registerSuccess => 'Registration successful, please login';
+
+	/// en: 'Registration failed'
+	String get registerFailed => 'Registration failed';
+
+	/// en: 'Email'
+	String get email => 'Email';
+
+	/// en: 'Name'
+	String get name => 'Name';
+
+	/// en: 'Phone (optional)'
+	String get phone => 'Phone (optional)';
+
+	/// en: 'Restaurant ID'
+	String get restaurantId => 'Restaurant ID';
+
+	/// en: 'Role'
+	String get role => 'Role';
+
+	/// en: 'Admin'
+	String get roleAdmin => 'Admin';
+
+	/// en: 'Manager'
+	String get roleManager => 'Manager';
+
+	/// en: 'Staff'
+	String get roleStaff => 'Staff';
+
+	/// en: 'Please enter email'
+	String get enterEmail => 'Please enter email';
+
+	/// en: 'Please enter name'
+	String get enterName => 'Please enter name';
+
+	/// en: 'Please enter restaurant ID'
+	String get enterRestaurantId => 'Please enter restaurant ID';
+
+	/// en: 'Please confirm password'
+	String get enterConfirmPassword => 'Please confirm password';
+
+	/// en: 'Password must contain both letters and numbers'
+	String get passwordContentLetterNumber => 'Password must contain both letters and numbers';
+
+	/// en: 'Don't have an account?'
+	String get noAccount => 'Don\'t have an account?';
+
+	/// en: 'Register now'
+	String get registerNow => 'Register now';
+
+	/// en: 'Already have an account?'
+	String get hasAccount => 'Already have an account?';
+
+	/// en: 'Go to login'
+	String get goToLogin => 'Go to login';
+
+	/// en: 'Are you sure you want to logout?'
+	String get logoutConfirm => 'Are you sure you want to logout?';
+
+	/// en: 'Cancel'
+	String get cancel => 'Cancel';
+
+	/// en: 'Confirm'
+	String get confirm => 'Confirm';
+
+	/// en: 'Restaurant Name'
+	String get restaurantName => 'Restaurant Name';
+
+	/// en: 'Restaurant Type'
+	String get restaurantType => 'Restaurant Type';
+
+	/// en: 'Restaurant Address'
+	String get restaurantAddress => 'Restaurant Address';
+
+	/// en: 'Restaurant Image (optional)'
+	String get restaurantImage => 'Restaurant Image (optional)';
+
+	/// en: 'Please enter restaurant name'
+	String get enterRestaurantName => 'Please enter restaurant name';
+
+	/// en: 'Please enter restaurant type'
+	String get enterRestaurantType => 'Please enter restaurant type';
+
+	/// en: 'Please enter restaurant address'
+	String get enterRestaurantAddress => 'Please enter restaurant address';
+
+	/// en: 'Account Information'
+	String get accountInfo => 'Account Information';
+
+	/// en: 'Personal Information'
+	String get personalInfo => 'Personal Information';
+
+	/// en: 'Restaurant Information'
+	String get restaurantInfo => 'Restaurant Information';
 }
 
 // Path: common
@@ -1002,6 +1101,27 @@ class TranslationsValidationEn {
 
 	/// en: 'Please enter a positive number'
 	String get positive => 'Please enter a positive number';
+
+	/// en: 'Username must be between 3-50 characters'
+	String get usernameLength => 'Username must be between 3-50 characters';
+
+	/// en: 'Username can only contain letters, numbers, and underscores'
+	String get usernameFormat => 'Username can only contain letters, numbers, and underscores';
+
+	/// en: 'Password must be between 6-20 characters'
+	String get passwordLength => 'Password must be between 6-20 characters';
+
+	/// en: 'Password must contain both letters and numbers'
+	String get passwordFormat => 'Password must contain both letters and numbers';
+
+	/// en: 'Name must be between 2-100 characters'
+	String get nameLength => 'Name must be between 2-100 characters';
+
+	/// en: 'Please enter a valid phone number'
+	String get phoneFormat => 'Please enter a valid phone number';
+
+	/// en: 'Please enter a valid restaurant ID'
+	String get restaurantIdFormat => 'Please enter a valid restaurant ID';
 }
 
 /// The flat map containing all translations for locale <en>.
@@ -1036,6 +1156,39 @@ extension on Translations {
 			'auth.passwordMinLength' => 'Password must be at least {min} characters',
 			'auth.enterUsernameAndPassword' => 'Please enter username and password',
 			'auth.resetPasswordContactAdmin' => 'Please contact admin to reset password',
+			'auth.register' => 'Register',
+			'auth.registerSuccess' => 'Registration successful, please login',
+			'auth.registerFailed' => 'Registration failed',
+			'auth.email' => 'Email',
+			'auth.name' => 'Name',
+			'auth.phone' => 'Phone (optional)',
+			'auth.restaurantId' => 'Restaurant ID',
+			'auth.role' => 'Role',
+			'auth.roleAdmin' => 'Admin',
+			'auth.roleManager' => 'Manager',
+			'auth.roleStaff' => 'Staff',
+			'auth.enterEmail' => 'Please enter email',
+			'auth.enterName' => 'Please enter name',
+			'auth.enterRestaurantId' => 'Please enter restaurant ID',
+			'auth.enterConfirmPassword' => 'Please confirm password',
+			'auth.passwordContentLetterNumber' => 'Password must contain both letters and numbers',
+			'auth.noAccount' => 'Don\'t have an account?',
+			'auth.registerNow' => 'Register now',
+			'auth.hasAccount' => 'Already have an account?',
+			'auth.goToLogin' => 'Go to login',
+			'auth.logoutConfirm' => 'Are you sure you want to logout?',
+			'auth.cancel' => 'Cancel',
+			'auth.confirm' => 'Confirm',
+			'auth.restaurantName' => 'Restaurant Name',
+			'auth.restaurantType' => 'Restaurant Type',
+			'auth.restaurantAddress' => 'Restaurant Address',
+			'auth.restaurantImage' => 'Restaurant Image (optional)',
+			'auth.enterRestaurantName' => 'Please enter restaurant name',
+			'auth.enterRestaurantType' => 'Please enter restaurant type',
+			'auth.enterRestaurantAddress' => 'Please enter restaurant address',
+			'auth.accountInfo' => 'Account Information',
+			'auth.personalInfo' => 'Personal Information',
+			'auth.restaurantInfo' => 'Restaurant Information',
 			'common.save' => 'Save',
 			'common.cancel' => 'Cancel',
 			'common.confirm' => 'Confirm',
@@ -1306,6 +1459,13 @@ extension on Translations {
 			'validation.maxLength' => 'Maximum {max} characters allowed',
 			'validation.numeric' => 'Please enter numbers only',
 			'validation.positive' => 'Please enter a positive number',
+			'validation.usernameLength' => 'Username must be between 3-50 characters',
+			'validation.usernameFormat' => 'Username can only contain letters, numbers, and underscores',
+			'validation.passwordLength' => 'Password must be between 6-20 characters',
+			'validation.passwordFormat' => 'Password must contain both letters and numbers',
+			'validation.nameLength' => 'Name must be between 2-100 characters',
+			'validation.phoneFormat' => 'Please enter a valid phone number',
+			'validation.restaurantIdFormat' => 'Please enter a valid restaurant ID',
 			_ => null,
 		};
 	}

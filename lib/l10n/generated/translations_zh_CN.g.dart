@@ -78,6 +78,39 @@ class _TranslationsAuthZhCn implements TranslationsAuthEn {
 	@override String get passwordMinLength => '密码至少{min}个字符';
 	@override String get enterUsernameAndPassword => '请输入用户名和密码';
 	@override String get resetPasswordContactAdmin => '请联系管理员重置密码';
+	@override String get register => '注册';
+	@override String get registerSuccess => '注册成功，请登录';
+	@override String get registerFailed => '注册失败';
+	@override String get email => '邮箱';
+	@override String get name => '姓名';
+	@override String get phone => '手机号（可选）';
+	@override String get restaurantId => '餐厅ID';
+	@override String get role => '角色';
+	@override String get roleAdmin => '管理员';
+	@override String get roleManager => '经理';
+	@override String get roleStaff => '员工';
+	@override String get enterEmail => '请输入邮箱';
+	@override String get enterName => '请输入姓名';
+	@override String get enterRestaurantId => '请输入餐厅ID';
+	@override String get enterConfirmPassword => '请确认密码';
+	@override String get passwordContentLetterNumber => '密码必须包含字母和数字';
+	@override String get noAccount => '还没有账户？';
+	@override String get registerNow => '立即注册';
+	@override String get hasAccount => '已有账户？';
+	@override String get goToLogin => '去登录';
+	@override String get logoutConfirm => '确定要退出登录吗？';
+	@override String get cancel => '取消';
+	@override String get confirm => '确定';
+	@override String get restaurantName => '餐厅名称';
+	@override String get restaurantType => '餐厅类型';
+	@override String get restaurantAddress => '餐厅地址';
+	@override String get restaurantImage => '餐厅图片（可选）';
+	@override String get enterRestaurantName => '请输入餐厅名称';
+	@override String get enterRestaurantType => '请输入餐厅类型';
+	@override String get enterRestaurantAddress => '请输入餐厅地址';
+	@override String get accountInfo => '账户信息';
+	@override String get personalInfo => '个人信息';
+	@override String get restaurantInfo => '餐厅信息';
 }
 
 // Path: common
@@ -411,6 +444,13 @@ class _TranslationsValidationZhCn implements TranslationsValidationEn {
 	@override String get maxLength => '最多只能输入 {max} 个字符';
 	@override String get numeric => '请输入数字';
 	@override String get positive => '请输入正数';
+	@override String get usernameLength => '用户名长度必须在3-50个字符之间';
+	@override String get usernameFormat => '用户名只能包含字母、数字和下划线';
+	@override String get passwordLength => '密码长度必须在6-20个字符之间';
+	@override String get passwordFormat => '密码必须同时包含字母和数字';
+	@override String get nameLength => '姓名长度必须在2-100个字符之间';
+	@override String get phoneFormat => '请输入有效的手机号码';
+	@override String get restaurantIdFormat => '请输入有效的餐厅ID';
 }
 
 /// The flat map containing all translations for locale <zh-CN>.
@@ -445,6 +485,39 @@ extension on TranslationsZhCn {
 			'auth.passwordMinLength' => '密码至少{min}个字符',
 			'auth.enterUsernameAndPassword' => '请输入用户名和密码',
 			'auth.resetPasswordContactAdmin' => '请联系管理员重置密码',
+			'auth.register' => '注册',
+			'auth.registerSuccess' => '注册成功，请登录',
+			'auth.registerFailed' => '注册失败',
+			'auth.email' => '邮箱',
+			'auth.name' => '姓名',
+			'auth.phone' => '手机号（可选）',
+			'auth.restaurantId' => '餐厅ID',
+			'auth.role' => '角色',
+			'auth.roleAdmin' => '管理员',
+			'auth.roleManager' => '经理',
+			'auth.roleStaff' => '员工',
+			'auth.enterEmail' => '请输入邮箱',
+			'auth.enterName' => '请输入姓名',
+			'auth.enterRestaurantId' => '请输入餐厅ID',
+			'auth.enterConfirmPassword' => '请确认密码',
+			'auth.passwordContentLetterNumber' => '密码必须包含字母和数字',
+			'auth.noAccount' => '还没有账户？',
+			'auth.registerNow' => '立即注册',
+			'auth.hasAccount' => '已有账户？',
+			'auth.goToLogin' => '去登录',
+			'auth.logoutConfirm' => '确定要退出登录吗？',
+			'auth.cancel' => '取消',
+			'auth.confirm' => '确定',
+			'auth.restaurantName' => '餐厅名称',
+			'auth.restaurantType' => '餐厅类型',
+			'auth.restaurantAddress' => '餐厅地址',
+			'auth.restaurantImage' => '餐厅图片（可选）',
+			'auth.enterRestaurantName' => '请输入餐厅名称',
+			'auth.enterRestaurantType' => '请输入餐厅类型',
+			'auth.enterRestaurantAddress' => '请输入餐厅地址',
+			'auth.accountInfo' => '账户信息',
+			'auth.personalInfo' => '个人信息',
+			'auth.restaurantInfo' => '餐厅信息',
 			'common.save' => '保存',
 			'common.cancel' => '取消',
 			'common.confirm' => '确认',
@@ -715,6 +788,13 @@ extension on TranslationsZhCn {
 			'validation.maxLength' => '最多只能输入 {max} 个字符',
 			'validation.numeric' => '请输入数字',
 			'validation.positive' => '请输入正数',
+			'validation.usernameLength' => '用户名长度必须在3-50个字符之间',
+			'validation.usernameFormat' => '用户名只能包含字母、数字和下划线',
+			'validation.passwordLength' => '密码长度必须在6-20个字符之间',
+			'validation.passwordFormat' => '密码必须同时包含字母和数字',
+			'validation.nameLength' => '姓名长度必须在2-100个字符之间',
+			'validation.phoneFormat' => '请输入有效的手机号码',
+			'validation.restaurantIdFormat' => '请输入有效的餐厅ID',
 			_ => null,
 		};
 	}

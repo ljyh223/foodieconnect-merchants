@@ -78,6 +78,39 @@ class _TranslationsAuthZhTw implements TranslationsAuthEn {
 	@override String get passwordMinLength => '密碼至少{min}個字符';
 	@override String get enterUsernameAndPassword => '請輸入用戶名和密碼';
 	@override String get resetPasswordContactAdmin => '請聯繫管理員重置密碼';
+	@override String get register => '註冊';
+	@override String get registerSuccess => '註冊成功，請登錄';
+	@override String get registerFailed => '註冊失敗';
+	@override String get email => '郵箱';
+	@override String get name => '姓名';
+	@override String get phone => '手機號（可選）';
+	@override String get restaurantId => '餐廳ID';
+	@override String get role => '角色';
+	@override String get roleAdmin => '管理員';
+	@override String get roleManager => '經理';
+	@override String get roleStaff => '員工';
+	@override String get enterEmail => '請輸入郵箱';
+	@override String get enterName => '請輸入姓名';
+	@override String get enterRestaurantId => '請輸入餐廳ID';
+	@override String get enterConfirmPassword => '請確認密碼';
+	@override String get passwordContentLetterNumber => '密碼必須包含字母和數字';
+	@override String get noAccount => '還沒有賬戶？';
+	@override String get registerNow => '立即註冊';
+	@override String get hasAccount => '已有賬戶？';
+	@override String get goToLogin => '去登錄';
+	@override String get logoutConfirm => '確定要退出登錄嗎？';
+	@override String get cancel => '取消';
+	@override String get confirm => '確定';
+	@override String get restaurantName => '餐廳名稱';
+	@override String get restaurantType => '餐廳類型';
+	@override String get restaurantAddress => '餐廳地址';
+	@override String get restaurantImage => '餐廳圖片（可選）';
+	@override String get enterRestaurantName => '請輸入餐廳名稱';
+	@override String get enterRestaurantType => '請輸入餐廳類型';
+	@override String get enterRestaurantAddress => '請輸入餐廳地址';
+	@override String get accountInfo => '賬戶信息';
+	@override String get personalInfo => '個人信息';
+	@override String get restaurantInfo => '餐廳信息';
 }
 
 // Path: common
@@ -411,6 +444,13 @@ class _TranslationsValidationZhTw implements TranslationsValidationEn {
 	@override String get maxLength => '最多只能輸入 {max} 個字符';
 	@override String get numeric => '請輸入數字';
 	@override String get positive => '請輸入正數';
+	@override String get usernameLength => '用戶名長度必須在3-50個字符之間';
+	@override String get usernameFormat => '用戶名只能包含字母、數字和下劃線';
+	@override String get passwordLength => '密碼長度必須在6-20個字符之間';
+	@override String get passwordFormat => '密碼必須同時包含字母和數字';
+	@override String get nameLength => '姓名長度必須在2-100個字符之間';
+	@override String get phoneFormat => '請輸入有效的手機號碼';
+	@override String get restaurantIdFormat => '請輸入有效的餐廳ID';
 }
 
 /// The flat map containing all translations for locale <zh-TW>.
@@ -445,6 +485,39 @@ extension on TranslationsZhTw {
 			'auth.passwordMinLength' => '密碼至少{min}個字符',
 			'auth.enterUsernameAndPassword' => '請輸入用戶名和密碼',
 			'auth.resetPasswordContactAdmin' => '請聯繫管理員重置密碼',
+			'auth.register' => '註冊',
+			'auth.registerSuccess' => '註冊成功，請登錄',
+			'auth.registerFailed' => '註冊失敗',
+			'auth.email' => '郵箱',
+			'auth.name' => '姓名',
+			'auth.phone' => '手機號（可選）',
+			'auth.restaurantId' => '餐廳ID',
+			'auth.role' => '角色',
+			'auth.roleAdmin' => '管理員',
+			'auth.roleManager' => '經理',
+			'auth.roleStaff' => '員工',
+			'auth.enterEmail' => '請輸入郵箱',
+			'auth.enterName' => '請輸入姓名',
+			'auth.enterRestaurantId' => '請輸入餐廳ID',
+			'auth.enterConfirmPassword' => '請確認密碼',
+			'auth.passwordContentLetterNumber' => '密碼必須包含字母和數字',
+			'auth.noAccount' => '還沒有賬戶？',
+			'auth.registerNow' => '立即註冊',
+			'auth.hasAccount' => '已有賬戶？',
+			'auth.goToLogin' => '去登錄',
+			'auth.logoutConfirm' => '確定要退出登錄嗎？',
+			'auth.cancel' => '取消',
+			'auth.confirm' => '確定',
+			'auth.restaurantName' => '餐廳名稱',
+			'auth.restaurantType' => '餐廳類型',
+			'auth.restaurantAddress' => '餐廳地址',
+			'auth.restaurantImage' => '餐廳圖片（可選）',
+			'auth.enterRestaurantName' => '請輸入餐廳名稱',
+			'auth.enterRestaurantType' => '請輸入餐廳類型',
+			'auth.enterRestaurantAddress' => '請輸入餐廳地址',
+			'auth.accountInfo' => '賬戶信息',
+			'auth.personalInfo' => '個人信息',
+			'auth.restaurantInfo' => '餐廳信息',
 			'common.save' => '保存',
 			'common.cancel' => '取消',
 			'common.confirm' => '確認',
@@ -715,6 +788,13 @@ extension on TranslationsZhTw {
 			'validation.maxLength' => '最多只能輸入 {max} 個字符',
 			'validation.numeric' => '請輸入數字',
 			'validation.positive' => '請輸入正數',
+			'validation.usernameLength' => '用戶名長度必須在3-50個字符之間',
+			'validation.usernameFormat' => '用戶名只能包含字母、數字和下劃線',
+			'validation.passwordLength' => '密碼長度必須在6-20個字符之間',
+			'validation.passwordFormat' => '密碼必須同時包含字母和數字',
+			'validation.nameLength' => '姓名長度必須在2-100個字符之間',
+			'validation.phoneFormat' => '請輸入有效的手機號碼',
+			'validation.restaurantIdFormat' => '請輸入有效的餐廳ID',
 			_ => null,
 		};
 	}
