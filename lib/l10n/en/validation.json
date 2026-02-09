@@ -5,5 +5,12 @@
   "minLength": "Minimum {min} characters required",
   "maxLength": "Maximum {max} characters allowed",
   "numeric": "Please enter numbers only",
-  "positive": "Please enter a positive number"
+  "positive": "Please enter a positive number",
+  "usernameLength": "Username must be between 3-50 characters",
+  "usernameFormat": "Username can only contain letters, numbers, and underscores",
+  "passwordLength": "Password must be between 6-20 characters",
+  "passwordFormat": "Password must contain both letters and numbers",
+  "nameLength": "Name must be between 2-100 characters",
+  "phoneFormat": "Please enter a valid phone number",
+  "restaurantIdFormat": "Please enter a valid restaurant ID"
 }

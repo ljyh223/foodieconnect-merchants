@@ -5,5 +5,12 @@
   "minLength": "最少需要 {min} 个字符",
   "maxLength": "最多只能输入 {max} 个字符",
   "numeric": "请输入数字",
-  "positive": "请输入正数"
+  "positive": "请输入正数",
+  "usernameLength": "用户名长度必须在3-50个字符之间",
+  "usernameFormat": "用户名只能包含字母、数字和下划线",
+  "passwordLength": "密码长度必须在6-20个字符之间",
+  "passwordFormat": "密码必须同时包含字母和数字",
+  "nameLength": "姓名长度必须在2-100个字符之间",
+  "phoneFormat": "请输入有效的手机号码",
+  "restaurantIdFormat": "请输入有效的餐厅ID"
 }

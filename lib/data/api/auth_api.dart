@@ -1,4 +1,5 @@
 import '../models/auth/merchant_login_request.dart';
+import '../models/auth/merchant_register_request.dart';
 import '../services/api_service.dart';
 
 /// 认证API服务
@@ -16,11 +17,11 @@ class AuthApi {
 
   /// 商家注册
   static Future<Map<String, dynamic>> register(
-    Map<String, dynamic> registerData,
+    MerchantRegisterRequest request,
   ) async {
     final response = await ApiService().post<Map<String, dynamic>>(
       '/merchant/auth/register',
-      data: registerData,
+      data: request.toJson(),
     );
     return response.data!;
   }

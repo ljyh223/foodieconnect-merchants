@@ -6,6 +6,7 @@ import 'package:foodieconnectmerchant/core/constants/app_constants.dart';
 import 'package:foodieconnectmerchant/core/utils/logger.dart';
 import 'package:foodieconnectmerchant/data/models/auth/merchant_login_request.dart';
 import 'package:foodieconnectmerchant/data/models/auth/merchant_login_response.dart';
+import 'package:foodieconnectmerchant/data/models/auth/merchant_register_request.dart';
 import 'package:foodieconnectmerchant/data/models/auth/user_dto.dart';
 
 import 'package:foodieconnectmerchant/data/services/auth_service.dart';
@@ -112,6 +113,52 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       AppLogger.error('AuthProvider: 登录异常', error: e);
       _setError('登录失败，请稍后重试');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  /// 商家注册
+  Future<bool> register({
+    required String username,
+    required String email,
+    required String password,
+    required String name,
+    String? phone,
+    required String restaurantName,
+    required String restaurantType,
+    required String restaurantAddress,
+    String? restaurantImage,
+  }) async {
+    try {
+      _setLoading(true);
+      _clearError();
+
+      final request = MerchantRegisterRequest(
+        username: username,
+        email: email,
+        password: password,
+        name: name,
+        phone: phone,
+        restaurantName: restaurantName,
+        restaurantType: restaurantType,
+        restaurantAddress: restaurantAddress,
+        restaurantImage: restaurantImage,
+      );
+
+      final response = await _authService.register(request);
+
+      if (response.isSuccess) {
+        AppLogger.info('AuthProvider: 注册成功');
+        return true;
+      } else {
+        _setError(response.errorMessage);
+        return false;
+      }
+    } catch (e) {
+      AppLogger.error('AuthProvider: 注册异常', error: e);
+      _setError('注册失败，请稍后重试');
       return false;
     } finally {
       _setLoading(false);

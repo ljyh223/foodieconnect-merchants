@@ -4,6 +4,8 @@ import 'package:foodieconnectmerchant/core/constants/app_constants.dart';
 import 'package:foodieconnectmerchant/core/utils/logger.dart';
 import 'package:foodieconnectmerchant/data/models/auth/merchant_login_request.dart';
 import 'package:foodieconnectmerchant/data/models/auth/merchant_login_response.dart';
+import 'package:foodieconnectmerchant/data/models/auth/merchant_register_request.dart';
+import 'package:foodieconnectmerchant/data/models/auth/merchant_register_response.dart';
 import 'package:foodieconnectmerchant/data/models/auth/user_dto.dart';
 import 'package:foodieconnectmerchant/data/models/common/api_response.dart';
 
@@ -45,17 +47,17 @@ class AuthService {
   }
 
   /// 商家注册
-  Future<ApiResponse<UserDTO>> register(
-    Map<String, dynamic> registerData,
+  Future<ApiResponse<MerchantRegisterResponse>> register(
+    MerchantRegisterRequest registerData,
   ) async {
     try {
       AppLogger.info('AuthService: 开始商家注册');
 
       final responseData = await _authRepository.register(registerData);
 
-      final apiResponse = ApiResponse<UserDTO>.fromJson(
+      final apiResponse = ApiResponse<MerchantRegisterResponse>.fromJson(
         responseData,
-        (json) => UserDTO.fromJson(json as Map<String, dynamic>),
+        (json) => MerchantRegisterResponse.fromJson(json as Map<String, dynamic>),
       );
 
       if (apiResponse.isSuccess) {

@@ -6,6 +6,7 @@ import 'package:foodieconnectmerchant/core/theme/app_theme.dart';
 import 'package:foodieconnectmerchant/core/utils/logger.dart';
 import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
 import 'package:foodieconnectmerchant/presentation/providers/auth_provider.dart';
+import 'package:foodieconnectmerchant/presentation/screens/auth/register_screen.dart';
 import 'package:foodieconnectmerchant/presentation/screens/dashboard/dashboard_screen.dart';
 import 'package:foodieconnectmerchant/presentation/widgets/common/loading_indicator.dart';
 
@@ -169,6 +170,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   // 登录按钮
                   _buildLoginButton(authProvider),
+
+                  const SizedBox(height: 16),
+
+                  // 注册链接
+                  _buildRegisterLink(),
                 ],
               ),
             ),
@@ -330,6 +336,25 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
       ),
+    );
+  }
+
+  /// 构建注册链接
+  Widget _buildRegisterLink() {
+    final t = Translations.of(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(t.auth.noAccount),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const RegisterScreen()),
+            );
+          },
+          child: Text(t.auth.registerNow),
+        ),
+      ],
     );
   }
 }

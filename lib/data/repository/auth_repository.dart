@@ -1,5 +1,6 @@
 import '../api/auth_api.dart';
 import '../models/auth/merchant_login_request.dart';
+import '../models/auth/merchant_register_request.dart';
 import '../models/common/api_error.dart';
 import 'package:dio/dio.dart';
 
@@ -16,7 +17,7 @@ class AuthRepository {
 
   /// 商家注册
   Future<Map<String, dynamic>> register(
-    Map<String, dynamic> registerData,
+    MerchantRegisterRequest registerData,
   ) async {
     try {
       return await AuthApi.register(registerData);

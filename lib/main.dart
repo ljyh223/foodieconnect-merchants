@@ -12,6 +12,7 @@ import 'presentation/providers/menu_provider.dart';
 import 'presentation/providers/staff_provider.dart';
 import 'presentation/providers/chat_provider.dart';
 import 'presentation/screens/auth/login_screen.dart';
+import 'presentation/screens/auth/register_screen.dart';
 import 'presentation/screens/dashboard/dashboard_screen.dart';
 import 'presentation/screens/restaurant/restaurant_edit_screen.dart';
 import 'presentation/screens/settings/settings_screen.dart';
@@ -106,6 +107,8 @@ class FoodieConnectApp extends StatelessWidget {
                 switch (settings.name) {
                   case '/login':
                     return const LoginScreen();
+                  case '/register':
+                    return const RegisterScreen();
                   case '/dashboard':
                     return const DashboardScreen();
                   case '/restaurant/edit':

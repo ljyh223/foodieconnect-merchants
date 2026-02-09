@@ -5,5 +5,12 @@
   "minLength": "最少需要 {min} 個字符",
   "maxLength": "最多只能輸入 {max} 個字符",
   "numeric": "請輸入數字",
-  "positive": "請輸入正數"
+  "positive": "請輸入正數",
+  "usernameLength": "用戶名長度必須在3-50個字符之間",
+  "usernameFormat": "用戶名只能包含字母、數字和下劃線",
+  "passwordLength": "密碼長度必須在6-20個字符之間",
+  "passwordFormat": "密碼必須同時包含字母和數字",
+  "nameLength": "姓名長度必須在2-100個字符之間",
+  "phoneFormat": "請輸入有效的手機號碼",
+  "restaurantIdFormat": "請輸入有效的餐廳ID"
 }
