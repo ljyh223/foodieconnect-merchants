@@ -87,5 +87,10 @@
   "selectFromAlbum": "Select from Album",
   "takePhoto": "Take Photo",
   "selectCategory": "Select Category",
-  "loadingCategories": "Loading categories..."
+  "loadingCategories": "Loading categories...",
+  "viewReviews": "View Reviews",
+  "spiceNone": "No Spice",
+  "spiceMild": "Mild",
+  "spiceMedium": "Medium",
+  "spiceHot": "Hot"
 }

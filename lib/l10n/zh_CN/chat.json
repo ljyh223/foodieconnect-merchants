@@ -1,0 +1,11 @@
+{
+  "connected": "已连接",
+  "disconnected": "未连接",
+  "newMessages": "条新消息",
+  "noMessages": "暂无消息",
+  "noMessagesHint": "顾客发送的消息会显示在这里",
+  "justNow": "刚刚",
+  "minutesAgo": "分钟前",
+  "hoursAgo": "小时前",
+  "unknownUser": "未知用户"
+}

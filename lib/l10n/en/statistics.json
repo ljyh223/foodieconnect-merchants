@@ -1,13 +1,16 @@
 {
   "title": "Statistics",
-  "overview": "Overview",
-  "today": "Today",
-  "weekly": "This Week",
-  "monthly": "This Month",
-  "yearly": "This Year",
-  "revenue": "Revenue",
-  "orders": "Orders",
-  "customers": "Customers",
+  "todaySummary": "Today's Summary",
+  "revenue": "Today's Revenue",
+  "dishAvgRating": "Avg Dish Rating",
+  "staffAvgRating": "Avg Staff Rating",
+  "monthlySummary": "Monthly Revenue",
+  "staffRatings": "Staff Ratings",
+  "highestRated": "Highest Rated",
+  "lowestRated": "Lowest Rated",
   "rating": "Rating",
-  "reviews": "Reviews"
+  "noData": "No Data",
+  "loading": "Loading...",
+  "loadFailed": "Load Failed",
+  "retry": "Retry"
 }

@@ -73,5 +73,9 @@
   "takePhotoFailed": "拍照失败",
   "saving": "保存中...",
   "uploadingImage": "图片上传中...",
-  "uploadImageInProgress": "正在上传图片..."
+  "uploadImageInProgress": "正在上传图片...",
+  "noRating": "暂无评分",
+  "noReviews": "暂无评价",
+  "reviews": "条评价",
+  "refreshCode": "刷新验证码"
 }

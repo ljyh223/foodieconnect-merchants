@@ -152,14 +152,14 @@ class _ChatScreenState extends State<ChatScreen> {
         // 连接状态指示器
         Padding(
           padding: const EdgeInsets.only(right: AppConstants.defaultPadding),
-          child: _buildConnectionStatusIndicator(chatProvider.isConnected),
+          child: _buildConnectionStatusIndicator(chatProvider.isConnected, t),
         ),
       ],
     );
   }
 
   // 构建连接状态指示器
-  Widget _buildConnectionStatusIndicator(bool isConnected) {
+  Widget _buildConnectionStatusIndicator(bool isConnected, Translations t) {
     return Row(
       children: [
         Container(
@@ -172,7 +172,7 @@ class _ChatScreenState extends State<ChatScreen> {
         ),
         const SizedBox(width: 4),
         Text(
-          isConnected ? '已连接' : '未连接',
+          isConnected ? t.chat.connected : t.chat.disconnected,
           style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
       ],
@@ -246,19 +246,55 @@ class _ChatScreenState extends State<ChatScreen> {
     Translations t,
     ChatProvider chatProvider,
   ) {
+    if (chatProvider.messages.isEmpty) {
+      return _buildEmptyMessagesWidget(context, t);
+    }
+
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
       itemCount: chatProvider.messages.length,
       itemBuilder: (context, index) {
         final message = chatProvider.messages[index];
-        return _buildMessageItem(context, message);
+        return _buildMessageItem(context, message, t);
       },
     );
   }
 
+  // 构建空消息提示组件
+  Widget _buildEmptyMessagesWidget(BuildContext context, Translations t) {
+    final theme = Theme.of(context);
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.chat_bubble_outline,
+            size: 80,
+            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
+          ),
+          const SizedBox(height: AppConstants.defaultPadding),
+          Text(
+            t.chat.noMessages,
+            style: theme.textTheme.titleLarge?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            t.chat.noMessagesHint,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   // 构建消息项
-  Widget _buildMessageItem(BuildContext context, ChatMessageModel message) {
+  Widget _buildMessageItem(BuildContext context, ChatMessageModel message, Translations t) {
     // 获取完整的头像URL
     final String? senderAvatar = message.senderAvatar;
     final avatarUrl = (senderAvatar != null && senderAvatar.isNotEmpty)
@@ -308,7 +344,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: Row(
                     children: [
                       Text(
-                        message.senderName ?? '未知用户',
+                        message.senderName ?? t.chat.unknownUser,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -317,7 +353,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        _formatTime(message.createdAt),
+                        _formatTime(message.createdAt, t),
                         style: TextStyle(
                           fontSize: 12,
                           color: theme.textTheme.bodySmall?.color,
@@ -410,7 +446,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '$_unreadMessageCount条新消息',
+                    '$_unreadMessageCount${t.chat.newMessages}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -427,7 +463,7 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   // 格式化时间
-  String _formatTime(DateTime? time) {
+  String _formatTime(DateTime? time, Translations t) {
     if (time == null) {
       return '';
     }
@@ -436,11 +472,11 @@ class _ChatScreenState extends State<ChatScreen> {
     final difference = now.difference(time);
 
     if (difference.inMinutes < 1) {
-      return '刚刚';
+      return t.chat.justNow;
     } else if (difference.inHours < 1) {
-      return '${difference.inMinutes}分钟前';
+      return '${difference.inMinutes}${t.chat.minutesAgo}';
     } else if (difference.inDays < 1) {
-      return '${difference.inHours}小时前';
+      return '${difference.inHours}${t.chat.hoursAgo}';
     } else {
       return '${time.month}/${time.day} ${time.hour}:${time.minute.toString().padLeft(2, '0')}';
     }

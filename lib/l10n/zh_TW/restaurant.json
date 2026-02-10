@@ -72,5 +72,9 @@
   "selectImageFailed": "選擇圖片失敗",
   "takePhotoFailed": "拍照失敗",
   "uploadingImage": "圖片上傳中...",
-  "uploadImageInProgress": "正在上傳圖片..."
+  "uploadImageInProgress": "正在上傳圖片...",
+  "noRating": "暫無評分",
+  "noReviews": "暫無評價",
+  "reviews": "條評價",
+  "refreshCode": "刷新驗證碼"
 }

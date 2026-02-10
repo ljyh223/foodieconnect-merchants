@@ -28,6 +28,31 @@ class ItemCard extends StatelessWidget {
     }
   }
 
+  /// 获取辣度显示文本
+  String _getSpiceLevelDisplay(BuildContext context) {
+    final t = Translations.of(context).menu;
+    if (item.spiceLevel == null) return t.spiceNone;
+    switch (item.spiceLevel!.toUpperCase()) {
+      case 'NONE':
+        return t.spiceNone;
+      case 'MILD':
+        return t.spiceMild;
+      case 'MEDIUM':
+        return t.spiceMedium;
+      case 'HOT':
+        return t.spiceHot;
+      default:
+        return item.spiceLevel!;
+    }
+  }
+
+  /// 获取制作时间显示文本
+  String _getPreparationTimeDisplay(BuildContext context) {
+    final t = Translations.of(context).menu;
+    if (item.preparationTime == null) return '';
+    return '${item.preparationTime}${t.minutes}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -190,6 +215,16 @@ class ItemCard extends StatelessWidget {
                       ),
                     ),
                     PopupMenuItem<String>(
+                      value: 'reviews',
+                      child: Row(
+                        children: [
+                          const Icon(Icons.rate_review, size: 20),
+                          const SizedBox(width: 8),
+                          Text(Translations.of(context).review.viewReviews),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem<String>(
                       value: 'delete',
                       child: Row(
                         children: [
@@ -284,7 +319,7 @@ class ItemCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          item.spiceLevelDisplay,
+                          _getSpiceLevelDisplay(context),
                           style: const TextStyle(
                             fontSize: 10,
                             color: Colors.white,
@@ -304,7 +339,7 @@ class ItemCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          item.preparationTimeDisplay,
+                          _getPreparationTimeDisplay(context),
                           style: const TextStyle(
                             fontSize: 10,
                             color: Colors.white,

@@ -1,0 +1,20 @@
+{
+  "title": "评价",
+  "itemReviews": "菜品评价",
+  "loadingReviews": "加载评价中...",
+  "noReviews": "暂无评价",
+  "noReviewsForItem": "该菜品暂无评价",
+  "allRatings": "全部",
+  "filterByRating": "按评分筛选",
+  "ratingStars": "{rating}星",
+  "reviewImages": "评价图片",
+  "postedOn": "发布于 ",
+  "loadMore": "加载更多",
+  "reviewCount": "{count}条评价",
+  "averageRating": "平均评分",
+  "viewReviews": "查看评价",
+  "filter": "筛选",
+  "clearFilter": "清除筛选",
+  "errorLoadingReviews": "加载评价失败",
+  "retry": "重试"
+}

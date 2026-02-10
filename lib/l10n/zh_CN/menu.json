@@ -87,5 +87,10 @@
   "selectFromAlbum": "从相册选择",
   "takePhoto": "拍照",
   "selectCategory": "选择分类",
-  "loadingCategories": "正在加载分类..."
+  "loadingCategories": "正在加载分类...",
+  "viewReviews": "查看评价",
+  "spiceNone": "不辣",
+  "spiceMild": "微辣",
+  "spiceMedium": "中辣",
+  "spiceHot": "特辣"
 }

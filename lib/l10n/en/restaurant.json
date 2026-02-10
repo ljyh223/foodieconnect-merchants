@@ -73,5 +73,9 @@
   "takePhotoFailed": "Failed to take photo",
   "saving": "Saving...",
   "uploadingImage": "Uploading image...",
-  "uploadImageInProgress": "Uploading image..."
+  "uploadImageInProgress": "Uploading image...",
+  "noRating": "No Rating",
+  "noReviews": "No Reviews",
+  "reviews": "reviews",
+  "refreshCode": "Refresh Code"
 }

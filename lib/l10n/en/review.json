@@ -1,0 +1,20 @@
+{
+  "title": "Reviews",
+  "itemReviews": "Item Reviews",
+  "loadingReviews": "Loading reviews...",
+  "noReviews": "No reviews yet",
+  "noReviewsForItem": "No reviews for this item yet",
+  "allRatings": "All",
+  "filterByRating": "Filter by Rating",
+  "ratingStars": "{rating} Stars",
+  "reviewImages": "Review Images",
+  "postedOn": "Posted on ",
+  "loadMore": "Load More",
+  "reviewCount": "{count} {count, plural, =1{review} other{reviews}}",
+  "averageRating": "Average Rating",
+  "viewReviews": "View Reviews",
+  "filter": "Filter",
+  "clearFilter": "Clear Filter",
+  "errorLoadingReviews": "Failed to load reviews",
+  "retry": "Retry"
+}

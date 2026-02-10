@@ -44,12 +44,12 @@ Future<void> main() async {
       );
       LocaleSettings.setLocale(locale);
     } catch (e) {
-      // 如果保存的语言无效，使用设备语言
-      LocaleSettings.useDeviceLocale();
+      // 如果保存的语言无效，使用英语作为默认语言
+      LocaleSettings.setLocale(AppLocale.en);
     }
   } else {
-    // 如果没有保存的语言，使用设备语言
-    LocaleSettings.useDeviceLocale();
+    // 如果没有保存的语言，使用英语作为默认语言
+    LocaleSettings.setLocale(AppLocale.en);
   }
 
   runApp(FoodieConnectApp(authProvider: authProvider));

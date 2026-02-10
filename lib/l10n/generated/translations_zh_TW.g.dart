@@ -38,10 +38,12 @@ class TranslationsZhTw with BaseTranslations<AppLocale, Translations> implements
 
 	// Translations
 	@override late final _TranslationsAuthZhTw auth = _TranslationsAuthZhTw._(_root);
+	@override late final _TranslationsChatZhTw chat = _TranslationsChatZhTw._(_root);
 	@override late final _TranslationsCommonZhTw common = _TranslationsCommonZhTw._(_root);
 	@override late final _TranslationsMenuZhTw menu = _TranslationsMenuZhTw._(_root);
 	@override late final _TranslationsNavigationZhTw navigation = _TranslationsNavigationZhTw._(_root);
 	@override late final _TranslationsRestaurantZhTw restaurant = _TranslationsRestaurantZhTw._(_root);
+	@override late final _TranslationsReviewZhTw review = _TranslationsReviewZhTw._(_root);
 	@override late final _TranslationsStaffZhTw staff = _TranslationsStaffZhTw._(_root);
 	@override late final _TranslationsStatisticsZhTw statistics = _TranslationsStatisticsZhTw._(_root);
 	@override late final _TranslationsValidationZhTw validation = _TranslationsValidationZhTw._(_root);
@@ -111,6 +113,24 @@ class _TranslationsAuthZhTw implements TranslationsAuthEn {
 	@override String get accountInfo => '賬戶信息';
 	@override String get personalInfo => '個人信息';
 	@override String get restaurantInfo => '餐廳信息';
+}
+
+// Path: chat
+class _TranslationsChatZhTw implements TranslationsChatEn {
+	_TranslationsChatZhTw._(this._root);
+
+	final TranslationsZhTw _root; // ignore: unused_field
+
+	// Translations
+	@override String get connected => '已連接';
+	@override String get disconnected => '未連接';
+	@override String get newMessages => '條新消息';
+	@override String get noMessages => '暫無消息';
+	@override String get noMessagesHint => '顧客發送的消息會顯示在這裡';
+	@override String get justNow => '剛剛';
+	@override String get minutesAgo => '分鐘前';
+	@override String get hoursAgo => '小時前';
+	@override String get unknownUser => '未知用戶';
 }
 
 // Path: common
@@ -244,6 +264,11 @@ class _TranslationsMenuZhTw implements TranslationsMenuEn {
 	@override String get takePhoto => '拍照';
 	@override String get selectCategory => '選擇分類';
 	@override String get loadingCategories => '正在加載分類...';
+	@override String get viewReviews => '查看評價';
+	@override String get spiceNone => '不辣';
+	@override String get spiceMild => '微辣';
+	@override String get spiceMedium => '中辣';
+	@override String get spiceHot => '特辣';
 }
 
 // Path: navigation
@@ -343,6 +368,37 @@ class _TranslationsRestaurantZhTw implements TranslationsRestaurantEn {
 	@override String get takePhotoFailed => '拍照失敗';
 	@override String get uploadingImage => '圖片上傳中...';
 	@override String get uploadImageInProgress => '正在上傳圖片...';
+	@override String get noRating => '暫無評分';
+	@override String get noReviews => '暫無評價';
+	@override String get reviews => '條評價';
+	@override String get refreshCode => '刷新驗證碼';
+}
+
+// Path: review
+class _TranslationsReviewZhTw implements TranslationsReviewEn {
+	_TranslationsReviewZhTw._(this._root);
+
+	final TranslationsZhTw _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => '評價';
+	@override String get itemReviews => '菜品評價';
+	@override String get loadingReviews => '載入評價中...';
+	@override String get noReviews => '暫無評價';
+	@override String get noReviewsForItem => '該菜品暫無評價';
+	@override String get allRatings => '全部';
+	@override String get filterByRating => '按評分篩選';
+	@override String get ratingStars => '{rating}星';
+	@override String get reviewImages => '評價圖片';
+	@override String get postedOn => '發布於 ';
+	@override String get loadMore => '載入更多';
+	@override String get reviewCount => '{count}條評價';
+	@override String get averageRating => '平均評分';
+	@override String get viewReviews => '查看評價';
+	@override String get filter => '篩選';
+	@override String get clearFilter => '清除篩選';
+	@override String get errorLoadingReviews => '載入評價失敗';
+	@override String get retry => '重試';
 }
 
 // Path: staff
@@ -417,17 +473,20 @@ class _TranslationsStatisticsZhTw implements TranslationsStatisticsEn {
 	final TranslationsZhTw _root; // ignore: unused_field
 
 	// Translations
-	@override String get title => '統計';
-	@override String get overview => '概覽';
-	@override String get today => '今日';
-	@override String get weekly => '本周';
-	@override String get monthly => '本月';
-	@override String get yearly => '本年';
-	@override String get revenue => '營收';
-	@override String get orders => '訂單';
-	@override String get customers => '顧客';
+	@override String get title => '數據統計';
+	@override String get todaySummary => '今日總結';
+	@override String get revenue => '今日收入';
+	@override String get dishAvgRating => '菜品平均評分';
+	@override String get staffAvgRating => '員工平均評分';
+	@override String get monthlySummary => '月度收入';
+	@override String get staffRatings => '員工評分';
+	@override String get highestRated => '最高評分';
+	@override String get lowestRated => '最低評分';
 	@override String get rating => '評分';
-	@override String get reviews => '評價';
+	@override String get noData => '暫無數據';
+	@override String get loading => '加載中...';
+	@override String get loadFailed => '加載失敗';
+	@override String get retry => '重試';
 }
 
 // Path: validation
@@ -518,6 +577,15 @@ extension on TranslationsZhTw {
 			'auth.accountInfo' => '賬戶信息',
 			'auth.personalInfo' => '個人信息',
 			'auth.restaurantInfo' => '餐廳信息',
+			'chat.connected' => '已連接',
+			'chat.disconnected' => '未連接',
+			'chat.newMessages' => '條新消息',
+			'chat.noMessages' => '暫無消息',
+			'chat.noMessagesHint' => '顧客發送的消息會顯示在這裡',
+			'chat.justNow' => '剛剛',
+			'chat.minutesAgo' => '分鐘前',
+			'chat.hoursAgo' => '小時前',
+			'chat.unknownUser' => '未知用戶',
 			'common.save' => '保存',
 			'common.cancel' => '取消',
 			'common.confirm' => '確認',
@@ -633,6 +701,11 @@ extension on TranslationsZhTw {
 			'menu.takePhoto' => '拍照',
 			'menu.selectCategory' => '選擇分類',
 			'menu.loadingCategories' => '正在加載分類...',
+			'menu.viewReviews' => '查看評價',
+			'menu.spiceNone' => '不辣',
+			'menu.spiceMild' => '微辣',
+			'menu.spiceMedium' => '中辣',
+			'menu.spiceHot' => '特辣',
 			'navigation.dashboard' => '儀表板',
 			'navigation.restaurant' => '餐廳管理',
 			'navigation.menu' => '菜單管理',
@@ -714,6 +787,28 @@ extension on TranslationsZhTw {
 			'restaurant.takePhotoFailed' => '拍照失敗',
 			'restaurant.uploadingImage' => '圖片上傳中...',
 			'restaurant.uploadImageInProgress' => '正在上傳圖片...',
+			'restaurant.noRating' => '暫無評分',
+			'restaurant.noReviews' => '暫無評價',
+			'restaurant.reviews' => '條評價',
+			'restaurant.refreshCode' => '刷新驗證碼',
+			'review.title' => '評價',
+			'review.itemReviews' => '菜品評價',
+			'review.loadingReviews' => '載入評價中...',
+			'review.noReviews' => '暫無評價',
+			'review.noReviewsForItem' => '該菜品暫無評價',
+			'review.allRatings' => '全部',
+			'review.filterByRating' => '按評分篩選',
+			'review.ratingStars' => '{rating}星',
+			'review.reviewImages' => '評價圖片',
+			'review.postedOn' => '發布於 ',
+			'review.loadMore' => '載入更多',
+			'review.reviewCount' => '{count}條評價',
+			'review.averageRating' => '平均評分',
+			'review.viewReviews' => '查看評價',
+			'review.filter' => '篩選',
+			'review.clearFilter' => '清除篩選',
+			'review.errorLoadingReviews' => '載入評價失敗',
+			'review.retry' => '重試',
 			'staff.title' => '員工管理',
 			'staff.list' => '員工列表',
 			'staff.addStaff' => '添加員工',
@@ -770,17 +865,20 @@ extension on TranslationsZhTw {
 			'staff.statusBusy' => '忙碌',
 			'staff.delete' => '刪除',
 			'staff.createStaff' => '創建員工',
-			'statistics.title' => '統計',
-			'statistics.overview' => '概覽',
-			'statistics.today' => '今日',
-			'statistics.weekly' => '本周',
-			'statistics.monthly' => '本月',
-			'statistics.yearly' => '本年',
-			'statistics.revenue' => '營收',
-			'statistics.orders' => '訂單',
-			'statistics.customers' => '顧客',
+			'statistics.title' => '數據統計',
+			'statistics.todaySummary' => '今日總結',
+			'statistics.revenue' => '今日收入',
+			'statistics.dishAvgRating' => '菜品平均評分',
+			'statistics.staffAvgRating' => '員工平均評分',
+			'statistics.monthlySummary' => '月度收入',
+			'statistics.staffRatings' => '員工評分',
+			'statistics.highestRated' => '最高評分',
+			'statistics.lowestRated' => '最低評分',
 			'statistics.rating' => '評分',
-			'statistics.reviews' => '評價',
+			'statistics.noData' => '暫無數據',
+			'statistics.loading' => '加載中...',
+			'statistics.loadFailed' => '加載失敗',
+			'statistics.retry' => '重試',
 			'validation.required' => '此字段為必填項',
 			'validation.email' => '請輸入有效的郵箱地址',
 			'validation.phone' => '請輸入有效的手機號碼',

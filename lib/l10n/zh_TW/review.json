@@ -1,0 +1,20 @@
+{
+  "title": "評價",
+  "itemReviews": "菜品評價",
+  "loadingReviews": "載入評價中...",
+  "noReviews": "暫無評價",
+  "noReviewsForItem": "該菜品暫無評價",
+  "allRatings": "全部",
+  "filterByRating": "按評分篩選",
+  "ratingStars": "{rating}星",
+  "reviewImages": "評價圖片",
+  "postedOn": "發布於 ",
+  "loadMore": "載入更多",
+  "reviewCount": "{count}條評價",
+  "averageRating": "平均評分",
+  "viewReviews": "查看評價",
+  "filter": "篩選",
+  "clearFilter": "清除篩選",
+  "errorLoadingReviews": "載入評價失敗",
+  "retry": "重試"
+}

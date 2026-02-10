@@ -41,10 +41,12 @@ class Translations with BaseTranslations<AppLocale, Translations> {
 
 	// Translations
 	late final TranslationsAuthEn auth = TranslationsAuthEn._(_root);
+	late final TranslationsChatEn chat = TranslationsChatEn._(_root);
 	late final TranslationsCommonEn common = TranslationsCommonEn._(_root);
 	late final TranslationsMenuEn menu = TranslationsMenuEn._(_root);
 	late final TranslationsNavigationEn navigation = TranslationsNavigationEn._(_root);
 	late final TranslationsRestaurantEn restaurant = TranslationsRestaurantEn._(_root);
+	late final TranslationsReviewEn review = TranslationsReviewEn._(_root);
 	late final TranslationsStaffEn staff = TranslationsStaffEn._(_root);
 	late final TranslationsStatisticsEn statistics = TranslationsStatisticsEn._(_root);
 	late final TranslationsValidationEn validation = TranslationsValidationEn._(_root);
@@ -228,6 +230,42 @@ class TranslationsAuthEn {
 
 	/// en: 'Restaurant Information'
 	String get restaurantInfo => 'Restaurant Information';
+}
+
+// Path: chat
+class TranslationsChatEn {
+	TranslationsChatEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Connected'
+	String get connected => 'Connected';
+
+	/// en: 'Disconnected'
+	String get disconnected => 'Disconnected';
+
+	/// en: 'new messages'
+	String get newMessages => 'new messages';
+
+	/// en: 'No Messages'
+	String get noMessages => 'No Messages';
+
+	/// en: 'Messages from customers will appear here'
+	String get noMessagesHint => 'Messages from customers will appear here';
+
+	/// en: 'just now'
+	String get justNow => 'just now';
+
+	/// en: 'minutes ago'
+	String get minutesAgo => 'minutes ago';
+
+	/// en: 'hours ago'
+	String get hoursAgo => 'hours ago';
+
+	/// en: 'Unknown User'
+	String get unknownUser => 'Unknown User';
 }
 
 // Path: common
@@ -591,6 +629,21 @@ class TranslationsMenuEn {
 
 	/// en: 'Loading categories...'
 	String get loadingCategories => 'Loading categories...';
+
+	/// en: 'View Reviews'
+	String get viewReviews => 'View Reviews';
+
+	/// en: 'No Spice'
+	String get spiceNone => 'No Spice';
+
+	/// en: 'Mild'
+	String get spiceMild => 'Mild';
+
+	/// en: 'Medium'
+	String get spiceMedium => 'Medium';
+
+	/// en: 'Hot'
+	String get spiceHot => 'Hot';
 }
 
 // Path: navigation
@@ -852,6 +905,81 @@ class TranslationsRestaurantEn {
 
 	/// en: 'Uploading image...'
 	String get uploadImageInProgress => 'Uploading image...';
+
+	/// en: 'No Rating'
+	String get noRating => 'No Rating';
+
+	/// en: 'No Reviews'
+	String get noReviews => 'No Reviews';
+
+	/// en: 'reviews'
+	String get reviews => 'reviews';
+
+	/// en: 'Refresh Code'
+	String get refreshCode => 'Refresh Code';
+}
+
+// Path: review
+class TranslationsReviewEn {
+	TranslationsReviewEn._(this._root);
+
+	final Translations _root; // ignore: unused_field
+
+	// Translations
+
+	/// en: 'Reviews'
+	String get title => 'Reviews';
+
+	/// en: 'Item Reviews'
+	String get itemReviews => 'Item Reviews';
+
+	/// en: 'Loading reviews...'
+	String get loadingReviews => 'Loading reviews...';
+
+	/// en: 'No reviews yet'
+	String get noReviews => 'No reviews yet';
+
+	/// en: 'No reviews for this item yet'
+	String get noReviewsForItem => 'No reviews for this item yet';
+
+	/// en: 'All'
+	String get allRatings => 'All';
+
+	/// en: 'Filter by Rating'
+	String get filterByRating => 'Filter by Rating';
+
+	/// en: '{rating} Stars'
+	String get ratingStars => '{rating} Stars';
+
+	/// en: 'Review Images'
+	String get reviewImages => 'Review Images';
+
+	/// en: 'Posted on '
+	String get postedOn => 'Posted on ';
+
+	/// en: 'Load More'
+	String get loadMore => 'Load More';
+
+	/// en: '{count} {count, plural, =1{review} other{reviews}}'
+	String get reviewCount => '{count} {count, plural, =1{review} other{reviews}}';
+
+	/// en: 'Average Rating'
+	String get averageRating => 'Average Rating';
+
+	/// en: 'View Reviews'
+	String get viewReviews => 'View Reviews';
+
+	/// en: 'Filter'
+	String get filter => 'Filter';
+
+	/// en: 'Clear Filter'
+	String get clearFilter => 'Clear Filter';
+
+	/// en: 'Failed to load reviews'
+	String get errorLoadingReviews => 'Failed to load reviews';
+
+	/// en: 'Retry'
+	String get retry => 'Retry';
 }
 
 // Path: staff
@@ -1042,35 +1170,44 @@ class TranslationsStatisticsEn {
 	/// en: 'Statistics'
 	String get title => 'Statistics';
 
-	/// en: 'Overview'
-	String get overview => 'Overview';
+	/// en: 'Today's Summary'
+	String get todaySummary => 'Today\'s Summary';
 
-	/// en: 'Today'
-	String get today => 'Today';
+	/// en: 'Today's Revenue'
+	String get revenue => 'Today\'s Revenue';
 
-	/// en: 'This Week'
-	String get weekly => 'This Week';
+	/// en: 'Avg Dish Rating'
+	String get dishAvgRating => 'Avg Dish Rating';
 
-	/// en: 'This Month'
-	String get monthly => 'This Month';
+	/// en: 'Avg Staff Rating'
+	String get staffAvgRating => 'Avg Staff Rating';
 
-	/// en: 'This Year'
-	String get yearly => 'This Year';
+	/// en: 'Monthly Revenue'
+	String get monthlySummary => 'Monthly Revenue';
 
-	/// en: 'Revenue'
-	String get revenue => 'Revenue';
+	/// en: 'Staff Ratings'
+	String get staffRatings => 'Staff Ratings';
 
-	/// en: 'Orders'
-	String get orders => 'Orders';
+	/// en: 'Highest Rated'
+	String get highestRated => 'Highest Rated';
 
-	/// en: 'Customers'
-	String get customers => 'Customers';
+	/// en: 'Lowest Rated'
+	String get lowestRated => 'Lowest Rated';
 
 	/// en: 'Rating'
 	String get rating => 'Rating';
 
-	/// en: 'Reviews'
-	String get reviews => 'Reviews';
+	/// en: 'No Data'
+	String get noData => 'No Data';
+
+	/// en: 'Loading...'
+	String get loading => 'Loading...';
+
+	/// en: 'Load Failed'
+	String get loadFailed => 'Load Failed';
+
+	/// en: 'Retry'
+	String get retry => 'Retry';
 }
 
 // Path: validation
@@ -1189,6 +1326,15 @@ extension on Translations {
 			'auth.accountInfo' => 'Account Information',
 			'auth.personalInfo' => 'Personal Information',
 			'auth.restaurantInfo' => 'Restaurant Information',
+			'chat.connected' => 'Connected',
+			'chat.disconnected' => 'Disconnected',
+			'chat.newMessages' => 'new messages',
+			'chat.noMessages' => 'No Messages',
+			'chat.noMessagesHint' => 'Messages from customers will appear here',
+			'chat.justNow' => 'just now',
+			'chat.minutesAgo' => 'minutes ago',
+			'chat.hoursAgo' => 'hours ago',
+			'chat.unknownUser' => 'Unknown User',
 			'common.save' => 'Save',
 			'common.cancel' => 'Cancel',
 			'common.confirm' => 'Confirm',
@@ -1304,6 +1450,11 @@ extension on Translations {
 			'menu.takePhoto' => 'Take Photo',
 			'menu.selectCategory' => 'Select Category',
 			'menu.loadingCategories' => 'Loading categories...',
+			'menu.viewReviews' => 'View Reviews',
+			'menu.spiceNone' => 'No Spice',
+			'menu.spiceMild' => 'Mild',
+			'menu.spiceMedium' => 'Medium',
+			'menu.spiceHot' => 'Hot',
 			'navigation.dashboard' => 'Dashboard',
 			'navigation.restaurant' => 'Restaurant',
 			'navigation.menu' => 'Menu',
@@ -1385,6 +1536,28 @@ extension on Translations {
 			'restaurant.takePhotoFailed' => 'Failed to take photo',
 			'restaurant.uploadingImage' => 'Uploading image...',
 			'restaurant.uploadImageInProgress' => 'Uploading image...',
+			'restaurant.noRating' => 'No Rating',
+			'restaurant.noReviews' => 'No Reviews',
+			'restaurant.reviews' => 'reviews',
+			'restaurant.refreshCode' => 'Refresh Code',
+			'review.title' => 'Reviews',
+			'review.itemReviews' => 'Item Reviews',
+			'review.loadingReviews' => 'Loading reviews...',
+			'review.noReviews' => 'No reviews yet',
+			'review.noReviewsForItem' => 'No reviews for this item yet',
+			'review.allRatings' => 'All',
+			'review.filterByRating' => 'Filter by Rating',
+			'review.ratingStars' => '{rating} Stars',
+			'review.reviewImages' => 'Review Images',
+			'review.postedOn' => 'Posted on ',
+			'review.loadMore' => 'Load More',
+			'review.reviewCount' => '{count} {count, plural, =1{review} other{reviews}}',
+			'review.averageRating' => 'Average Rating',
+			'review.viewReviews' => 'View Reviews',
+			'review.filter' => 'Filter',
+			'review.clearFilter' => 'Clear Filter',
+			'review.errorLoadingReviews' => 'Failed to load reviews',
+			'review.retry' => 'Retry',
 			'staff.title' => 'Staff Management',
 			'staff.list' => 'Staff List',
 			'staff.addStaff' => 'Add Staff',
@@ -1442,16 +1615,19 @@ extension on Translations {
 			'staff.delete' => 'Delete',
 			'staff.createStaff' => 'Create Staff',
 			'statistics.title' => 'Statistics',
-			'statistics.overview' => 'Overview',
-			'statistics.today' => 'Today',
-			'statistics.weekly' => 'This Week',
-			'statistics.monthly' => 'This Month',
-			'statistics.yearly' => 'This Year',
-			'statistics.revenue' => 'Revenue',
-			'statistics.orders' => 'Orders',
-			'statistics.customers' => 'Customers',
+			'statistics.todaySummary' => 'Today\'s Summary',
+			'statistics.revenue' => 'Today\'s Revenue',
+			'statistics.dishAvgRating' => 'Avg Dish Rating',
+			'statistics.staffAvgRating' => 'Avg Staff Rating',
+			'statistics.monthlySummary' => 'Monthly Revenue',
+			'statistics.staffRatings' => 'Staff Ratings',
+			'statistics.highestRated' => 'Highest Rated',
+			'statistics.lowestRated' => 'Lowest Rated',
 			'statistics.rating' => 'Rating',
-			'statistics.reviews' => 'Reviews',
+			'statistics.noData' => 'No Data',
+			'statistics.loading' => 'Loading...',
+			'statistics.loadFailed' => 'Load Failed',
+			'statistics.retry' => 'Retry',
 			'validation.required' => 'This field is required',
 			'validation.email' => 'Please enter a valid email address',
 			'validation.phone' => 'Please enter a valid phone number',

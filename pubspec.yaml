@@ -63,6 +63,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   flutter_svg: ^2.2.2
   shimmer: ^3.0.0
+  fl_chart: ^0.66.0
   
   # WebSocket支持
   web_socket_channel: ^2.4.0

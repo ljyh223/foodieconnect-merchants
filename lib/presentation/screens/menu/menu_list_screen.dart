@@ -8,6 +8,7 @@ import 'package:foodieconnectmerchant/presentation/widgets/menu/search_filter_ba
 import 'package:foodieconnectmerchant/l10n/generated/translations.g.dart';
 
 import 'menu_item_screen.dart';
+import '../review/item_reviews_screen.dart';
 
 /// 重构后的菜单列表页面
 /// 使用提取的组件，代码更简洁、可维护
@@ -234,6 +235,13 @@ class _MenuListScreenState extends State<MenuListScreen> {
       case 'recommend':
       case 'unrecommend':
         _toggleRecommendedStatus(context, menuItem, provider);
+        break;
+      case 'reviews':
+        ItemReviewsScreen.show(
+          context,
+          itemId: menuItem.id,
+          itemName: menuItem.name,
+        );
         break;
       case 'delete':
         _showDeleteConfirmation(context, menuItem, provider);

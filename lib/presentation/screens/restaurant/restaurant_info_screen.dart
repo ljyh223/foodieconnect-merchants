@@ -117,7 +117,7 @@ class RestaurantInfoScreen extends StatelessWidget {
           ),
           _buildInfoRow(
             t.restaurant.operatingStatus,
-            restaurant.statusDisplay,
+            restaurant.isCurrentlyOpen ? t.restaurant.open : t.restaurant.closed,
             theme,
           ),
 
@@ -192,14 +192,18 @@ class RestaurantInfoScreen extends StatelessWidget {
               Expanded(
                 child: _buildInfoRow(
                   t.restaurant.rating,
-                  restaurant.ratingDisplay,
+                  restaurant.rating == null
+                      ? t.restaurant.noRating
+                      : '${restaurant.rating!.toStringAsFixed(1)} ⭐',
                   theme,
                 ),
               ),
               Expanded(
                 child: _buildInfoRow(
                   t.restaurant.reviewCount,
-                  restaurant.reviewCountDisplay,
+                  restaurant.reviewCount == null || restaurant.reviewCount == 0
+                      ? t.restaurant.noReviews
+                      : '${restaurant.reviewCount} ${t.restaurant.reviews}',
                   theme,
                 ),
               ),
@@ -227,7 +231,7 @@ class RestaurantInfoScreen extends StatelessWidget {
                   provider.loadChatRoomVerificationCode();
                 },
                 icon: Icon(Icons.refresh, color: theme.colorScheme.primary),
-                tooltip: '刷新验证码',
+                tooltip: t.restaurant.refreshCode,
                 style: IconButton.styleFrom(
                   backgroundColor: theme.colorScheme.surfaceContainerHighest,
                   shape: RoundedRectangleBorder(
