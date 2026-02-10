@@ -68,15 +68,4 @@ class StaffApi {
       queryParameters: {'status': status},
     );
   }
-
-  /// 更新员工评分
-  Future<Response<Map<String, dynamic>>> updateStaffRating(
-    int staffId,
-    double rating,
-  ) async {
-    return await _apiService.put<Map<String, dynamic>>(
-      '/merchant/staff/$staffId/rating',
-      queryParameters: {'rating': rating},
-    );
-  }
 }

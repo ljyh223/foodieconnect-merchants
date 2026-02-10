@@ -107,20 +107,6 @@ class StaffRepository {
     }
   }
 
-  /// 更新员工评分
-  Future<ApiResponse<void>> updateStaffRating(
-    int staffId,
-    double rating,
-  ) async {
-    try {
-      final response = await _staffApi.updateStaffRating(staffId, rating);
-      return ApiResponse<void>.fromJson(response.data!, (json) {});
-    } catch (e) {
-      AppLogger.error('StaffRepository: 更新员工评分失败', error: e);
-      rethrow;
-    }
-  }
-
   /// 根据状态获取员工
   Future<ApiResponse<List<StaffModel>>> getStaffByStatus(String status) async {
     return getStaff(status: status);

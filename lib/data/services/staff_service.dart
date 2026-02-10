@@ -234,46 +234,6 @@ class StaffService {
     }
   }
 
-  /// 更新员工评分
-  Future<ApiResponse<void>> updateStaffRating(
-    int staffId,
-    double rating,
-  ) async {
-    try {
-      AppLogger.info('StaffService: 更新员工评分 - $staffId, $rating');
-
-      final apiResponse = await _staffRepository.updateStaffRating(
-        staffId,
-        rating,
-      );
-
-      if (apiResponse.isSuccess) {
-        AppLogger.info('StaffService: 更新员工评分成功');
-      } else {
-        AppLogger.warning(
-          'StaffService: 更新员工评分失败 - ${apiResponse.errorMessage}',
-        );
-      }
-
-      return apiResponse;
-    } on DioException catch (e) {
-      AppLogger.error('StaffService: 更新员工评分网络错误', error: e);
-
-      if (e.response?.data is Map<String, dynamic>) {
-        final errorData = e.response!.data as Map<String, dynamic>;
-        return ApiResponse.error(
-          _extractErrorMessage(errorData),
-          code: e.response?.statusCode,
-        );
-      }
-
-      return ApiResponse.error('更新员工评分失败，请检查网络连接');
-    } catch (e) {
-      AppLogger.error('StaffService: 更新员工评分未知错误', error: e);
-      return ApiResponse.error('更新员工评分失败，请稍后重试');
-    }
-  }
-
   /// 根据状态获取员工
   Future<ApiResponse<List<StaffModel>>> getStaffByStatus(String status) async {
     return getStaff(status: status);

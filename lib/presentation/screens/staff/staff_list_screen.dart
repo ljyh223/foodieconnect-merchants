@@ -448,31 +448,6 @@ class _StaffListScreenState extends State<StaffListScreen> {
 
         const SizedBox(width: 12),
 
-        // 评分按钮
-        Container(
-          height: 44,
-          width: 44,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: Colors.amber.withValues(alpha: 0.1),
-          ),
-          child: IconButton(
-            onPressed: () {
-              _updateStaffRating(staff);
-            },
-            icon: const Icon(Icons.star, size: 20, color: Colors.amber),
-            tooltip: Translations.of(context).staff.updateRating,
-            style: IconButton.styleFrom(
-              padding: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-          ),
-        ),
-
-        const SizedBox(width: 12),
-
         // 编辑按钮
         Container(
           height: 44,
@@ -620,84 +595,6 @@ class _StaffListScreenState extends State<StaffListScreen> {
     }
   }
 
-  /// 更新员工评分
-  void _updateStaffRating(StaffModel staff) {
-    final theme = Theme.of(context);
-    final provider = Provider.of<StaffProvider>(context, listen: false);
-    final ratingController = TextEditingController(
-      text: staff.rating?.toStringAsFixed(1) ?? '5.0',
-    );
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: theme.colorScheme.surface,
-        surfaceTintColor: theme.colorScheme.surface,
-        title: Text(
-          Translations.of(context).staff.updateRatingTitle,
-          style: TextStyle(color: theme.colorScheme.onSurface),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              Translations.of(
-                context,
-              ).staff.setNewRating(staffName: staff.displayName),
-              style: TextStyle(color: theme.colorScheme.onSurface),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: ratingController,
-              keyboardType: TextInputType.number,
-              style: TextStyle(color: theme.colorScheme.onSurface),
-              decoration: InputDecoration(
-                labelText: Translations.of(context).staff.ratingInputHint,
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: theme.colorScheme.outline),
-                ),
-                labelStyle: TextStyle(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            style: TextButton.styleFrom(
-              foregroundColor: theme.colorScheme.onSurface,
-            ),
-            child: Text(Translations.of(context).staff.cancel),
-          ),
-          TextButton(
-            onPressed: () async {
-              final newRating = double.tryParse(ratingController.text);
-              if (newRating != null && newRating >= 0 && newRating <= 5) {
-                Navigator.of(context).pop();
-                await provider.updateStaffRating(staff.id, newRating);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      Translations.of(context).staff.validRatingRequired,
-                    ),
-                    backgroundColor: theme.colorScheme.error,
-                  ),
-                );
-              }
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: theme.colorScheme.primary,
-            ),
-            child: Text(Translations.of(context).staff.confirm),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildErrorWidget(String error, ThemeData theme) {
     return Builder(
       builder: (context) {
@@ -785,9 +682,6 @@ class _StaffListScreenState extends State<StaffListScreen> {
     );
     final statusController = TextEditingController(
       text: staff?.status ?? 'OFFLINE',
-    );
-    final ratingController = TextEditingController(
-      text: staff?.rating?.toStringAsFixed(1) ?? '',
     );
 
     showDialog(
@@ -895,27 +789,6 @@ class _StaffListScreenState extends State<StaffListScreen> {
                 },
                 style: TextStyle(color: theme.colorScheme.onSurface),
               ),
-              const SizedBox(height: 16),
-
-              // 员工评分
-              TextField(
-                controller: ratingController,
-                keyboardType: TextInputType.number,
-                style: TextStyle(color: theme.colorScheme.onSurface),
-                decoration: InputDecoration(
-                  labelText: Translations.of(context).staff.rating,
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                  ),
-                  helperText: Translations.of(context).staff.ratingHelper,
-                  labelStyle: TextStyle(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                  helperStyle: TextStyle(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -949,26 +822,6 @@ class _StaffListScreenState extends State<StaffListScreen> {
                 'experience': experienceController.text.trim(),
                 'status': statusController.text,
               };
-
-              if (ratingController.text.isNotEmpty) {
-                final rating = double.tryParse(ratingController.text);
-                if (rating != null && rating >= 0 && rating <= 5) {
-                  staffData['rating'] = rating.toStringAsFixed(1);
-                } else {
-                  final currentContext = context;
-                  ScaffoldMessenger.of(currentContext).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        Translations.of(
-                          currentContext,
-                        ).staff.validRatingRequired,
-                      ),
-                      backgroundColor: theme.colorScheme.error,
-                    ),
-                  );
-                  return;
-                }
-              }
 
               final currentContext = context;
               Navigator.of(currentContext).pop();

@@ -170,55 +170,6 @@ class StaffProvider extends ChangeNotifier {
     }
   }
 
-  /// 更新员工评分
-  Future<bool> updateStaffRating(int staffId, double rating) async {
-    try {
-      _setUpdating(true);
-      _clearError();
-
-      AppLogger.info('StaffProvider: 开始更新员工评分 - $staffId, $rating');
-
-      final response = await _staffService.updateStaffRating(staffId, rating);
-
-      if (response.isSuccess) {
-        // 更新本地状态
-        final staffList = List<StaffModel>.from(_state.staffList);
-        final staffIndex = staffList.indexWhere((staff) => staff.id == staffId);
-        if (staffIndex != -1) {
-          staffList[staffIndex] = staffList[staffIndex].copyWith(
-            rating: rating,
-          );
-        }
-
-        // 更新选中的员工
-        StaffModel? selectedStaff = _state.selectedStaff;
-        if (selectedStaff?.id == staffId) {
-          selectedStaff = selectedStaff!.copyWith(rating: rating);
-        }
-
-        // 更新状态
-        _state = _state.copyWith(
-          staffList: staffList,
-          selectedStaff: selectedStaff,
-        );
-
-        AppLogger.info('StaffProvider: 员工评分更新成功');
-        notifyListeners();
-        return true;
-      } else {
-        _setError(response.errorMessage);
-        AppLogger.warning('StaffProvider: 员工评分更新失败 - ${response.errorMessage}');
-        return false;
-      }
-    } catch (e) {
-      AppLogger.error('StaffProvider: 更新员工评分异常', error: e);
-      _setError('更新员工评分失败，请稍后重试');
-      return false;
-    } finally {
-      _setUpdating(false);
-    }
-  }
-
   /// 根据状态筛选员工
   Future<void> filterByStatus(String? status) async {
     // 更新筛选状态和页码
