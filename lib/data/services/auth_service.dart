@@ -22,7 +22,7 @@ class AuthService {
     MerchantLoginRequest request,
   ) async {
     try {
-      AppLogger.info('AuthService: 开始商家登录 - ${request.username}');
+      AppLogger.info('AuthService: Starting merchant login - ${request.username}');
 
       final responseData = await _authRepository.login(request);
 
@@ -32,17 +32,17 @@ class AuthService {
       );
 
       if (apiResponse.isSuccess && apiResponse.data != null) {
-        // 登录成功，保存token和用户信息
+        // Login successful, save token and user information
         await _saveLoginData(apiResponse.data!);
-        AppLogger.info('AuthService: 登录成功');
+        AppLogger.info('AuthService: Login successful');
       } else {
-        AppLogger.warning('AuthService: 登录失败 - ${apiResponse.errorMessage}');
+        AppLogger.warning('AuthService: Login failed - ${apiResponse.errorMessage}');
       }
 
       return apiResponse;
     } catch (e) {
-      AppLogger.error('AuthService: 登录错误', error: e);
-      return ApiResponse.error('登录失败，请稍后重试');
+      AppLogger.error('AuthService: Login error', error: e);
+      return ApiResponse.error('Login failed, please try again later');
     }
   }
 
@@ -51,7 +51,7 @@ class AuthService {
     MerchantRegisterRequest registerData,
   ) async {
     try {
-      AppLogger.info('AuthService: 开始商家注册');
+      AppLogger.info('AuthService: Starting merchant registration');
 
       final responseData = await _authRepository.register(registerData);
 
@@ -61,22 +61,22 @@ class AuthService {
       );
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('AuthService: 注册成功');
+        AppLogger.info('AuthService: Registration successful');
       } else {
-        AppLogger.warning('AuthService: 注册失败 - ${apiResponse.errorMessage}');
+        AppLogger.warning('AuthService: Registration failed - ${apiResponse.errorMessage}');
       }
 
       return apiResponse;
     } catch (e) {
-      AppLogger.error('AuthService: 注册错误', error: e);
-      return ApiResponse.error('注册失败，请稍后重试');
+      AppLogger.error('AuthService: Registration error', error: e);
+      return ApiResponse.error('Registration failed, please try again later');
     }
   }
 
   /// 获取当前商家信息
   Future<ApiResponse<UserDTO>> getCurrentMerchant() async {
     try {
-      AppLogger.info('AuthService: 获取当前商家信息');
+      AppLogger.info('AuthService: Fetching current merchant information');
 
       final responseData = await _authRepository.getCurrentMerchant();
 
@@ -86,17 +86,17 @@ class AuthService {
       );
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('AuthService: 获取商家信息成功');
+        AppLogger.info('AuthService: Successfully fetched merchant information');
       } else {
         AppLogger.warning(
-          'AuthService: 获取商家信息失败 - ${apiResponse.errorMessage}',
+          'AuthService: Failed to fetch merchant information - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } catch (e) {
-      AppLogger.error('AuthService: 获取商家信息错误', error: e);
-      return ApiResponse.error('获取商家信息失败，请稍后重试');
+      AppLogger.error('AuthService: Error fetching merchant information', error: e);
+      return ApiResponse.error('Failed to fetch merchant information, please try again later');
     }
   }
 
@@ -106,7 +106,7 @@ class AuthService {
     required String newPassword,
   }) async {
     try {
-      AppLogger.info('AuthService: 开始修改密码');
+      AppLogger.info('AuthService: Starting password change');
 
       final responseData = await _authRepository.changePassword(
         currentPassword: currentPassword,
@@ -116,55 +116,55 @@ class AuthService {
       final apiResponse = ApiResponse<void>.fromJson(responseData, (json) {});
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('AuthService: 修改密码成功');
+        AppLogger.info('AuthService: Password changed successfully');
       } else {
-        AppLogger.warning('AuthService: 修改密码失败 - ${apiResponse.errorMessage}');
+        AppLogger.warning('AuthService: Failed to change password - ${apiResponse.errorMessage}');
       }
 
       return apiResponse;
     } catch (e) {
-      AppLogger.error('AuthService: 修改密码错误', error: e);
-      return ApiResponse.error('修改密码失败，请稍后重试');
+      AppLogger.error('AuthService: Error changing password', error: e);
+      return ApiResponse.error('Failed to change password, please try again later');
     }
   }
 
   /// 商家登出
   Future<ApiResponse<void>> logout() async {
     try {
-      AppLogger.info('AuthService: 开始商家登出');
+      AppLogger.info('AuthService: Starting merchant logout');
 
       final responseData = await _authRepository.logout();
 
       final apiResponse = ApiResponse<void>.fromJson(responseData, (json) {});
 
-      // 无论API调用是否成功，都清除本地数据
+      // Clear local data regardless of API call success
       await _clearLoginData();
-      AppLogger.info('AuthService: 登出成功');
+      AppLogger.info('AuthService: Logout successful');
 
       return apiResponse;
     } catch (e) {
-      AppLogger.error('AuthService: 登出错误', error: e);
+      AppLogger.error('AuthService: Logout error', error: e);
 
-      // 即使发生错误，也要清除本地数据
+      // Clear local data even if an error occurs
       await _clearLoginData();
 
-      return ApiResponse.error('登出失败，但本地数据已清除');
+      return ApiResponse.error('Logout failed, but local data has been cleared');
     }
   }
 
   /// 刷新Token
   Future<ApiResponse<MerchantLoginResponse>> refreshToken() async {
     try {
-      AppLogger.info('AuthService: 开始刷新Token');
+      AppLogger.info('AuthService: Starting Token refresh');
 
-      // 由于API不返回refreshToken，暂时禁用此功能
-      // 实际项目中需要与后端协商实现token刷新机制
-      return ApiResponse.error('Token刷新功能暂未实现，请重新登录');
+      // Token refresh feature temporarily disabled as API does not return refreshToken
+      // Actual projects need to coordinate with backend to implement token refresh mechanism
+      return ApiResponse.error('Token refresh feature not yet implemented, please login again');
     } catch (e) {
-      AppLogger.error('AuthService: 刷新Token错误', error: e);
-      // 刷新失败，清除登录数据
+      AppLogger.error('AuthService: Error refreshing Token', error: e);
+      // Refresh failed, clear login data
       await _clearLoginData();
-      return ApiResponse.error('Token刷新失败，请重新登录');
+      return ApiResponse.error('Token refresh failed, please login again');
     }
   }
 
@@ -174,7 +174,7 @@ class AuthService {
       final token = await SecureStorage.getString(AppConstants.tokenKey);
       return token != null && token.isNotEmpty;
     } catch (e) {
-      AppLogger.error('AuthService: 检查登录状态失败', error: e);
+      AppLogger.error('AuthService: Failed to check login status', error: e);
       return false;
     }
   }
@@ -203,28 +203,28 @@ class AuthService {
         jsonEncode(userInfo),
       );
 
-      // 设置API服务的访问令牌
+      // Set API service access token
       ApiService().setAccessToken(loginResponse.token);
 
-      AppLogger.debug('AuthService: 登录数据保存成功');
+      AppLogger.debug('AuthService: Login data saved successfully');
     } catch (e) {
-      AppLogger.error('AuthService: 保存登录数据失败', error: e);
+      AppLogger.error('AuthService: Failed to save login data', error: e);
       rethrow;
     }
   }
 
-  /// 清除登录数据
+  /// Clear login data
   Future<void> _clearLoginData() async {
     try {
       await SecureStorage.remove(AppConstants.tokenKey);
       await SecureStorage.remove(AppConstants.userInfoKey);
 
-      // 清除API服务的访问令牌
+      // Clear API service access token
       ApiService().clearAccessToken();
 
-      AppLogger.debug('AuthService: 登录数据清除成功');
+      AppLogger.debug('AuthService: Login data cleared successfully');
     } catch (e) {
-      AppLogger.error('AuthService: 清除登录数据失败', error: e);
+      AppLogger.error('AuthService: Failed to clear login data', error: e);
     }
   }
 }

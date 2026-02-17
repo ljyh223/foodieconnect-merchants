@@ -13,7 +13,7 @@ class CacheService {
   /// 初始化缓存服务
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
-    AppLogger.info('CacheService: 初始化完成');
+    AppLogger.info('CacheService: Initialization completed');
   }
 
   /// 保存数据到缓存
@@ -29,7 +29,7 @@ class CacheService {
       final json = cacheItem.toJson();
       return await _prefs.setString(key, json);
     } catch (e) {
-      AppLogger.error('CacheService: 保存缓存失败 - $key', error: e);
+      AppLogger.error('CacheService: Failed to save cache - $key', error: e);
       return false;
     }
   }
@@ -52,7 +52,7 @@ class CacheService {
 
       return fromJson(cacheItem.data);
     } catch (e) {
-      AppLogger.error('CacheService: 获取缓存失败 - $key', error: e);
+      AppLogger.error('CacheService: Failed to retrieve cache - $key', error: e);
       return null;
     }
   }
@@ -62,7 +62,7 @@ class CacheService {
     try {
       return await _prefs.remove(key);
     } catch (e) {
-      AppLogger.error('CacheService: 移除缓存失败 - $key', error: e);
+      AppLogger.error('CacheService: Failed to remove cache - $key', error: e);
       return false;
     }
   }
@@ -72,7 +72,7 @@ class CacheService {
     try {
       return await _prefs.clear();
     } catch (e) {
-      AppLogger.error('CacheService: 清空缓存失败', error: e);
+      AppLogger.error('CacheService: Failed to clear cache', error: e);
       return false;
     }
   }

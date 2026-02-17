@@ -15,21 +15,21 @@ class RestaurantService {
   /// 获取餐厅信息
   Future<ApiResponse<RestaurantModel>> getRestaurant() async {
     try {
-      AppLogger.info('RestaurantService: 获取餐厅信息');
+      AppLogger.info('RestaurantService: Fetching restaurant information');
 
       final apiResponse = await _restaurantRepository.getRestaurant();
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('RestaurantService: 获取餐厅信息成功');
+        AppLogger.info('RestaurantService: Successfully fetched restaurant information');
       } else {
         AppLogger.warning(
-          'RestaurantService: 获取餐厅信息失败 - ${apiResponse.errorMessage}',
+          'RestaurantService: Failed to fetch restaurant information - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('RestaurantService: 获取餐厅信息网络错误', error: e);
+      AppLogger.error('RestaurantService: Network error fetching restaurant information', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -39,10 +39,10 @@ class RestaurantService {
         );
       }
 
-      return ApiResponse.error('获取餐厅信息失败，请检查网络连接');
+      return ApiResponse.error('Failed to fetch restaurant information, please check network connection');
     } catch (e) {
-      AppLogger.error('RestaurantService: 获取餐厅信息未知错误', error: e);
-      return ApiResponse.error('获取餐厅信息失败，请稍后重试');
+      AppLogger.error('RestaurantService: Unknown error fetching restaurant information', error: e);
+      return ApiResponse.error('Failed to fetch restaurant information, please try again later');
     }
   }
 
@@ -51,21 +51,21 @@ class RestaurantService {
     RestaurantUpdateRequest request,
   ) async {
     try {
-      AppLogger.info('RestaurantService: 更新餐厅信息');
+      AppLogger.info('RestaurantService: Updating restaurant information');
 
       final apiResponse = await _restaurantRepository.updateRestaurant(request);
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('RestaurantService: 更新餐厅信息成功');
+        AppLogger.info('RestaurantService: Successfully updated restaurant information');
       } else {
         AppLogger.warning(
-          'RestaurantService: 更新餐厅信息失败 - ${apiResponse.errorMessage}',
+          'RestaurantService: Failed to update restaurant information - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('RestaurantService: 更新餐厅信息网络错误', error: e);
+      AppLogger.error('RestaurantService: Network error updating restaurant information', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -75,33 +75,33 @@ class RestaurantService {
         );
       }
 
-      return ApiResponse.error('更新餐厅信息失败，请检查网络连接');
+      return ApiResponse.error('Failed to update restaurant information, please check network connection');
     } catch (e) {
-      AppLogger.error('RestaurantService: 更新餐厅信息未知错误', error: e);
-      return ApiResponse.error('更新餐厅信息失败，请稍后重试');
+      AppLogger.error('RestaurantService: Unknown error updating restaurant information', error: e);
+      return ApiResponse.error('Failed to update restaurant information, please try again later');
     }
   }
 
   /// 更新餐厅营业状态
   Future<ApiResponse<void>> updateRestaurantStatus(bool isOpen) async {
     try {
-      AppLogger.info('RestaurantService: 更新餐厅营业状态 - $isOpen');
+      AppLogger.info('RestaurantService: Updating restaurant business status - $isOpen');
 
       final apiResponse = await _restaurantRepository.updateRestaurantStatus(
         isOpen,
       );
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('RestaurantService: 更新餐厅营业状态成功');
+        AppLogger.info('RestaurantService: Successfully updated restaurant business status');
       } else {
         AppLogger.warning(
-          'RestaurantService: 更新餐厅营业状态失败 - ${apiResponse.errorMessage}',
+          'RestaurantService: Failed to update restaurant business status - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('RestaurantService: 更新餐厅营业状态网络错误', error: e);
+      AppLogger.error('RestaurantService: Network error updating restaurant business status', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -111,31 +111,31 @@ class RestaurantService {
         );
       }
 
-      return ApiResponse.error('更新营业状态失败，请检查网络连接');
+      return ApiResponse.error('Failed to update business status, please check network connection');
     } catch (e) {
-      AppLogger.error('RestaurantService: 更新餐厅营业状态未知错误', error: e);
-      return ApiResponse.error('更新营业状态失败，请稍后重试');
+      AppLogger.error('RestaurantService: Unknown error updating restaurant business status', error: e);
+      return ApiResponse.error('Failed to update business status, please try again later');
     }
   }
 
   /// 上传图片文件
   Future<ApiResponse<String>> uploadImage(File imageFile) async {
     try {
-      AppLogger.info('RestaurantService: 上传图片文件');
+      AppLogger.info('RestaurantService: Uploading image file');
 
       final apiResponse = await _restaurantRepository.uploadImage(imageFile);
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('RestaurantService: 图片上传成功 - URL: ${apiResponse.data}');
+        AppLogger.info('RestaurantService: Image uploaded successfully - URL: ${apiResponse.data}');
       } else {
         AppLogger.warning(
-          'RestaurantService: 图片上传失败 - ${apiResponse.errorMessage}',
+          'RestaurantService: Failed to upload image - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('RestaurantService: 上传图片网络错误', error: e);
+      AppLogger.error('RestaurantService: Network error uploading image', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -145,33 +145,33 @@ class RestaurantService {
         );
       }
 
-      return ApiResponse.error('上传图片失败，请检查网络连接');
+      return ApiResponse.error('Failed to upload image, please check network connection');
     } catch (e) {
-      AppLogger.error('RestaurantService: 上传图片未知错误', error: e);
-      return ApiResponse.error('上传图片失败，请稍后重试');
+      AppLogger.error('RestaurantService: Unknown error uploading image', error: e);
+      return ApiResponse.error('Failed to upload image, please try again later');
     }
   }
 
   /// 更新餐厅图片URL
   Future<ApiResponse<String>> updateRestaurantImageUrl(String imageUrl) async {
     try {
-      AppLogger.info('RestaurantService: 更新餐厅图片URL - $imageUrl');
+      AppLogger.info('RestaurantService: Updating restaurant image URL - $imageUrl');
 
       final apiResponse = await _restaurantRepository.updateRestaurantImageUrl(
         imageUrl,
       );
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('RestaurantService: 餐厅图片URL更新成功');
+        AppLogger.info('RestaurantService: Successfully updated restaurant image URL');
       } else {
         AppLogger.warning(
-          'RestaurantService: 餐厅图片URL更新失败 - ${apiResponse.errorMessage}',
+          'RestaurantService: Failed to update restaurant image URL - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('RestaurantService: 更新餐厅图片URL网络错误', error: e);
+      AppLogger.error('RestaurantService: Network error updating restaurant image URL', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -181,31 +181,31 @@ class RestaurantService {
         );
       }
 
-      return ApiResponse.error('更新餐厅图片失败，请检查网络连接');
+      return ApiResponse.error('Failed to update restaurant image, please check network connection');
     } catch (e) {
-      AppLogger.error('RestaurantService: 更新餐厅图片URL未知错误', error: e);
-      return ApiResponse.error('更新餐厅图片失败，请稍后重试');
+      AppLogger.error('RestaurantService: Unknown error updating restaurant image URL', error: e);
+      return ApiResponse.error('Failed to update restaurant image, please try again later');
     }
   }
 
   /// 获取餐厅详情（用户视角）
   Future<ApiResponse<RestaurantModel>> getRestaurantDetail() async {
     try {
-      AppLogger.info('RestaurantService: 获取餐厅详情（用户视角）');
+      AppLogger.info('RestaurantService: Fetching restaurant details (user view)');
 
       final apiResponse = await _restaurantRepository.getRestaurantDetail();
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('RestaurantService: 获取餐厅详情成功');
+        AppLogger.info('RestaurantService: Successfully fetched restaurant details');
       } else {
         AppLogger.warning(
-          'RestaurantService: 获取餐厅详情失败 - ${apiResponse.errorMessage}',
+          'RestaurantService: Failed to fetch restaurant details - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('RestaurantService: 获取餐厅详情网络错误', error: e);
+      AppLogger.error('RestaurantService: Network error fetching restaurant details', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -215,32 +215,32 @@ class RestaurantService {
         );
       }
 
-      return ApiResponse.error('获取餐厅详情失败，请检查网络连接');
+      return ApiResponse.error('Failed to fetch restaurant details, please check network connection');
     } catch (e) {
-      AppLogger.error('RestaurantService: 获取餐厅详情未知错误', error: e);
-      return ApiResponse.error('获取餐厅详情失败，请稍后重试');
+      AppLogger.error('RestaurantService: Unknown error fetching restaurant details', error: e);
+      return ApiResponse.error('Failed to fetch restaurant details, please try again later');
     }
   }
 
   /// 获取聊天室验证码
   Future<ApiResponse<String>> getChatRoomVerificationCode() async {
     try {
-      AppLogger.info('RestaurantService: 获取聊天室验证码');
+      AppLogger.info('RestaurantService: Fetching chat room verification code');
 
       final apiResponse = await _restaurantRepository
           .getChatRoomVerificationCode();
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('RestaurantService: 获取聊天室验证码成功');
+        AppLogger.info('RestaurantService: Successfully fetched chat room verification code');
       } else {
         AppLogger.warning(
-          'RestaurantService: 获取聊天室验证码失败 - ${apiResponse.errorMessage}',
+          'RestaurantService: Failed to fetch chat room verification code - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('RestaurantService: 获取聊天室验证码网络错误', error: e);
+      AppLogger.error('RestaurantService: Network error fetching chat room verification code', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -250,10 +250,10 @@ class RestaurantService {
         );
       }
 
-      return ApiResponse.error('获取聊天室验证码失败，请检查网络连接');
+      return ApiResponse.error('Failed to fetch chat room verification code, please check network connection');
     } catch (e) {
-      AppLogger.error('RestaurantService: 获取聊天室验证码未知错误', error: e);
-      return ApiResponse.error('获取聊天室验证码失败，请稍后重试');
+      AppLogger.error('RestaurantService: Unknown error fetching chat room verification code', error: e);
+      return ApiResponse.error('Failed to fetch chat room verification code, please try again later');
     }
   }
 
@@ -270,6 +270,6 @@ class RestaurantService {
       return errorData['message'] as String;
     }
 
-    return '未知错误';
+    return 'Unknown error';
   }
 }

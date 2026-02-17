@@ -49,7 +49,7 @@ class StaffProvider extends ChangeNotifier {
         hasMore = true;
       }
 
-      AppLogger.info('StaffProvider: 开始加载员工列表 - 页码: $currentPage');
+      AppLogger.info('StaffProvider: Starting to load staff list - Page: $currentPage');
 
       final response = await _staffService.getStaff(
         page: currentPage,
@@ -69,7 +69,7 @@ class StaffProvider extends ChangeNotifier {
         currentPage++;
         hasMore = newStaff.length >= _state.pageSize;
 
-        AppLogger.info('StaffProvider: 员工列表加载成功 - ${newStaff.length} 项');
+        AppLogger.info('StaffProvider: Staff list loaded successfully - ${newStaff.length} items');
 
         // 更新状态
         _state = _state.copyWith(
@@ -80,13 +80,13 @@ class StaffProvider extends ChangeNotifier {
         );
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('StaffProvider: 员工列表加载失败 - ${response.errorMessage}');
+        AppLogger.warning('StaffProvider: Failed to load staff list - ${response.errorMessage}');
       }
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('StaffProvider: 加载员工列表异常', error: e);
-      _setError('加载员工列表失败，请稍后重试');
+      AppLogger.error('StaffProvider: Exception loading staff list', error: e);
+      _setError('Failed to load staff list, please try again later');
       notifyListeners();
     } finally {
       _setLoading(false);
@@ -99,22 +99,22 @@ class StaffProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      AppLogger.info('StaffProvider: 开始加载员工详情 - $staffId');
+      AppLogger.info('StaffProvider: Starting to load staff details - $staffId');
 
       final response = await _staffService.getStaffDetail(staffId);
 
       if (response.isSuccess && response.data != null) {
         _state = _state.copyWith(selectedStaff: response.data!);
-        AppLogger.info('StaffProvider: 员工详情加载成功');
+        AppLogger.info('StaffProvider: Staff details loaded successfully');
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('StaffProvider: 员工详情加载失败 - ${response.errorMessage}');
+        AppLogger.warning('StaffProvider: Failed to load staff details - ${response.errorMessage}');
       }
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('StaffProvider: 加载员工详情异常', error: e);
-      _setError('加载员工详情失败，请稍后重试');
+      AppLogger.error('StaffProvider: Exception loading staff details', error: e);
+      _setError('Failed to load staff details, please try again later');
       notifyListeners();
     } finally {
       _setLoading(false);
@@ -127,7 +127,7 @@ class StaffProvider extends ChangeNotifier {
       _setUpdating(true);
       _clearError();
 
-      AppLogger.info('StaffProvider: 开始更新员工状态 - $staffId, $status');
+      AppLogger.info('StaffProvider: Starting to update staff status - $staffId, $status');
 
       final response = await _staffService.updateStaffStatus(staffId, status);
 
@@ -153,17 +153,17 @@ class StaffProvider extends ChangeNotifier {
           selectedStaff: selectedStaff,
         );
 
-        AppLogger.info('StaffProvider: 员工状态更新成功');
+        AppLogger.info('StaffProvider: Staff status updated successfully');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('StaffProvider: 员工状态更新失败 - ${response.errorMessage}');
+        AppLogger.warning('StaffProvider: Failed to update staff status - ${response.errorMessage}');
         return false;
       }
     } catch (e) {
-      AppLogger.error('StaffProvider: 更新员工状态异常', error: e);
-      _setError('更新员工状态失败，请稍后重试');
+      AppLogger.error('StaffProvider: Exception updating staff status', error: e);
+      _setError('Failed to update staff status, please try again later');
       return false;
     } finally {
       _setUpdating(false);
@@ -203,7 +203,7 @@ class StaffProvider extends ChangeNotifier {
   void selectStaff(StaffModel? staff) {
     _state = _state.copyWith(selectedStaff: staff);
     notifyListeners();
-    AppLogger.info('StaffProvider: 已选择员工 - ${staff?.name}');
+    AppLogger.info('StaffProvider: Selected staff - ${staff?.name}');
   }
 
   /// 加载更多员工
@@ -270,7 +270,7 @@ class StaffProvider extends ChangeNotifier {
       _setUpdating(true);
       _clearError();
 
-      AppLogger.info('StaffProvider: 开始创建员工 - ${staffData['name']}');
+      AppLogger.info('StaffProvider: Starting to create staff - ${staffData['name']}');
 
       final response = await _staffService.createStaff(staffData);
 
@@ -285,17 +285,17 @@ class StaffProvider extends ChangeNotifier {
           totalCount: _state.totalCount + 1,
         );
 
-        AppLogger.info('StaffProvider: 员工创建成功 - ${response.data!.name}');
+        AppLogger.info('StaffProvider: Staff created successfully - ${response.data!.name}');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('StaffProvider: 员工创建失败 - ${response.errorMessage}');
+        AppLogger.warning('StaffProvider: Failed to create staff - ${response.errorMessage}');
         return false;
       }
     } catch (e) {
-      AppLogger.error('StaffProvider: 创建员工异常', error: e);
-      _setError('创建员工失败，请稍后重试');
+      AppLogger.error('StaffProvider: Exception creating staff', error: e);
+      _setError('Failed to create staff, please try again later');
       return false;
     } finally {
       _setUpdating(false);
@@ -308,7 +308,7 @@ class StaffProvider extends ChangeNotifier {
       _setUpdating(true);
       _clearError();
 
-      AppLogger.info('StaffProvider: 开始更新员工信息 - $staffId');
+      AppLogger.info('StaffProvider: Starting to update staff information - $staffId');
 
       final response = await _staffService.updateStaff(staffId, staffData);
 
@@ -332,17 +332,17 @@ class StaffProvider extends ChangeNotifier {
           selectedStaff: selectedStaff,
         );
 
-        AppLogger.info('StaffProvider: 员工信息更新成功 - ${response.data!.name}');
+        AppLogger.info('StaffProvider: Staff information updated successfully - ${response.data!.name}');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('StaffProvider: 员工信息更新失败 - ${response.errorMessage}');
+        AppLogger.warning('StaffProvider: Failed to update staff information - ${response.errorMessage}');
         return false;
       }
     } catch (e) {
-      AppLogger.error('StaffProvider: 更新员工信息异常', error: e);
-      _setError('更新员工信息失败，请稍后重试');
+      AppLogger.error('StaffProvider: Exception updating staff information', error: e);
+      _setError('Failed to update staff information, please try again later');
       return false;
     } finally {
       _setUpdating(false);
@@ -355,7 +355,7 @@ class StaffProvider extends ChangeNotifier {
       _setUpdating(true);
       _clearError();
 
-      AppLogger.info('StaffProvider: 开始删除员工 - $staffId');
+      AppLogger.info('StaffProvider: Starting to delete staff - $staffId');
 
       final response = await _staffService.deleteStaff(staffId);
 
@@ -377,17 +377,17 @@ class StaffProvider extends ChangeNotifier {
           selectedStaff: selectedStaff,
         );
 
-        AppLogger.info('StaffProvider: 员工删除成功');
+        AppLogger.info('StaffProvider: Staff deleted successfully');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('StaffProvider: 员工删除失败 - ${response.errorMessage}');
+        AppLogger.warning('StaffProvider: Failed to delete staff - ${response.errorMessage}');
         return false;
       }
     } catch (e) {
-      AppLogger.error('StaffProvider: 删除员工异常', error: e);
-      _setError('删除员工失败，请稍后重试');
+      AppLogger.error('StaffProvider: Exception deleting staff', error: e);
+      _setError('Failed to delete staff, please try again later');
       return false;
     } finally {
       _setUpdating(false);
@@ -396,13 +396,13 @@ class StaffProvider extends ChangeNotifier {
 
   /// 获取员工显示名称
   String getStaffDisplayName(StaffModel staff) {
-    return staff.name.isNotEmpty ? staff.name : '未知员工';
+    return staff.name.isNotEmpty ? staff.name : 'Unknown Staff';
   }
 
   /// 获取员工职位显示
   String getStaffPositionDisplay(StaffModel staff) {
     if (staff.position == null || staff.position!.isEmpty) {
-      return '员工';
+      return 'Staff';
     }
     return staff.position!;
   }
@@ -411,20 +411,20 @@ class StaffProvider extends ChangeNotifier {
   String getStaffStatusDisplay(StaffModel staff) {
     switch (staff.status.toUpperCase()) {
       case 'ONLINE':
-        return '在线';
+        return 'Online';
       case 'OFFLINE':
-        return '离线';
+        return 'Offline';
       case 'BUSY':
-        return '忙碌';
+        return 'Busy';
       default:
-        return '未知';
+        return 'Unknown';
     }
   }
 
   /// 获取员工评分显示
   String getStaffRatingDisplay(StaffModel staff) {
     if (staff.rating == null) {
-      return '暂无评分';
+      return 'No rating yet';
     }
     return '${staff.rating!.toStringAsFixed(1)} ⭐';
   }
@@ -462,6 +462,6 @@ class StaffProvider extends ChangeNotifier {
   void reset() {
     _state = const StaffState();
     notifyListeners();
-    AppLogger.info('StaffProvider: 状态已重置');
+    AppLogger.info('StaffProvider: State has been reset');
   }
 }

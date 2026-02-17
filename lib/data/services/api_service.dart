@@ -51,7 +51,7 @@ class ApiService {
             while (retryCount < maxRetries) {
               retryCount++;
               AppLogger.debug(
-                'ApiService: 重试请求 ($retryCount/$maxRetries): ${error.requestOptions.uri}',
+                'ApiService: Retrying request ($retryCount/$maxRetries): ${error.requestOptions.uri}',
               );
 
               try {
@@ -88,13 +88,13 @@ class ApiService {
       ),
     );
 
-    AppLogger.info('ApiService: 初始化完成');
+    AppLogger.info('ApiService: Initialization completed');
   }
 
   /// 设置访问令牌
   void setAccessToken(String? token) {
     _accessToken = token;
-    AppLogger.debug('ApiService: 设置访问令牌');
+    AppLogger.debug('ApiService: Setting access token');
   }
 
   /// 获取访问令牌
@@ -103,7 +103,7 @@ class ApiService {
   /// 清除访问令牌
   void clearAccessToken() {
     _accessToken = null;
-    AppLogger.debug('ApiService: 清除访问令牌');
+    AppLogger.debug('ApiService: Clearing access token');
   }
 
   /// 请求拦截器
@@ -122,14 +122,14 @@ class ApiService {
       // 商家API不需要额外处理，直接使用
     }
 
-    AppLogger.debug('API请求: ${options.method} ${options.uri}');
+    AppLogger.debug('API Request: ${options.method} ${options.uri}');
     handler.next(options);
   }
 
   /// 响应拦截器
   void _onResponse(Response response, ResponseInterceptorHandler handler) {
     AppLogger.debug(
-      'API响应: ${response.statusCode} ${response.requestOptions.uri}',
+      'API Response: ${response.statusCode} ${response.requestOptions.uri}',
     );
 
     // 尝试解析通用响应格式
@@ -140,7 +140,7 @@ class ApiService {
       if (data.containsKey('success')) {
         // 这里可以添加统一的响应处理逻辑
         if (data['success'] == false && data.containsKey('error')) {
-          AppLogger.warning('API返回错误: ${data['error']}');
+          AppLogger.warning('API returned error: ${data['error']}');
         }
       }
     }
@@ -150,20 +150,20 @@ class ApiService {
 
   /// 错误拦截器
   void _onError(DioException error, ErrorInterceptorHandler handler) {
-    AppLogger.error('API错误: ${error.message}', error: error);
+    AppLogger.error('API Error: ${error.message}', error: error);
 
     // 处理不同类型的错误
-    String errorMessage = '网络请求失败';
+    String errorMessage = 'Network request failed';
 
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
-        errorMessage = '连接超时';
+        errorMessage = 'Connection timeout';
         break;
       case DioExceptionType.sendTimeout:
-        errorMessage = '请求超时';
+        errorMessage = 'Request timeout';
         break;
       case DioExceptionType.receiveTimeout:
-        errorMessage = '响应超时';
+        errorMessage = 'Response timeout';
         break;
       case DioExceptionType.badResponse:
         errorMessage = _handleHttpError(error.response);
@@ -172,23 +172,23 @@ class ApiService {
         if (error.response?.statusCode == 401 ||
             error.response?.statusCode == 403) {
           AppLogger.warning(
-            'API错误: ${error.response?.statusCode} - Token过期或权限不足',
+            'API Error: ${error.response?.statusCode} - Token expired or insufficient permissions',
           );
           // 调用认证错误回调
           onAuthError?.call();
         }
         break;
       case DioExceptionType.cancel:
-        errorMessage = '请求已取消';
+        errorMessage = 'Request cancelled';
         break;
       case DioExceptionType.connectionError:
-        errorMessage = '网络连接失败';
+        errorMessage = 'Network connection failed';
         break;
       case DioExceptionType.badCertificate:
-        errorMessage = '证书验证失败';
+        errorMessage = 'Certificate verification failed';
         break;
       case DioExceptionType.unknown:
-        errorMessage = '未知网络错误';
+        errorMessage = 'Unknown network error';
         break;
     }
 
@@ -212,35 +212,35 @@ class ApiService {
 
   /// 处理HTTP错误
   String _handleHttpError(Response? response) {
-    if (response == null) return '服务器响应错误';
+    if (response == null) return 'Server response error';
 
     switch (response.statusCode) {
       case 400:
-        return '请求参数错误';
+        return 'Invalid request parameters';
       case 401:
-        return '未授权访问，请重新登录';
+        return 'Unauthorized access, please login again';
       case 403:
-        return '访问被拒绝';
+        return 'Access denied';
       case 404:
-        return '请求的资源不存在';
+        return 'Requested resource not found';
       case 405:
-        return '请求方法不被允许';
+        return 'Request method not allowed';
       case 408:
-        return '请求超时';
+        return 'Request timeout';
       case 409:
-        return '请求冲突';
+        return 'Request conflict';
       case 429:
-        return '请求过于频繁，请稍后再试';
+        return 'Too many requests, please try again later';
       case 500:
-        return '服务器内部错误';
+        return 'Internal server error';
       case 502:
-        return '网关错误';
+        return 'Bad gateway';
       case 503:
-        return '服务暂时不可用';
+        return 'Service temporarily unavailable';
       case 504:
-        return '网关超时';
+        return 'Gateway timeout';
       default:
-        return 'HTTP错误: ${response.statusCode}';
+        return 'HTTP Error: ${response.statusCode}';
     }
   }
 

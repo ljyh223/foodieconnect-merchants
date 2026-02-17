@@ -39,99 +39,99 @@ class RestaurantProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      AppLogger.info('RestaurantProvider: 开始加载餐厅信息');
+      AppLogger.info('RestaurantProvider: Starting to load restaurant information');
 
       final response = await _restaurantService.getRestaurant();
 
       if (response.isSuccess && response.data != null) {
         _restaurant = response.data;
-        AppLogger.info('RestaurantProvider: 餐厅信息加载成功');
+        AppLogger.info('RestaurantProvider: Restaurant information loaded successfully');
       } else {
         _setError(response.errorMessage);
         AppLogger.warning(
-          'RestaurantProvider: 餐厅信息加载失败 - ${response.errorMessage}',
+          'RestaurantProvider: Failed to load restaurant information - ${response.errorMessage}',
         );
       }
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('RestaurantProvider: 加载餐厅信息异常', error: e);
-      _setError('加载餐厅信息失败，请稍后重试');
+      AppLogger.error('RestaurantProvider: Error loading restaurant information', error: e);
+      _setError('Failed to load restaurant information, please try again later');
       notifyListeners();
     } finally {
       _setLoading(false);
     }
   }
 
-  /// 更新餐厅信息
+  /// Update restaurant information
   Future<bool> updateRestaurant(RestaurantUpdateRequest request) async {
     try {
       _setUpdating(true);
       _clearError();
 
-      AppLogger.info('RestaurantProvider: 开始更新餐厅信息');
+      AppLogger.info('RestaurantProvider: Starting to update restaurant information');
 
       final response = await _restaurantService.updateRestaurant(request);
 
       if (response.isSuccess && response.data != null) {
         _restaurant = response.data;
-        AppLogger.info('RestaurantProvider: 餐厅信息更新成功');
+        AppLogger.info('RestaurantProvider: Restaurant information updated successfully');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
         AppLogger.warning(
-          'RestaurantProvider: 餐厅信息更新失败 - ${response.errorMessage}',
+          'RestaurantProvider: Failed to update restaurant information - ${response.errorMessage}',
         );
         return false;
       }
     } catch (e) {
-      AppLogger.error('RestaurantProvider: 更新餐厅信息异常', error: e);
-      _setError('更新餐厅信息失败，请稍后重试');
+      AppLogger.error('RestaurantProvider: Exception updating restaurant information', error: e);
+      _setError('Failed to update restaurant information, please try again later');
       return false;
     } finally {
       _setUpdating(false);
     }
   }
 
-  /// 更新餐厅营业状态
+  /// Update restaurant business status
   Future<bool> updateRestaurantStatus(bool isOpen) async {
     try {
       _setUpdating(true);
       _clearError();
 
-      AppLogger.info('RestaurantProvider: 开始更新餐厅营业状态');
+      AppLogger.info('RestaurantProvider: Starting to update restaurant business status');
 
       final response = await _restaurantService.updateRestaurantStatus(isOpen);
 
       if (response.isSuccess) {
-        // 更新本地状态
+        // Update local state
         if (_restaurant != null) {
           _restaurant = _restaurant!.copyWith(isOpen: isOpen);
-          AppLogger.info('RestaurantProvider: 餐厅营业状态更新成功');
+          AppLogger.info('RestaurantProvider: Restaurant business status updated successfully');
           notifyListeners();
         }
         return true;
       } else {
         _setError(response.errorMessage);
         AppLogger.warning(
-          'RestaurantProvider: 餐厅营业状态更新失败 - ${response.errorMessage}',
+          'RestaurantProvider: Failed to update restaurant business status - ${response.errorMessage}',
         );
         return false;
       }
     } catch (e) {
-      AppLogger.error('RestaurantProvider: 更新餐厅营业状态异常', error: e);
-      _setError('更新营业状态失败，请稍后重试');
+      AppLogger.error('RestaurantProvider: Exception updating restaurant business status', error: e);
+      _setError('Failed to update business status, please try again later');
       return false;
     } finally {
       _setUpdating(false);
     }
   }
 
-  /// 切换餐厅营业状态
+  /// Toggle restaurant business status
   Future<bool> toggleRestaurantStatus() async {
     if (_restaurant == null) {
-      _setError('餐厅信息未加载');
+      _setError('Restaurant information not loaded');
       return false;
     }
 
@@ -139,121 +139,121 @@ class RestaurantProvider extends ChangeNotifier {
     return await updateRestaurantStatus(newStatus);
   }
 
-  /// 更新餐厅图片
+  /// Update restaurant image
   Future<bool> updateRestaurantImage(dynamic imageFile) async {
     try {
       _setUpdating(true);
       _clearError();
 
-      AppLogger.info('RestaurantProvider: 开始上传餐厅图片');
+      AppLogger.info('RestaurantProvider: Starting to upload restaurant image');
 
-      // 转换 XFile 为 File
+      // Convert XFile to File
       File? file;
       if (imageFile is XFile) {
         file = File(imageFile.path);
       } else if (imageFile is File) {
         file = imageFile;
       } else {
-        _setError('不支持的图片类型');
+        _setError('Unsupported image type');
         AppLogger.error(
-          'RestaurantProvider: 不支持的图片类型 - ${imageFile.runtimeType}',
+          'RestaurantProvider: Unsupported image type - ${imageFile.runtimeType}',
         );
         return false;
       }
 
-      // 第一步：上传图片文件
+      // Step 1: Upload image file
       final uploadResponse = await _restaurantService.uploadImage(file);
 
       if (!uploadResponse.isSuccess || uploadResponse.data?.isEmpty != false) {
         final errorMessage = uploadResponse.errorMessage.isNotEmpty == true
             ? uploadResponse.errorMessage
-            : '图片上传失败';
+            : 'Image upload failed';
         _setError(errorMessage);
-        AppLogger.warning('RestaurantProvider: 图片上传失败 - $errorMessage');
+        AppLogger.warning('RestaurantProvider: Image upload failed - $errorMessage');
         return false;
       }
 
       final imageUrl = uploadResponse.data!;
-      AppLogger.info('RestaurantProvider: 图片上传成功，URL: $imageUrl');
+      AppLogger.info('RestaurantProvider: Image uploaded successfully, URL: $imageUrl');
 
-      // 第二步：更新餐厅图片URL
+      // Step 2: Update restaurant image URL
       final updateResponse = await _restaurantService.updateRestaurantImageUrl(
         imageUrl,
       );
 
       if (updateResponse.isSuccess) {
-        // 更新本地状态
+        // Update local state
         if (_restaurant != null) {
           _restaurant = _restaurant!.copyWith(imageUrl: imageUrl);
-          AppLogger.info('RestaurantProvider: 餐厅图片更新成功');
+          AppLogger.info('RestaurantProvider: Restaurant image updated successfully');
           notifyListeners();
         }
         return true;
       } else {
         _setError(updateResponse.errorMessage);
         AppLogger.warning(
-          'RestaurantProvider: 餐厅图片URL更新失败 - ${updateResponse.errorMessage}',
+          'RestaurantProvider: Failed to update restaurant image URL - ${updateResponse.errorMessage}',
         );
         return false;
       }
     } catch (e) {
-      AppLogger.error('RestaurantProvider: 更新餐厅图片异常', error: e);
-      _setError('更新餐厅图片失败，请稍后重试');
+      AppLogger.error('RestaurantProvider: Exception updating restaurant image', error: e);
+      _setError('Failed to update restaurant image, please try again later');
       return false;
     } finally {
       _setUpdating(false);
     }
   }
 
-  /// 刷新餐厅信息
+  /// Refresh restaurant information
   Future<void> refreshRestaurant() async {
     await loadRestaurant();
   }
 
-  /// 获取餐厅显示名称
+  /// Get restaurant display name
   String get restaurantDisplayName {
-    if (_restaurant == null) return '未知餐厅';
-    return _restaurant!.name.isNotEmpty ? _restaurant!.name : '未命名餐厅';
+    if (_restaurant == null) return 'Unknown restaurant';
+    return _restaurant!.name.isNotEmpty ? _restaurant!.name : 'Unnamed restaurant';
   }
 
-  /// 获取餐厅类型显示
+  /// Get restaurant type display
   String get restaurantTypeDisplay {
     if (_restaurant == null) return '';
-    return _restaurant!.type.isNotEmpty ? _restaurant!.type : '未分类';
+    return _restaurant!.type.isNotEmpty ? _restaurant!.type : 'Uncategorized';
   }
 
-  /// 获取餐厅地址显示
+  /// Get restaurant address display
   String get restaurantAddressDisplay {
     if (_restaurant == null) return '';
-    return _restaurant!.address.isNotEmpty ? _restaurant!.address : '地址未设置';
+    return _restaurant!.address.isNotEmpty ? _restaurant!.address : 'Address not set';
   }
 
-  /// 获取餐厅电话显示
+  /// Get restaurant phone display
   String get restaurantPhoneDisplay {
     if (_restaurant == null) return '';
-    return _restaurant!.phone.isNotEmpty ? _restaurant!.phone : '电话未设置';
+    return _restaurant!.phone.isNotEmpty ? _restaurant!.phone : 'Phone not set';
   }
 
-  /// 获取餐厅营业时间显示
+  /// Get restaurant business hours display
   String get restaurantHoursDisplay {
     if (_restaurant == null) return '';
     return _restaurant!.hours?.isNotEmpty == true
         ? _restaurant!.hours!
-        : '营业时间未设置';
+        : 'Business hours not set';
   }
 
-  /// 获取餐厅描述显示
+  /// Get restaurant description display
   String get restaurantDescriptionDisplay {
     if (_restaurant == null) return '';
     return _restaurant!.description?.isNotEmpty == true
         ? _restaurant!.description!
-        : '暂无描述';
+        : 'No description';
   }
 
-  /// 获取餐厅状态显示
+  /// Get restaurant status display
   String get restaurantStatusDisplay {
     if (_restaurant == null) return '';
-    return _restaurant!.isCurrentlyOpen ? '营业中' : '已打烊';
+    return _restaurant!.isCurrentlyOpen ? 'Open' : 'Closed';
   }
 
   /// 获取餐厅评分显示
@@ -334,37 +334,37 @@ class RestaurantProvider extends ChangeNotifier {
     _clearError();
   }
 
-  /// 获取聊天室验证码
+  /// Load chat room verification code
   Future<void> loadChatRoomVerificationCode() async {
     try {
       _setLoading(true);
       _clearError();
 
-      AppLogger.info('RestaurantProvider: 开始加载聊天室验证码');
+      AppLogger.info('RestaurantProvider: Starting to load chat room verification code');
 
       final response = await _restaurantService.getChatRoomVerificationCode();
 
       if (response.isSuccess && response.data?.isNotEmpty == true) {
         _chatRoomVerificationCode = response.data;
-        AppLogger.info('RestaurantProvider: 聊天室验证码加载成功');
+        AppLogger.info('RestaurantProvider: Chat room verification code loaded successfully');
       } else {
         _setError(response.errorMessage);
         AppLogger.warning(
-          'RestaurantProvider: 聊天室验证码加载失败 - ${response.errorMessage}',
+          'RestaurantProvider: Failed to load chat room verification code - ${response.errorMessage}',
         );
       }
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('RestaurantProvider: 加载聊天室验证码异常', error: e);
-      _setError('加载聊天室验证码失败，请稍后重试');
+      AppLogger.error('RestaurantProvider: Exception loading chat room verification code', error: e);
+      _setError('Failed to load chat room verification code, please try again later');
       notifyListeners();
     } finally {
       _setLoading(false);
     }
   }
 
-  /// 重置状态
+  /// Reset state
   void reset() {
     _isLoading = false;
     _isUpdating = false;
@@ -372,6 +372,6 @@ class RestaurantProvider extends ChangeNotifier {
     _restaurant = null;
     _chatRoomVerificationCode = null;
     notifyListeners();
-    AppLogger.info('RestaurantProvider: 状态已重置');
+    AppLogger.info('RestaurantProvider: State has been reset');
   }
 }

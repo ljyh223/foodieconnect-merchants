@@ -17,7 +17,7 @@ class StaffService {
     int size = 20,
   }) async {
     try {
-      AppLogger.info('StaffService: 获取员工列表');
+      AppLogger.info('StaffService: Fetching staff list');
 
       final apiResponse = await _staffRepository.getStaff(
         status: status,
@@ -27,17 +27,17 @@ class StaffService {
 
       if (apiResponse.isSuccess) {
         AppLogger.info(
-          'StaffService: 获取员工列表成功 - ${apiResponse.data?.length} 项',
+          'StaffService: Successfully fetched staff list - ${apiResponse.data?.length} items',
         );
       } else {
         AppLogger.warning(
-          'StaffService: 获取员工列表失败 - ${apiResponse.errorMessage}',
+          'StaffService: Failed to fetch staff list - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('StaffService: 获取员工列表网络错误', error: e);
+      AppLogger.error('StaffService: Network error fetching staff list', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -47,31 +47,31 @@ class StaffService {
         );
       }
 
-      return ApiResponse.error('获取员工列表失败，请检查网络连接');
+      return ApiResponse.error('Failed to fetch staff list, please check network connection');
     } catch (e) {
-      AppLogger.error('StaffService: 获取员工列表未知错误', error: e);
-      return ApiResponse.error('获取员工列表失败，请稍后重试');
+      AppLogger.error('StaffService: Unknown error fetching staff list', error: e);
+      return ApiResponse.error('Failed to fetch staff list, please try again later');
     }
   }
 
   /// 获取员工详情
   Future<ApiResponse<StaffModel>> getStaffDetail(int staffId) async {
     try {
-      AppLogger.info('StaffService: 获取员工详情 - $staffId');
+      AppLogger.info('StaffService: Fetching staff detail - $staffId');
 
       final apiResponse = await _staffRepository.getStaffDetail(staffId);
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('StaffService: 获取员工详情成功');
+        AppLogger.info('StaffService: Successfully fetched staff detail');
       } else {
         AppLogger.warning(
-          'StaffService: 获取员工详情失败 - ${apiResponse.errorMessage}',
+          'StaffService: Failed to fetch staff detail - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('StaffService: 获取员工详情网络错误', error: e);
+      AppLogger.error('StaffService: Network error fetching staff detail', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -81,10 +81,10 @@ class StaffService {
         );
       }
 
-      return ApiResponse.error('获取员工详情失败，请检查网络连接');
+      return ApiResponse.error('Failed to fetch staff detail, please check network connection');
     } catch (e) {
-      AppLogger.error('StaffService: 获取员工详情未知错误', error: e);
-      return ApiResponse.error('获取员工详情失败，请稍后重试');
+      AppLogger.error('StaffService: Unknown error fetching staff detail', error: e);
+      return ApiResponse.error('Failed to fetch staff detail, please try again later');
     }
   }
 
@@ -93,19 +93,19 @@ class StaffService {
     Map<String, dynamic> staffData,
   ) async {
     try {
-      AppLogger.info('StaffService: 创建员工 - ${staffData['name']}');
+      AppLogger.info('StaffService: Creating staff - ${staffData['name']}');
 
       final apiResponse = await _staffRepository.createStaff(staffData);
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('StaffService: 创建员工成功 - ${apiResponse.data?.name}');
+        AppLogger.info('StaffService: Successfully created staff - ${apiResponse.data?.name}');
       } else {
-        AppLogger.warning('StaffService: 创建员工失败 - ${apiResponse.errorMessage}');
+        AppLogger.warning('StaffService: Failed to create staff - ${apiResponse.errorMessage}');
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('StaffService: 创建员工网络错误', error: e);
+      AppLogger.error('StaffService: Network error creating staff', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -115,10 +115,10 @@ class StaffService {
         );
       }
 
-      return ApiResponse.error('创建员工失败，请检查网络连接');
+      return ApiResponse.error('Failed to create staff, please check network connection');
     } catch (e) {
-      AppLogger.error('StaffService: 创建员工未知错误', error: e);
-      return ApiResponse.error('创建员工失败，请稍后重试');
+      AppLogger.error('StaffService: Unknown error creating staff', error: e);
+      return ApiResponse.error('Failed to create staff, please try again later');
     }
   }
 
@@ -128,7 +128,7 @@ class StaffService {
     Map<String, dynamic> staffData,
   ) async {
     try {
-      AppLogger.info('StaffService: 更新员工信息 - $staffId');
+      AppLogger.info('StaffService: Updating staff information - $staffId');
 
       final apiResponse = await _staffRepository.updateStaff(
         staffId,
@@ -136,16 +136,16 @@ class StaffService {
       );
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('StaffService: 更新员工信息成功 - ${apiResponse.data?.name}');
+        AppLogger.info('StaffService: Successfully updated staff information - ${apiResponse.data?.name}');
       } else {
         AppLogger.warning(
-          'StaffService: 更新员工信息失败 - ${apiResponse.errorMessage}',
+          'StaffService: Failed to update staff information - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('StaffService: 更新员工信息网络错误', error: e);
+      AppLogger.error('StaffService: Network error updating staff information', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -155,29 +155,29 @@ class StaffService {
         );
       }
 
-      return ApiResponse.error('更新员工信息失败，请检查网络连接');
+      return ApiResponse.error('Failed to update staff information, please check network connection');
     } catch (e) {
-      AppLogger.error('StaffService: 更新员工信息未知错误', error: e);
-      return ApiResponse.error('更新员工信息失败，请稍后重试');
+      AppLogger.error('StaffService: Unknown error updating staff information', error: e);
+      return ApiResponse.error('Failed to update staff information, please try again later');
     }
   }
 
   /// 删除员工
   Future<ApiResponse<void>> deleteStaff(int staffId) async {
     try {
-      AppLogger.info('StaffService: 删除员工 - $staffId');
+      AppLogger.info('StaffService: Deleting staff - $staffId');
 
       final apiResponse = await _staffRepository.deleteStaff(staffId);
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('StaffService: 删除员工成功');
+        AppLogger.info('StaffService: Successfully deleted staff');
       } else {
-        AppLogger.warning('StaffService: 删除员工失败 - ${apiResponse.errorMessage}');
+        AppLogger.warning('StaffService: Failed to delete staff - ${apiResponse.errorMessage}');
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('StaffService: 删除员工网络错误', error: e);
+      AppLogger.error('StaffService: Network error deleting staff', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -187,10 +187,10 @@ class StaffService {
         );
       }
 
-      return ApiResponse.error('删除员工失败，请检查网络连接');
+      return ApiResponse.error('Failed to delete staff, please check network connection');
     } catch (e) {
-      AppLogger.error('StaffService: 删除员工未知错误', error: e);
-      return ApiResponse.error('删除员工失败，请稍后重试');
+      AppLogger.error('StaffService: Unknown error deleting staff', error: e);
+      return ApiResponse.error('Failed to delete staff, please try again later');
     }
   }
 
@@ -200,7 +200,7 @@ class StaffService {
     String status,
   ) async {
     try {
-      AppLogger.info('StaffService: 更新员工状态 - $staffId, $status');
+      AppLogger.info('StaffService: Updating staff status - $staffId, $status');
 
       final apiResponse = await _staffRepository.updateStaffStatus(
         staffId,
@@ -208,16 +208,16 @@ class StaffService {
       );
 
       if (apiResponse.isSuccess) {
-        AppLogger.info('StaffService: 更新员工状态成功');
+        AppLogger.info('StaffService: Successfully updated staff status');
       } else {
         AppLogger.warning(
-          'StaffService: 更新员工状态失败 - ${apiResponse.errorMessage}',
+          'StaffService: Failed to update staff status - ${apiResponse.errorMessage}',
         );
       }
 
       return apiResponse;
     } on DioException catch (e) {
-      AppLogger.error('StaffService: 更新员工状态网络错误', error: e);
+      AppLogger.error('StaffService: Network error updating staff status', error: e);
 
       if (e.response?.data is Map<String, dynamic>) {
         final errorData = e.response!.data as Map<String, dynamic>;
@@ -227,10 +227,10 @@ class StaffService {
         );
       }
 
-      return ApiResponse.error('更新员工状态失败，请检查网络连接');
+      return ApiResponse.error('Failed to update staff status, please check network connection');
     } catch (e) {
-      AppLogger.error('StaffService: 更新员工状态未知错误', error: e);
-      return ApiResponse.error('更新员工状态失败，请稍后重试');
+      AppLogger.error('StaffService: Unknown error updating staff status', error: e);
+      return ApiResponse.error('Failed to update staff status, please try again later');
     }
   }
 
@@ -257,6 +257,6 @@ class StaffService {
       return errorData['message'] as String;
     }
 
-    return '未知错误';
+    return 'Unknown error';
   }
 }

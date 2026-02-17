@@ -12,7 +12,7 @@ class StatisticsService {
     int? month,
   }) async {
     try {
-      AppLogger.info('StatisticsService: 获取统计概览');
+      AppLogger.info('StatisticsService: Fetching statistics overview');
 
       final result = await _statisticsRepository.getOverviewStats(
         date: date,
@@ -21,19 +21,19 @@ class StatisticsService {
       );
 
       return result.when(
-        loading: () => ApiResponse.error('加载中'),
+        loading: () => ApiResponse.error('Loading'),
         success: (data) {
-          AppLogger.info('StatisticsService: 获取统计概览成功');
+          AppLogger.info('StatisticsService: Successfully fetched statistics overview');
           return ApiResponse.success(data);
         },
         error: (message, code, details) {
-          AppLogger.warning('StatisticsService: 获取统计概览失败 - $message');
+          AppLogger.warning('StatisticsService: Failed to fetch statistics overview - $message');
           return ApiResponse.error(message, code: code);
         },
       );
     } catch (e) {
-      AppLogger.error('StatisticsService: 获取统计概览异常', error: e);
-      return ApiResponse.error('获取统计数据失败，请稍后重试');
+      AppLogger.error('StatisticsService: Exception while fetching statistics overview', error: e);
+      return ApiResponse.error('Failed to fetch statistics data, please try again later');
     }
   }
 }

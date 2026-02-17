@@ -26,7 +26,7 @@ class ReviewProvider extends ChangeNotifier {
   int? get selectedRating => _selectedRating;
   String? get errorMessage => _errorMessage;
 
-  /// 加载评价列表
+  /// Load reviews list
   Future<void> loadReviews(int itemId, {bool refresh = false}) async {
     if (refresh) {
       _currentPage = 0;
@@ -44,7 +44,7 @@ class ReviewProvider extends ChangeNotifier {
       }
       _errorMessage = null;
 
-      AppLogger.info('ReviewProvider: 加载评价 - itemId: $itemId, page: $_currentPage');
+      AppLogger.info('ReviewProvider: Loading reviews - itemId: $itemId, page: $_currentPage');
 
       final response = await _reviewService.getItemReviews(
         itemId: itemId,
@@ -60,15 +60,15 @@ class ReviewProvider extends ChangeNotifier {
         _currentPage++;
         _hasMore = _reviews.length < _totalCount;
 
-        AppLogger.info('ReviewProvider: 加载评价成功 - 已加载${_reviews.length}条');
+        AppLogger.info('ReviewProvider: Successfully loaded reviews - Loaded ${_reviews.length} reviews');
       } else {
         _errorMessage = response.errorMessage;
       }
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('ReviewProvider: 加载评价异常', error: e);
-      _errorMessage = '加载评价失败，请稍后重试';
+      AppLogger.error('ReviewProvider: Exception while loading reviews', error: e);
+      _errorMessage = 'Failed to load reviews, please try again later';
       notifyListeners();
     } finally {
       _isLoading = false;
@@ -77,17 +77,17 @@ class ReviewProvider extends ChangeNotifier {
     }
   }
 
-  /// 按评分筛选
+  /// Filter by rating
   Future<void> filterByRating(int? rating, int itemId) async {
     if (_selectedRating == rating) return;
 
     _selectedRating = rating;
 
-    // 重新加载第一页
+    // Reload first page
     await loadReviews(itemId, refresh: true);
   }
 
-  /// 清除筛选
+  /// Clear filter
   Future<void> clearFilter(int itemId) async {
     await filterByRating(null, itemId);
   }

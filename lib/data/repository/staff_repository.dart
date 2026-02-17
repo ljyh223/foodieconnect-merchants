@@ -30,7 +30,7 @@ class StaffRepository {
         return <StaffModel>[];
       });
     } catch (e) {
-      AppLogger.error('StaffRepository: 获取员工列表失败', error: e);
+      AppLogger.error('StaffRepository: Failed to fetch staff list', error: e);
       rethrow;
     }
   }
@@ -44,7 +44,7 @@ class StaffRepository {
         (json) => StaffModel.fromJson(json as Map<String, dynamic>),
       );
     } catch (e) {
-      AppLogger.error('StaffRepository: 获取员工详情失败', error: e);
+      AppLogger.error('StaffRepository: Failed to fetch staff detail', error: e);
       rethrow;
     }
   }
@@ -60,7 +60,7 @@ class StaffRepository {
         (json) => StaffModel.fromJson(json as Map<String, dynamic>),
       );
     } catch (e) {
-      AppLogger.error('StaffRepository: 创建员工失败', error: e);
+      AppLogger.error('StaffRepository: Failed to create staff', error: e);
       rethrow;
     }
   }
@@ -77,7 +77,7 @@ class StaffRepository {
         (json) => StaffModel.fromJson(json as Map<String, dynamic>),
       );
     } catch (e) {
-      AppLogger.error('StaffRepository: 更新员工信息失败', error: e);
+      AppLogger.error('StaffRepository: Failed to update staff information', error: e);
       rethrow;
     }
   }
@@ -88,7 +88,7 @@ class StaffRepository {
       final response = await _staffApi.deleteStaff(staffId);
       return ApiResponse<void>.fromJson(response.data!, (json) {});
     } catch (e) {
-      AppLogger.error('StaffRepository: 删除员工失败', error: e);
+      AppLogger.error('StaffRepository: Failed to delete staff', error: e);
       rethrow;
     }
   }
@@ -102,7 +102,7 @@ class StaffRepository {
       final response = await _staffApi.updateStaffStatus(staffId, status);
       return ApiResponse<void>.fromJson(response.data!, (json) {});
     } catch (e) {
-      AppLogger.error('StaffRepository: 更新员工状态失败', error: e);
+      AppLogger.error('StaffRepository: Failed to update staff status', error: e);
       rethrow;
     }
   }

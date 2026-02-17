@@ -20,7 +20,7 @@ abstract class BaseRepository {
         if (data is Map<String, dynamic>) {
           return dataParser(data);
         }
-        throw Exception('缓存数据格式错误');
+        throw Exception('Cache data format error');
       });
 
       if (cachedData != null) {
@@ -58,7 +58,7 @@ abstract class BaseRepository {
       // 处理Dio错误
       final apiError = ApiError.fromDio(e);
       return apiError.when(
-        network: () => ApiResult.error('网络连接失败', code: -1, details: e),
+        network: () => ApiResult.error('Network connection failed', code: -1, details: e),
         server: (code, message) =>
             ApiResult.error(message, code: code, details: e),
         unknown: (message) => ApiResult.error(message, code: -1, details: e),
@@ -90,7 +90,7 @@ abstract class BaseRepository {
               .map((item) => itemParser(item as Map<String, dynamic>))
               .toList();
         }
-        throw Exception('缓存数据格式错误');
+        throw Exception('Cache data format error');
       });
 
       if (cachedData != null) {
@@ -150,7 +150,7 @@ abstract class BaseRepository {
       // 处理Dio错误
       final apiError = ApiError.fromDio(e);
       return apiError.when(
-        network: () => ApiResult.error('网络连接失败', code: -1, details: e),
+        network: () => ApiResult.error('Network connection failed', code: -1, details: e),
         server: (code, message) =>
             ApiResult.error(message, code: code, details: e),
         unknown: (message) => ApiResult.error(message, code: -1, details: e),

@@ -82,7 +82,7 @@ class MenuProvider extends ChangeNotifier {
         _hasMore = true;
       }
 
-      AppLogger.info('MenuProvider: 开始加载菜品列表 - 页码: $_currentPage');
+      AppLogger.info('MenuProvider: Starting to load menu items list - Page: $_currentPage');
 
       final response = await _menuService.getMenuItems(
         page: _currentPage,
@@ -105,16 +105,16 @@ class MenuProvider extends ChangeNotifier {
         _currentPage++;
         _hasMore = newItems.length >= _pageSize;
 
-        AppLogger.info('MenuProvider: 菜品列表加载成功 - ${newItems.length} 项');
+        AppLogger.info('MenuProvider: Menu items list loaded successfully - ${newItems.length} items');
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('MenuProvider: 菜品列表加载失败 - ${response.errorMessage}');
+        AppLogger.warning('MenuProvider: Failed to load menu items list - ${response.errorMessage}');
       }
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('MenuProvider: 加载菜品列表异常', error: e);
-      _setError('加载菜品列表失败，请稍后重试');
+      AppLogger.error('MenuProvider: Exception loading menu items list', error: e);
+      _setError('Failed to load menu items list, please try again later');
       notifyListeners();
     } finally {
       _setLoading(false);
@@ -127,7 +127,7 @@ class MenuProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      AppLogger.info('MenuProvider: 开始加载所有菜品');
+      AppLogger.info('MenuProvider: Starting to load all menu items');
 
       final response = await _menuService.getAllMenuItems();
 
@@ -136,16 +136,16 @@ class MenuProvider extends ChangeNotifier {
         _menuItems = _allMenuItems;
         _totalCount = _allMenuItems.length;
 
-        AppLogger.info('MenuProvider: 所有菜品加载成功 - ${_allMenuItems.length} 项');
+        AppLogger.info('MenuProvider: All menu items loaded successfully - ${_allMenuItems.length} items');
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('MenuProvider: 所有菜品加载失败 - ${response.errorMessage}');
+        AppLogger.warning('MenuProvider: Failed to load all menu items - ${response.errorMessage}');
       }
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('MenuProvider: 加载所有菜品异常', error: e);
-      _setError('加载所有菜品失败，请稍后重试');
+      AppLogger.error('MenuProvider: Exception loading all menu items', error: e);
+      _setError('Failed to load all menu items, please try again later');
       notifyListeners();
     } finally {
       _setLoading(false);
@@ -170,7 +170,7 @@ class MenuProvider extends ChangeNotifier {
         return null;
       }
     } catch (e) {
-      _setError('图片上传失败，请稍后重试');
+      _setError('Failed to upload image, please try again later');
       return null;
     } finally {
       _isUploadingImage = false;
@@ -184,8 +184,8 @@ class MenuProvider extends ChangeNotifier {
       _setCreating(true);
       _clearError();
 
-      AppLogger.info('MenuProvider: 开始创建菜品 - ${request.name}');
-      AppLogger.info('MenuProvider: 请求数据 - ${request.toJson()}');
+      AppLogger.info('MenuProvider: Starting to create menu item - ${request.name}');
+      AppLogger.info('MenuProvider: Request data - ${request.toJson()}');
 
       final response = await _menuService.createMenuItem(request);
 
@@ -195,20 +195,20 @@ class MenuProvider extends ChangeNotifier {
         _allMenuItems.add(newItem);
         _totalCount++;
 
-        AppLogger.info('MenuProvider: 菜品创建成功 - ${newItem.toJson()}');
+        AppLogger.info('MenuProvider: Menu item created successfully - ${newItem.toJson()}');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('MenuProvider: 菜品创建失败 - ${response.errorMessage}');
+        AppLogger.warning('MenuProvider: Failed to create menu item - ${response.errorMessage}');
         AppLogger.warning(
           'MenuProvider: 响应数据 - ${response.toJson((dynamic x) => x)}',
         );
         return false;
       }
     } catch (e) {
-      AppLogger.error('MenuProvider: 创建菜品异常', error: e);
-      _setError('创建菜品失败，请稍后重试');
+      AppLogger.error('MenuProvider: Exception creating menu item', error: e);
+      _setError('Failed to create menu item, please try again later');
       return false;
     } finally {
       _setCreating(false);
@@ -221,7 +221,7 @@ class MenuProvider extends ChangeNotifier {
       _setUpdating(true);
       _clearError();
 
-      AppLogger.info('MenuProvider: 开始更新菜品 - $itemId');
+      AppLogger.info('MenuProvider: Starting to update menu item - $itemId');
 
       final response = await _menuService.updateMenuItem(itemId, request);
 
@@ -244,17 +244,17 @@ class MenuProvider extends ChangeNotifier {
           _selectedMenuItem = updatedItem;
         }
 
-        AppLogger.info('MenuProvider: 菜品更新成功');
+        AppLogger.info('MenuProvider: Menu item updated successfully');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('MenuProvider: 菜品更新失败 - ${response.errorMessage}');
+        AppLogger.warning('MenuProvider: Failed to update menu item - ${response.errorMessage}');
         return false;
       }
     } catch (e) {
-      AppLogger.error('MenuProvider: 更新菜品异常', error: e);
-      _setError('更新菜品失败，请稍后重试');
+      AppLogger.error('MenuProvider: Exception updating menu item', error: e);
+      _setError('Failed to update menu item, please try again later');
       return false;
     } finally {
       _setUpdating(false);
@@ -267,7 +267,7 @@ class MenuProvider extends ChangeNotifier {
       _setDeleting(true);
       _clearError();
 
-      AppLogger.info('MenuProvider: 开始删除菜品 - $itemId');
+      AppLogger.info('MenuProvider: Starting to delete menu item - $itemId');
 
       final response = await _menuService.deleteMenuItem(itemId);
 
@@ -281,17 +281,17 @@ class MenuProvider extends ChangeNotifier {
           _selectedMenuItem = null;
         }
 
-        AppLogger.info('MenuProvider: 菜品删除成功');
+        AppLogger.info('MenuProvider: Menu item deleted successfully');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('MenuProvider: 菜品删除失败 - ${response.errorMessage}');
+        AppLogger.warning('MenuProvider: Failed to delete menu item - ${response.errorMessage}');
         return false;
       }
     } catch (e) {
-      AppLogger.error('MenuProvider: 删除菜品异常', error: e);
-      _setError('删除菜品失败，请稍后重试');
+      AppLogger.error('MenuProvider: Exception deleting menu item', error: e);
+      _setError('Failed to delete menu item, please try again later');
       return false;
     } finally {
       _setDeleting(false);
@@ -303,7 +303,7 @@ class MenuProvider extends ChangeNotifier {
     try {
       _clearError();
 
-      AppLogger.info('MenuProvider: 开始切换菜品状态 - $itemId, $isAvailable');
+      AppLogger.info('MenuProvider: Starting to toggle menu item status - $itemId, $isAvailable');
 
       final response = await _menuService.toggleMenuItemStatus(
         itemId,
@@ -333,17 +333,17 @@ class MenuProvider extends ChangeNotifier {
           );
         }
 
-        AppLogger.info('MenuProvider: 菜品状态切换成功');
+        AppLogger.info('MenuProvider: Menu item status toggled successfully');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('MenuProvider: 菜品状态切换失败 - ${response.errorMessage}');
+        AppLogger.warning('MenuProvider: Failed to toggle menu item status - ${response.errorMessage}');
         return false;
       }
     } catch (e) {
-      AppLogger.error('MenuProvider: 切换菜品状态异常', error: e);
-      _setError('切换菜品状态失败，请稍后重试');
+      AppLogger.error('MenuProvider: Exception toggling menu item status', error: e);
+      _setError('Failed to toggle menu item status, please try again later');
       return false;
     }
   }
@@ -353,7 +353,7 @@ class MenuProvider extends ChangeNotifier {
     try {
       _clearError();
 
-      AppLogger.info('MenuProvider: 开始设置推荐菜品 - $itemId, $isRecommended');
+      AppLogger.info('MenuProvider: Starting to set recommended menu item - $itemId, $isRecommended');
 
       final response = await _menuService.setRecommendedMenuItem(
         itemId,
@@ -383,17 +383,17 @@ class MenuProvider extends ChangeNotifier {
           );
         }
 
-        AppLogger.info('MenuProvider: 推荐菜品设置成功');
+        AppLogger.info('MenuProvider: Recommended menu item set successfully');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('MenuProvider: 推荐菜品设置失败 - ${response.errorMessage}');
+        AppLogger.warning('MenuProvider: Failed to set recommended menu item - ${response.errorMessage}');
         return false;
       }
     } catch (e) {
-      AppLogger.error('MenuProvider: 设置推荐菜品异常', error: e);
-      _setError('设置推荐菜品失败，请稍后重试');
+      AppLogger.error('MenuProvider: Exception setting recommended menu item', error: e);
+      _setError('Failed to set recommended menu item, please try again later');
       return false;
     }
   }
@@ -441,7 +441,7 @@ class MenuProvider extends ChangeNotifier {
         _setError(response.errorMessage);
       }
     } catch (e) {
-      _setError('加载分类列表失败，请稍后重试');
+      _setError('Failed to load category list, please try again later');
     } finally {
       _setCategoryLoading(false);
     }
@@ -464,7 +464,7 @@ class MenuProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _setError('创建分类失败，请稍后重试');
+      _setError('Failed to create category, please try again later');
       return false;
     } finally {
       _setCategoryCreating(false);
@@ -497,7 +497,7 @@ class MenuProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _setError('更新分类失败，请稍后重试');
+      _setError('Failed to update category, please try again later');
       return false;
     } finally {
       _setCategoryUpdating(false);
@@ -524,7 +524,7 @@ class MenuProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _setError('删除分类失败，请稍后重试');
+      _setError('Failed to delete category, please try again later');
       return false;
     } finally {
       _setCategoryDeleting(false);
@@ -556,7 +556,7 @@ class MenuProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _setError('切换分类状态失败，请稍后重试');
+      _setError('Failed to toggle category status, please try again later');
       return false;
     }
   }
@@ -581,7 +581,7 @@ class MenuProvider extends ChangeNotifier {
   void selectMenuItem(MenuItemModel? menuItem) {
     _selectedMenuItem = menuItem;
     notifyListeners();
-    AppLogger.info('MenuProvider: 已选择菜品 - ${menuItem?.name}');
+    AppLogger.info('MenuProvider: Selected menu item - ${menuItem?.name}');
   }
 
   /// 加载更多菜品
@@ -696,6 +696,6 @@ class MenuProvider extends ChangeNotifier {
     _selectedCategory = null;
 
     notifyListeners();
-    AppLogger.info('MenuProvider: 状态已重置');
+    AppLogger.info('MenuProvider: State has been reset');
   }
 }

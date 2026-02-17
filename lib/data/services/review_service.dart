@@ -13,7 +13,7 @@ class ReviewService {
     int? rating,
   }) async {
     try {
-      AppLogger.info('ReviewService: 获取菜品评价 - itemId: $itemId, page: $page');
+      AppLogger.info('ReviewService: Fetching item reviews - itemId: $itemId, page: $page');
 
       final result = await _reviewRepository.getItemReviews(
         itemId: itemId,
@@ -23,19 +23,19 @@ class ReviewService {
       );
 
       return result.when(
-        loading: () => ApiResponse.error('加载中'),
+        loading: () => ApiResponse.error('Loading'),
         success: (data) {
-          AppLogger.info('ReviewService: 获取菜品评价成功');
+          AppLogger.info('ReviewService: Successfully fetched item reviews');
           return ApiResponse.success(data);
         },
         error: (message, code, details) {
-          AppLogger.warning('ReviewService: 获取菜品评价失败 - $message');
+          AppLogger.warning('ReviewService: Failed to fetch item reviews - $message');
           return ApiResponse.error(message, code: code);
         },
       );
     } catch (e) {
-      AppLogger.error('ReviewService: 获取菜品评价异常', error: e);
-      return ApiResponse.error('获取菜品评价失败，请稍后重试');
+      AppLogger.error('ReviewService: Exception while fetching item reviews', error: e);
+      return ApiResponse.error('Failed to fetch item reviews, please try again later');
     }
   }
 }

@@ -35,7 +35,7 @@ class AuthProvider extends ChangeNotifier {
   /// 初始化认证状态
   Future<void> init() async {
     try {
-      AppLogger.info('AuthProvider: 初始化认证状态');
+      AppLogger.info('AuthProvider: Initializing authentication status');
 
       // 检查本地存储的登录状态
       final isLoggedIn = await _authService.isLoggedIn();
@@ -49,16 +49,16 @@ class AuthProvider extends ChangeNotifier {
       }
 
       notifyListeners();
-      AppLogger.info('AuthProvider: 初始化完成 - 登录状态: $_isLoggedIn');
+      AppLogger.info('AuthProvider: Initialization complete - Login status: $_isLoggedIn');
     } catch (e) {
-      AppLogger.error('AuthProvider: 初始化失败', error: e);
-      _setError('初始化失败');
+      AppLogger.error('AuthProvider: Initialization failed', error: e);
+      _setError('Initialization failed');
     }
   }
 
   /// 处理Token过期
   Future<void> handleTokenExpired() async {
-    AppLogger.info('AuthProvider: 处理Token过期');
+    AppLogger.info('AuthProvider: Handling token expiration');
     await logout();
   }
 
@@ -71,7 +71,7 @@ class AuthProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      AppLogger.info('AuthProvider: 开始登录 - $username');
+      AppLogger.info('AuthProvider: Starting login - $username');
 
       final loginRequest = MerchantLoginRequest(
         username: username,
@@ -102,17 +102,17 @@ class AuthProvider extends ChangeNotifier {
         // 设置ApiService的访问令牌
         ApiService().setAccessToken(response.data!.token);
 
-        AppLogger.info('AuthProvider: 登录成功');
+        AppLogger.info('AuthProvider: Login successful');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('AuthProvider: 登录失败 - ${response.errorMessage}');
+        AppLogger.warning('AuthProvider: Login failed - ${response.errorMessage}');
         return false;
       }
     } catch (e) {
-      AppLogger.error('AuthProvider: 登录异常', error: e);
-      _setError('登录失败，请稍后重试');
+      AppLogger.error('AuthProvider: Login exception', error: e);
+      _setError('Login failed, please try again later');
       return false;
     } finally {
       _setLoading(false);
@@ -150,15 +150,15 @@ class AuthProvider extends ChangeNotifier {
       final response = await _authService.register(request);
 
       if (response.isSuccess) {
-        AppLogger.info('AuthProvider: 注册成功');
+        AppLogger.info('AuthProvider: Registration successful');
         return true;
       } else {
         _setError(response.errorMessage);
         return false;
       }
     } catch (e) {
-      AppLogger.error('AuthProvider: 注册异常', error: e);
-      _setError('注册失败，请稍后重试');
+      AppLogger.error('AuthProvider: Registration exception', error: e);
+      _setError('Registration failed, please try again later');
       return false;
     } finally {
       _setLoading(false);
@@ -171,7 +171,7 @@ class AuthProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      AppLogger.info('AuthProvider: 开始登出');
+      AppLogger.info('AuthProvider: Starting logout');
 
       final response = await _authService.logout();
 
@@ -181,14 +181,14 @@ class AuthProvider extends ChangeNotifier {
       ApiService().clearAccessToken();
 
       if (response.isSuccess) {
-        AppLogger.info('AuthProvider: 登出成功');
+        AppLogger.info('AuthProvider: Logout successful');
       } else {
-        AppLogger.warning('AuthProvider: 登出API失败 - ${response.errorMessage}');
+        AppLogger.warning('AuthProvider: Logout API failed - ${response.errorMessage}');
       }
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('AuthProvider: 登出异常', error: e);
+      AppLogger.error('AuthProvider: Logout exception', error: e);
       // 即使发生异常，也要清除本地状态
       _clearAuthState();
       // 清除ApiService的访问令牌
@@ -208,7 +208,7 @@ class AuthProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      AppLogger.info('AuthProvider: 开始修改密码');
+      AppLogger.info('AuthProvider: Starting to change password');
 
       final response = await _authService.changePassword(
         currentPassword: currentPassword,
@@ -216,16 +216,16 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (response.isSuccess) {
-        AppLogger.info('AuthProvider: 修改密码成功');
+        AppLogger.info('AuthProvider: Password changed successfully');
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('AuthProvider: 修改密码失败 - ${response.errorMessage}');
+        AppLogger.warning('AuthProvider: Failed to change password - ${response.errorMessage}');
         return false;
       }
     } catch (e) {
-      AppLogger.error('AuthProvider: 修改密码异常', error: e);
-      _setError('修改密码失败，请稍后重试');
+      AppLogger.error('AuthProvider: Password change exception', error: e);
+      _setError('Failed to change password, please try again later');
       return false;
     } finally {
       _setLoading(false);
@@ -238,18 +238,18 @@ class AuthProvider extends ChangeNotifier {
       _setLoading(true);
       _clearError();
 
-      AppLogger.info('AuthProvider: 开始刷新Token');
+      AppLogger.info('AuthProvider: Starting to refresh token');
 
       final response = await _authService.refreshToken();
 
       if (response.isSuccess && response.data != null) {
         _loginResponse = response.data!;
-        AppLogger.info('AuthProvider: 刷新Token成功');
+        AppLogger.info('AuthProvider: Token refreshed successfully');
         notifyListeners();
         return true;
       } else {
         _setError(response.errorMessage);
-        AppLogger.warning('AuthProvider: 刷新Token失败 - ${response.errorMessage}');
+        AppLogger.warning('AuthProvider: Failed to refresh token - ${response.errorMessage}');
 
         // 刷新失败，清除认证状态
         _clearAuthState();
@@ -257,8 +257,8 @@ class AuthProvider extends ChangeNotifier {
         return false;
       }
     } catch (e) {
-      AppLogger.error('AuthProvider: 刷新Token异常', error: e);
-      _setError('Token刷新失败');
+      AppLogger.error('AuthProvider: Token refresh exception', error: e);
+      _setError('Token refresh failed');
 
       // 发生异常，清除认证状态
       _clearAuthState();
@@ -293,7 +293,7 @@ class AuthProvider extends ChangeNotifier {
       jsonEncode(storedUserInfo),
     );
 
-    AppLogger.info('AuthProvider: 用户信息已更新');
+    AppLogger.info('AuthProvider: User information updated');
     notifyListeners();
   }
 
@@ -327,10 +327,10 @@ class AuthProvider extends ChangeNotifier {
                 ? DateTime.parse(userInfoMap['lastLoginAt'] as String)
                 : null,
           );
-          AppLogger.info('AuthProvider: 用户信息从本地加载成功');
+          AppLogger.info('AuthProvider: User information loaded from local storage successfully');
           return;
         } catch (e) {
-          AppLogger.warning('AuthProvider: 本地用户信息解析失败', error: e);
+          AppLogger.warning('AuthProvider: Failed to parse local user information', error: e);
         }
       }
 
@@ -339,14 +339,14 @@ class AuthProvider extends ChangeNotifier {
 
       if (response.isSuccess && response.data != null) {
         _currentUser = response.data;
-        AppLogger.info('AuthProvider: 用户信息从API加载成功');
+        AppLogger.info('AuthProvider: User information loaded from API successfully');
       } else {
-        AppLogger.warning('AuthProvider: 用户信息加载失败 - ${response.errorMessage}');
+        AppLogger.warning('AuthProvider: Failed to load user information - ${response.errorMessage}');
         // 加载失败，可能token已过期，清除认证状态
         _clearAuthState();
       }
     } catch (e) {
-      AppLogger.error('AuthProvider: 加载用户信息异常', error: e);
+      AppLogger.error('AuthProvider: Exception loading user information', error: e);
       _clearAuthState();
     }
   }
@@ -358,10 +358,10 @@ class AuthProvider extends ChangeNotifier {
       if (token != null && token.isNotEmpty) {
         // 设置ApiService的访问令牌
         ApiService().setAccessToken(token);
-        AppLogger.info('AuthProvider: Token已加载到ApiService');
+        AppLogger.info('AuthProvider: Token loaded to ApiService');
       }
     } catch (e) {
-      AppLogger.error('AuthProvider: 加载Token到ApiService失败', error: e);
+      AppLogger.error('AuthProvider: Failed to load token to ApiService', error: e);
     }
   }
 
@@ -371,7 +371,7 @@ class AuthProvider extends ChangeNotifier {
     _currentUser = null;
     _loginResponse = null;
     _clearError();
-    AppLogger.info('AuthProvider: 认证状态已清除');
+    AppLogger.info('AuthProvider: Authentication status cleared');
   }
 
   /// 设置加载状态
@@ -408,7 +408,7 @@ class AuthProvider extends ChangeNotifier {
 
   /// 获取用户显示名称
   String get userDisplayName {
-    if (_currentUser == null) return '未知用户';
+    if (_currentUser == null) return 'Unknown User';
     return _currentUser!.displayName.isNotEmpty
         ? _currentUser!.displayName
         : _currentUser!.email.split('@').first;

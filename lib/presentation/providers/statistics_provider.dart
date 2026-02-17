@@ -16,7 +16,7 @@ class StatisticsProvider extends ChangeNotifier {
   OverviewStatsResponse? get statsData => _statsData;
   String? get errorMessage => _errorMessage;
 
-  /// 加载统计数据
+  /// Load statistics data
   Future<void> loadStats({
     String? date,
     int? year,
@@ -29,7 +29,7 @@ class StatisticsProvider extends ChangeNotifier {
       _errorMessage = null;
       notifyListeners();
 
-      AppLogger.info('StatisticsProvider: 加载统计数据');
+      AppLogger.info('StatisticsProvider: Loading statistics data');
 
       final response = await _statisticsService.getOverviewStats(
         date: date,
@@ -39,15 +39,15 @@ class StatisticsProvider extends ChangeNotifier {
 
       if (response.isSuccess && response.data != null) {
         _statsData = response.data!;
-        AppLogger.info('StatisticsProvider: 加载统计数据成功');
+        AppLogger.info('StatisticsProvider: Successfully loaded statistics data');
       } else {
         _errorMessage = response.errorMessage;
       }
 
       notifyListeners();
     } catch (e) {
-      AppLogger.error('StatisticsProvider: 加载统计数据异常', error: e);
-      _errorMessage = '加载统计数据失败，请稍后重试';
+      AppLogger.error('StatisticsProvider: Exception while loading statistics data', error: e);
+      _errorMessage = 'Failed to load statistics data, please try again later';
       notifyListeners();
     } finally {
       _isLoading = false;

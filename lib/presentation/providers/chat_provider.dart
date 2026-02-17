@@ -41,7 +41,7 @@ class ChatProvider extends ChangeNotifier {
 
   // 初始化方法
   Future<void> init() async {
-    AppLogger.debug('ChatProvider: 初始化');
+    AppLogger.debug('ChatProvider: Initializing');
     _chatService.init();
 
     // 监听连接状态变化
@@ -61,7 +61,7 @@ class ChatProvider extends ChangeNotifier {
   Future<void> loadChatRoom() async {
     // 如果正在加载，直接返回
     if (_isLoading) {
-      AppLogger.info('ChatProvider: 正在加载聊天室信息，请勿重复调用');
+      AppLogger.info('ChatProvider: Loading chat room information, please do not call repeatedly');
       return;
     }
 
@@ -79,14 +79,14 @@ class ChatProvider extends ChangeNotifier {
         }
       } else if (chatRoom != null) {
         // 获取到聊天室信息但没有房间ID
-        _errorMessage = '获取聊天室信息失败：缺少房间ID';
+        _errorMessage = 'Failed to get chat room information: Missing room ID';
         _chatRoom = chatRoom;
       } else {
-        _errorMessage = '获取聊天室信息失败';
+        _errorMessage = 'Failed to get chat room information';
       }
     } catch (e) {
-      _errorMessage = '加载聊天室信息时出错: $e';
-      AppLogger.error('ChatProvider: 加载聊天室信息失败', error: e);
+      _errorMessage = 'Error loading chat room information: $e';
+      AppLogger.error('ChatProvider: Failed to load chat room information', error: e);
     } finally {
       _setLoading(false);
     }
@@ -102,8 +102,8 @@ class ChatProvider extends ChangeNotifier {
       // 获取历史消息
       await _chatService.getHistoryMessages();
     } catch (e) {
-      _errorMessage = '连接聊天室失败: $e';
-      AppLogger.error('ChatProvider: 连接聊天室失败', error: e);
+      _errorMessage = 'Failed to connect to chat room: $e';
+      AppLogger.error('ChatProvider: Failed to connect to chat room', error: e);
     } finally {
       _setLoading(false);
     }
@@ -116,8 +116,8 @@ class ChatProvider extends ChangeNotifier {
       await _chatService.getHistoryMessages();
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = '获取历史消息失败: $e';
-      AppLogger.error('ChatProvider: 获取历史消息失败', error: e);
+      _errorMessage = 'Failed to get history messages: $e';
+      AppLogger.error('ChatProvider: Failed to get history messages', error: e);
     } finally {
       _setLoading(false);
     }
@@ -130,8 +130,8 @@ class ChatProvider extends ChangeNotifier {
       await _chatService.disconnect();
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = '断开连接失败: $e';
-      AppLogger.error('ChatProvider: 断开连接失败', error: e);
+      _errorMessage = 'Failed to disconnect: $e';
+      AppLogger.error('ChatProvider: Failed to disconnect', error: e);
     } finally {
       _setLoading(false);
     }
